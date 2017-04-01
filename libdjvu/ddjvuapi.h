@@ -803,6 +803,18 @@ ddjvu_document_get_pageinfo_imp(ddjvu_document_t *document, int pageno,
 DDJVUAPI char *
 ddjvu_document_get_pagedump(ddjvu_document_t *document, int pageno);
 
+/* ddjvu_document_get_pagedump_json --
+This function returns a UTF8 encoded json formatted text 
+describing the contents of page <pageno> using the same 
+format as command <djvudump>. The returned string must be 
+deallocated using <free()>. It returns <0> when the 
+information is not yet available. It may then cause 
+the emission of <m_pageinfo> messages with null <m_any.page>.
+*/
+
+DDJVUAPI char *
+ddjvu_document_get_pagedump_json(ddjvu_document_t *document, int pageno, bool json);
+
 
 /* ddjvu_document_get_filedump --
    This function returns a UTF8 encoded text describing the contents 
@@ -815,6 +827,19 @@ ddjvu_document_get_pagedump(ddjvu_document_t *document, int pageno);
 
 DDJVUAPI char *
 ddjvu_document_get_filedump(ddjvu_document_t *document, int fileno);
+
+
+/* ddjvu_document_get_filedump_json --
+This function returns a UTF8 encoded text describing the contents
+of file <fileno> using the same format as command <djvudump>.
+The returned string must be deallocated using <free()>.
+It returns <0> when the information is not yet available.
+It may then cause then the emission of <m_pageinfo>
+messages with null <m_any.page>.
+*/
+
+DDJVUAPI char *
+ddjvu_document_get_filedump_json(ddjvu_document_t *document, int fileno, bool json);
 
 
 

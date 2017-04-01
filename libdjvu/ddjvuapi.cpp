@@ -1476,11 +1476,11 @@ ddjvu_document_get_pageinfo_imp(ddjvu_document_t *document, int pageno,
 
 
 static char *
-get_file_dump(DjVuFile *file)
+get_file_dump(DjVuFile *file, bool json)
 {
   DjVuDumpHelper dumper;
   GP<DataPool> pool = file->get_init_data_pool();
-  GP<ByteStream> str = dumper.dump(pool);
+  GP<ByteStream> str = dumper.dump(pool, json);
   int size = str->size();
   char *buffer;
   if ((size = str->size()) > 0 && (buffer = (char*)malloc(size+1)))
@@ -1493,63 +1493,72 @@ get_file_dump(DjVuFile *file)
   return 0;
 }
 
+char *
+ddjvu_document_get_pagedump_json(ddjvu_document_t *document, int pageno, bool json)
+{
+    G_TRY
+    {
+        DjVuDocument *doc = document->doc;
+    if (doc)
+    {
+        document->want_pageinfo();
+        GP<DjVuFile> file = doc->get_djvu_file(pageno);
+        if (file && file->is_data_present())
+            return get_file_dump(file, json);
+    }
+    }
+        G_CATCH(ex)
+    {
+        ERROR1(document, ex);
+    }
+    G_ENDCATCH;
+    return 0;
+}
 
 char *
 ddjvu_document_get_pagedump(ddjvu_document_t *document, int pageno)
 {
-  G_TRY
-    {
-      DjVuDocument *doc = document->doc;
-      if (doc)
-        {
-          document->want_pageinfo();
-          GP<DjVuFile> file = doc->get_djvu_file(pageno);
-          if (file && file->is_data_present())
-            return get_file_dump(file);
-        }
-    }
-  G_CATCH(ex)
-    {
-      ERROR1(document, ex);
-    }
-  G_ENDCATCH;
-  return 0;
+    return ddjvu_document_get_pagedump_json(document, pageno, false);
 }
 
+char *
+ddjvu_document_get_filedump_json(ddjvu_document_t *document, int fileno, bool json) 
+{
+    G_TRY
+    {
+        DjVuDocument *doc = document->doc;
+    document->want_pageinfo();
+    if (doc)
+    {
+        GP<DjVuFile> file;
+        int type = doc->get_doc_type();
+        if (type != DjVuDocument::BUNDLED &&
+            type != DjVuDocument::INDIRECT)
+            file = doc->get_djvu_file(fileno);
+        else
+        {
+            GP<DjVmDir> dir = doc->get_djvm_dir();
+            GP<DjVmDir::File> fdesc = dir->pos_to_file(fileno);
+            if (fdesc)
+                file = doc->get_djvu_file(fdesc->get_load_name());
+        }
+        if (file && file->is_data_present())
+            return get_file_dump(file, json);
+    }
+    }
+        G_CATCH(ex)
+    {
+        ERROR1(document, ex);
+    }
+    G_ENDCATCH;
+    return 0;
+}
 
 char *
 ddjvu_document_get_filedump(ddjvu_document_t *document, int fileno)
 {
-  G_TRY
-    {
-      DjVuDocument *doc = document->doc;
-      document->want_pageinfo();
-      if (doc)
-        {
-          GP<DjVuFile> file;
-          int type = doc->get_doc_type();
-          if ( type != DjVuDocument::BUNDLED &&
-               type != DjVuDocument::INDIRECT )
-            file = doc->get_djvu_file(fileno);
-          else
-            {
-              GP<DjVmDir> dir = doc->get_djvm_dir();
-              GP<DjVmDir::File> fdesc = dir->pos_to_file(fileno);
-              if (fdesc)
-                file = doc->get_djvu_file(fdesc->get_load_name());
-            }
-          if (file && file->is_data_present())
-            return get_file_dump(file);
-        }
-    }
-  G_CATCH(ex)
-    {
-      ERROR1(document, ex);
-    }
-  G_ENDCATCH;
-  return 0;
+    return ddjvu_document_get_filedump_json(document, fileno, false);
 }
-
 
 
 // ----------------------------------------
