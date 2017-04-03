@@ -326,7 +326,6 @@ paket-files/
 # FAKE - F# Make
 .fake/
 
-# JetBrains Rider
 .idea/
 *.sln.iml
 
@@ -336,4 +335,8 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+*.runsettings
+
+
 
