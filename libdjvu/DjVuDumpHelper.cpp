@@ -391,7 +391,7 @@ display_chunks(ByteStream & out_str, IFFByteStream &iff,
         if (json && index > 0)
         {
             if (compositeChunk)
-                out_str.format("%s},%s\n", (const char*)get_indent(indentSize));
+                out_str.format("%s},\n", (const char*)get_indent(indentSize));
             else
                 out_str.format(" },\n");
         }
@@ -446,7 +446,7 @@ display_chunks(ByteStream & out_str, IFFByteStream &iff,
         if (!json)
             out_str.format("\n");
 
-        bool compositeChunk = iff.composite();
+        compositeChunk = iff.composite() != 0 ? true : false;
 
         if (compositeChunk)
         {
@@ -454,7 +454,8 @@ display_chunks(ByteStream & out_str, IFFByteStream &iff,
                 out_str.format(", \"Children\": [\n");
             indentSize++;
             display_chunks(out_str, iff, head2, djvminfo, json);
-            out_str.format("%s]\n", (const char*)get_indent(indentSize));
+            if (json)
+                out_str.format("%s]\n", (const char*)get_indent(indentSize));
             indentSize--;
         }
 
@@ -468,7 +469,7 @@ display_chunks(ByteStream & out_str, IFFByteStream &iff,
     if (json)
     {
         if (compositeChunk)
-            out_str.format("%s}%s\n", (const char*)get_indent(indentSize));
+            out_str.format("%s}\n", (const char*)get_indent(indentSize));
         else
             out_str.format(" }\n");
     }
@@ -483,9 +484,9 @@ DjVuDumpHelper::dump(const GP<DataPool> & pool)
 }
 
 GP<ByteStream>
-DjVuDumpHelper::dump(const GP<DataPool> & pool, const bool dumpJson)
+DjVuDumpHelper::dump(const GP<DataPool> & pool, const bool json)
 {
-    return dump(pool->get_stream());
+    return dump(pool->get_stream(), json);
 }
 
 GP<ByteStream>
@@ -502,10 +503,10 @@ DjVuDumpHelper::dump(GP<ByteStream> gstr, const bool json)
     GP<IFFByteStream> iff = IFFByteStream::create(gstr);
     DjVmInfo djvminfo;
     if (json)
-        out_str->format("{\n");
+        out_str->format("{ \"DjvuData\":\n");
     display_chunks(*out_str, *iff, head, djvminfo, json);
     if (json)
-        out_str->format("\n}\n");
+        out_str->format("}\n");
     return out_str;
 }
 

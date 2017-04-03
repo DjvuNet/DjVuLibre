@@ -120,6 +120,20 @@ using namespace DJVU;
 #include "miniexp.h"
 #include "ddjvuapi.h"
 
+// ----------------------------------------
+// Memory management
+
+void*
+ddjvu_alloc(size_t size)
+{
+    return malloc(size);
+}
+
+void
+ddjvu_free(void* block)
+{
+    free(block);
+}
 
 // ----------------------------------------
 // Private structures
@@ -1474,6 +1488,25 @@ ddjvu_document_get_pageinfo_imp(ddjvu_document_t *document, int pageno,
   return DDJVU_JOB_FAILED;
 }
 
+char *
+ddjvu_document_get_dump(ddjvu_document_t *document, bool json) 
+{ 
+    DjVuDumpHelper helper;
+    GURL url = document->doc->get_init_url();
+    GP<ByteStream> ibs = ByteStream::create(url, "rb");
+    GP<ByteStream> obs = helper.dump(ibs, json);
+    GUTF8String str;
+    size_t size = obs->size();
+    char *buf = (char *) malloc(size + 1);
+    if (size && buf)
+    {
+        obs->seek(0);
+        int len = obs->readall(buf, size);
+        buf[len] = 0;
+        return buf;
+    }
+    return 0;
+}
 
 static char *
 get_file_dump(DjVuFile *file, bool json)
@@ -3615,48 +3648,99 @@ pagetext_sub(const GP<DjVuTXT> &txt, DjVuTXT::Zone &zone,
   return miniexp_nil;
 }
 
+char *
+ddjvu_document_get_pagetext_utf8(ddjvu_document_t *document, int pageno,
+                                const char *maxdetail) 
+{
+    G_TRY
+    {
+        ddjvu_status_t status = document->status();
+        if (status != DDJVU_JOB_OK)
+            return 0;
+        DjVuDocument *doc = document->doc;
+        if (doc)
+        {
+            document->pageinfoflag = true;
+            GP<DjVuFile> file = doc->get_djvu_file(pageno);
+            if (!file || !file->is_data_present())
+                return 0;
+            GP<ByteStream> bs = file->get_text();
+            if (!bs)
+                return 0;
+            GP<DjVuText> text = DjVuText::create();
+            text->decode(bs);
+            GP<DjVuTXT> txt = text->txt;
+            if (!txt)
+                return 0;
+
+            DjVuTXT::ZoneType detail = DjVuTXT::CHARACTER;
+            { // extra nesting for windows
+                for (int i = 0; zone_names[i].name; i++)
+                    if (maxdetail && !strcmp(maxdetail, zone_names[i].name))
+                        detail = zone_names[i].ztype;
+            }
+
+            DjVuTXT::Zone &zoneI = txt->page_zone;
+            DjVuTXT::ZoneType &detailRef = detail;
+            const char *data = (const char*)(txt->textUTF8) + zoneI.text_start;
+            int length = zoneI.text_length;
+
+            char* buffer = (char*) malloc(length + 1);
+            memcpy(buffer, data, length);
+            buffer[length] = 0;
+            return buffer;
+        }
+    }
+        G_CATCH(ex)
+    {
+        ERROR1(document, ex);
+    }
+    G_ENDCATCH;
+    return 0;
+}
+
 miniexp_t
 ddjvu_document_get_pagetext(ddjvu_document_t *document, int pageno,
                             const char *maxdetail)
 {
-  G_TRY
+    G_TRY
     {
-      ddjvu_status_t status = document->status();
-      if (status != DDJVU_JOB_OK)
+        ddjvu_status_t status = document->status();
+    if (status != DDJVU_JOB_OK)
         return miniexp_status(status);
-      DjVuDocument *doc = document->doc;
-      if (doc)
-        {
-          document->pageinfoflag = true;
-          GP<DjVuFile> file = doc->get_djvu_file(pageno);
-          if (! file || ! file->is_data_present() )
-            return miniexp_dummy;
-          GP<ByteStream> bs = file->get_text();
-          if (! bs)
-            return miniexp_nil;
-          GP<DjVuText> text = DjVuText::create();
-          text->decode(bs);
-          GP<DjVuTXT> txt = text->txt;
-          if (! txt)
-            return miniexp_nil;
-          minivar_t result;
-          DjVuTXT::ZoneType detail = DjVuTXT::CHARACTER;
-          { // extra nesting for windows
-            for (int i=0; zone_names[i].name; i++)
-              if (maxdetail && !strcmp(maxdetail, zone_names[i].name))
-                detail = zone_names[i].ztype;
-          }
-          result = pagetext_sub(txt, txt->page_zone, detail);
-          miniexp_protect(document, result);
-          return result;
-        }
-    }
-  G_CATCH(ex)
+    DjVuDocument *doc = document->doc;
+    if (doc)
     {
-      ERROR1(document, ex);
+        document->pageinfoflag = true;
+        GP<DjVuFile> file = doc->get_djvu_file(pageno);
+        if (!file || !file->is_data_present())
+            return miniexp_dummy;
+        GP<ByteStream> bs = file->get_text();
+        if (!bs)
+            return miniexp_nil;
+        GP<DjVuText> text = DjVuText::create();
+        text->decode(bs);
+        GP<DjVuTXT> txt = text->txt;
+        if (!txt)
+            return miniexp_nil;
+        minivar_t result;
+        DjVuTXT::ZoneType detail = DjVuTXT::CHARACTER;
+        { // extra nesting for windows
+            for (int i = 0; zone_names[i].name; i++)
+                if (maxdetail && !strcmp(maxdetail, zone_names[i].name))
+                    detail = zone_names[i].ztype;
+        }
+        result = pagetext_sub(txt, txt->page_zone, detail);
+        miniexp_protect(document, result);
+        return result;
     }
-  G_ENDCATCH;
-  return miniexp_status(DDJVU_JOB_FAILED);
+    }
+        G_CATCH(ex)
+    {
+        ERROR1(document, ex);
+    }
+    G_ENDCATCH;
+    return miniexp_status(DDJVU_JOB_FAILED);
 }
 
 
