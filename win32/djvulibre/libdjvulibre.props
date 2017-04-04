@@ -7,9 +7,6 @@
     <VcpkgTriplet>x86-windows-static</VcpkgTriplet>
     <VcpkgEnabled>false</VcpkgEnabled>
   </PropertyGroup>
-  <PropertyGroup>
-    <OutDir Condition="$(DjvuNetRoot) != ''">$(DjvuNetRoot)build\$(PlatformTarget)\$(Configuration)\</OutDir>
-  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>$(JpegRoot)include;$(TiffRoot)include;$(ZlibRoot)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -18,10 +15,13 @@
     <Link>
       <AdditionalLibraryDirectories>$(JpegRoot)$(Configuration)\static\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <!--<OutputFile Condition="$(DjvuNetRoot) != ''">$(DjvuNetRoot)\build\$(PlatformShortName)\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
+      <ProgramDatabaseFile Condition="$(DjvuNetRoot) != ''">$(DjvuNetRoot)\build\$(PlatformShortName)\$(Configuration)\$(TargetName).pdb</ProgramDatabaseFile>-->
     </Link>
   </ItemDefinitionGroup>
   <PropertyGroup>
-    <OutDir Condition="$(DjvuNetRoot) != ''">$(DjvuNetRoot)build\$(PlatformTarget)\$(Configuration)\</OutDir>
-    <IntDir Condition="$(DjvuNetRoot) != ''">$(DjvuNetRoot)build\obj\$(PlatformTarget)\$(Configuration)\</IntDir>
+    <SolutionDir Condition="$(DjvuNetRoot) != ''">$(DjvuNetRoot)\</SolutionDir>
+    <OutDir Condition="$(DjvuNetRoot) != ''">$(DjvuNetRoot)\build\$(PlatformShortName)\$(Configuration)\</OutDir>
+    <IntDir Condition="$(DjvuNetRoot) != ''">$(DjvuNetRoot)\build\obj\$(PlatformShortName)\$(Configuration)\</IntDir>
   </PropertyGroup>
 </Project>
