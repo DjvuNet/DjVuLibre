@@ -39,6 +39,15 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "djvuxmlparser", "djvuxmlpar
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "djvutoxml", "djvutoxml\djvutoxml.vcxproj", "{923CCB70-AF1E-472C-99F9-E0FF1D657186}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{865383FD-2E82-44D4-891E-43BBAC7D5512}"
+	ProjectSection(SolutionItems) = preProject
+		dirs.props = dirs.props
+		djvulibre.targets = djvulibre.targets
+		libdjvulibre.props = libdjvulibre.props
+		tools.props = tools.props
+		warnings.props = warnings.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
