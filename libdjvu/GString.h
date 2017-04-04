@@ -773,9 +773,9 @@ public:
       character array #dat# are added into the string until the
       string length reaches #len# or until encountering a null
       character (whichever comes first). */
-  GUTF8String(const char *dat, unsigned int len);
-  GUTF8String(const uint16_t *dat, unsigned int len);
-  GUTF8String(const uint32_t *dat, unsigned int len);
+  GUTF8String(const char *dat, size_t len);
+  GUTF8String(const uint16_t *dat, size_t len);
+  GUTF8String(const uint32_t *dat, size_t len);
 
   /// Construct from base class.
   GUTF8String(const GP<GStringRep> &str);

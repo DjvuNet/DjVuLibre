@@ -154,7 +154,7 @@ public:
   virtual size_t read(void *buffer, size_t size);
   virtual size_t write(const void *buffer, size_t size);
   virtual void flush(void);
-  virtual int seek(long offset, int whence = SEEK_SET, bool nothrow=false);
+  virtual size_t seek(long offset, int whence = SEEK_SET, bool nothrow=false);
   virtual size_t tell(void) const;
 private:
   // Cancel C++ default stuff
@@ -220,14 +220,14 @@ private:
   Memory(const Memory &);
   Memory & operator=(const Memory &);
   // Current position
-  long where;
+  size_t where;
 protected:
   /** Reads data from a random position. This function reads at most #sz#
       bytes at position #pos# into #buffer# and returns the actual number of
       bytes read.  The current position is unchanged. */
-  virtual size_t readat(void *buffer, size_t sz, long pos);
+  virtual size_t readat(void *buffer, size_t sz, size_t pos);
   /** Number of bytes in internal buffer. */
-  long bsize;
+  size_t bsize;
   /** Number of 4096 bytes blocks. */
   int nblocks;
   /** Pointers (possibly null) to 4096 bytes blocks. */
@@ -274,7 +274,7 @@ public:
   ~Static();
   // Virtual functions
   virtual size_t read(void *buffer, size_t sz);
-  virtual int    seek(long offset, int whence = SEEK_SET, bool nothrow=false);
+  virtual int seek(size_t offset, int whence = SEEK_SET, bool nothrow=false);
   virtual size_t tell(void) const;
   /** Returns the total number of bytes contained in the buffer, file, etc.
       Valid offsets for function #seek# range from 0 to the value returned
@@ -282,9 +282,9 @@ public:
   virtual size_t size(void) const;
 protected:
   const char *data;
-  long bsize;
+  size_t bsize;
 private:
-  long where;
+  size_t where;
 };
 
 ByteStream::Static::~Static() {}
@@ -348,8 +348,8 @@ ByteStream::flush()
 int
 ByteStream::seek(size_t offset, int whence, bool nothrow)
 {
-  long nwhere = 0;
-  long ncurrent = tell();
+  size_t nwhere = 0;
+  size_t ncurrent = tell();
   switch (whence)
     {
     case SEEK_SET:
@@ -384,7 +384,7 @@ ByteStream::seek(size_t offset, int whence, bool nothrow)
   while (nwhere > ncurrent)
     {
       char buffer[1024];
-      long xbytes = nwhere - ncurrent;
+      size_t xbytes = nwhere - ncurrent;
       if (xbytes > (long)sizeof(buffer))
         xbytes = sizeof(buffer);
       long bytes = (long)read(buffer, xbytes);
@@ -659,13 +659,13 @@ urlfopen(const GURL &url,const char mode[])
   wchar_t *wfilename;
   const size_t wfilename_size=filename.length()+1;
   GPBuffer<wchar_t> gwfilename(wfilename,wfilename_size);
-  if(filename.ncopy(wfilename,wfilename_size) > 0)
+  if(filename.ncopy(wfilename,(int)wfilename_size) > 0)
   {
     const GUTF8String gmode(mode);
     wchar_t *wmode;
     const size_t wmode_size=gmode.length()+1;
     GPBuffer<wchar_t> gwmode(wmode,wmode_size);
-	if(gmode.ncopy(wmode,wmode_size) > 0)
+	if(gmode.ncopy(wmode,(int)wmode_size) > 0)
 	{
 	  retval=_wfopen(wfilename,wmode);
 	}
@@ -765,7 +765,7 @@ ByteStream::Stdio::flush()
 size_t 
 ByteStream::Stdio::tell(void) const
 {
-  long x = ftell(fp);
+  size_t x = ftell(fp);
   if (x >= 0)
   {
     Stdio *sbs=const_cast<Stdio *>(this);
@@ -777,7 +777,7 @@ ByteStream::Stdio::tell(void) const
   return x;
 }
 
-int
+size_t
 ByteStream::Stdio::seek(long offset, int whence, bool nothrow)
 {
   if (whence==SEEK_SET && offset>=0 && offset==ftell(fp))
@@ -840,7 +840,7 @@ ByteStream::Memory::~Memory()
 size_t 
 ByteStream::Memory::write(const void *buffer, size_t sz)
 {
-  long nsz = (long)sz;
+  size_t nsz = sz;
   if (nsz <= 0)
     return 0;
   // check memory
@@ -860,7 +860,7 @@ ByteStream::Memory::write(const void *buffer, size_t sz)
             }
         }
       // allocate blocks
-      for (long b=(where>>12); (b<<12)<(where+nsz); b++)
+      for (size_t b=(where>>12); (b<<12)<(where+nsz); b++)
         {
           if (! blocks[b])
             blocks[b] = new char[0x1000];
@@ -869,7 +869,7 @@ ByteStream::Memory::write(const void *buffer, size_t sz)
   // write data to buffer
   while (nsz > 0)
     {
-      long n = (where|0xfff) + 1 - where;
+      size_t n = (where|0xfff) + 1 - where;
       n = ((nsz < n) ? nsz : n);
       memcpy( (void*)&blocks[where>>12][where&0xfff], buffer, (size_t)n);
       buffer = (void*) ((char*)buffer + n);
@@ -883,17 +883,17 @@ ByteStream::Memory::write(const void *buffer, size_t sz)
 }
 
 size_t 
-ByteStream::Memory::readat(void *buffer, size_t sz, long pos)
+ByteStream::Memory::readat(void *buffer, size_t sz, size_t pos)
 {
-  if ((long)sz > bsize - pos)
+  if (sz > bsize - pos)
     sz = (size_t)(bsize - pos);
-  long nsz = (long)sz;
+  size_t nsz = sz;
   if (nsz <= 0)
     return 0;
   // read data from buffer
   while (nsz > 0)
     {
-      long n = (pos|0xfff) + 1 - pos;
+      size_t n = (pos|0xfff) + 1 - pos;
       n = ((nsz < n) ? nsz : n);
       memcpy(buffer, (void*)&blocks[pos>>12][pos&0xfff], (size_t)n);
       buffer = (void*) ((char*)buffer + n);
@@ -920,7 +920,7 @@ ByteStream::Memory::tell(void) const
 int
 ByteStream::Memory::seek(long offset, int whence, bool nothrow)
 {
-  long nwhere = 0;
+  size_t nwhere = 0;
   switch (whence)
     {
     case SEEK_SET: nwhere = 0; break;
@@ -961,7 +961,7 @@ ByteStream::Static::Static(const void * const buffer, const size_t sz)
 size_t 
 ByteStream::Static::read(void *buffer, size_t sz)
 {
-  long nsz = (long)sz;
+  size_t nsz = (long)sz;
   if (nsz > bsize - where)
     nsz = bsize - where;
   if (nsz <= 0)
@@ -972,9 +972,9 @@ ByteStream::Static::read(void *buffer, size_t sz)
 }
 
 int
-ByteStream::Static::seek(long offset, int whence, bool nothrow)
+ByteStream::Static::seek(size_t offset, int whence, bool nothrow)
 {
-  long nwhere = 0;
+  size_t nwhere = 0;
   switch (whence)
     {
     case SEEK_SET: nwhere = 0; break;
@@ -1269,19 +1269,19 @@ void ByteStream::writemessage( const char *message )
 static void 
 read_file(ByteStream &bs,char *&buffer,GPBuffer<char> &gbuffer)
 {
-  const int size=bs.size();
-  int pos=0;
+  const size_t size=bs.size();
+  size_t pos=0;
   if(size>0)
   {
     size_t readsize=size+1;
     gbuffer.resize(readsize);
-    for(int i;readsize&&(i=bs.read(buffer+pos,readsize))>0;pos+=i,readsize-=i)
+    for(size_t i;readsize&&(i=bs.read(buffer+pos,readsize))>0;pos+=i,readsize-=i)
       EMPTY_LOOP;
   }else
   {
     const size_t readsize=32768;
     gbuffer.resize(readsize);
-    for(int i;((i=bs.read(buffer+pos,readsize))>0);
+    for(size_t i;((i=bs.read(buffer+pos,readsize))>0);
       gbuffer.resize((pos+=i)+readsize))
       EMPTY_LOOP;
   }

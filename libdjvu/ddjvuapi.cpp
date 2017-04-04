@@ -264,7 +264,7 @@ unref(GPEnabled *p)
 static char *
 xstr(const char *s)
 {
-  int l = strlen(s);
+  size_t l = strlen(s);
   char *p = (char*)malloc(l + 1);
   if (p) 
     {
@@ -1501,7 +1501,7 @@ ddjvu_document_get_dump(ddjvu_document_t *document, bool json)
     if (size && buf)
     {
         obs->seek(0);
-        int len = obs->readall(buf, size);
+        size_t len = obs->readall(buf, size);
         buf[len] = 0;
         return buf;
     }
@@ -1514,12 +1514,12 @@ get_file_dump(DjVuFile *file, bool json)
   DjVuDumpHelper dumper;
   GP<DataPool> pool = file->get_init_data_pool();
   GP<ByteStream> str = dumper.dump(pool, json);
-  int size = str->size();
+  size_t size = str->size();
   char *buffer;
   if ((size = str->size()) > 0 && (buffer = (char*)malloc(size+1)))
     {
       str->seek(0);
-      int len = str->readall(buffer, size);
+      size_t len = str->readall(buffer, size);
       buffer[len] = 0;
       return buffer;
     }
@@ -3259,7 +3259,7 @@ ddjvu_savejob_s::mark_included_files(DjVuFile *file)
           GP<ByteStream> incl = iff->get_bytestream();
           GUTF8String fileid;
           char buffer[1024];
-          int length;
+          size_t length;
           while((length=incl->read(buffer, 1024)))
             fileid += GUTF8String(buffer, length);
           for (int i=0; i<comp_ids.size(); i++)

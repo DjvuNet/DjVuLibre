@@ -2601,13 +2601,13 @@ GUTF8String::GUTF8String(const uint16_t *str)
 GUTF8String::GUTF8String(const uint32_t *str)
 { init(GStringRep::UTF8::create(str,0,-1)); }
 
-GUTF8String::GUTF8String(const char *dat, unsigned int len)
+GUTF8String::GUTF8String(const char *dat, size_t len)
 { init(GStringRep::UTF8::create(dat,0,((int)len<0)?(-1):(int)len)); }
 
-GUTF8String::GUTF8String(const uint16_t *dat, unsigned int len)
+GUTF8String::GUTF8String(const uint16_t *dat, size_t len)
 { init(GStringRep::UTF8::create(dat,0,((int)len<0)?(-1):(int)len)); }
 
-GUTF8String::GUTF8String(const uint32_t *dat, unsigned int len)
+GUTF8String::GUTF8String(const uint32_t *dat, size_t len)
 { init(GStringRep::UTF8::create(dat,0,((int)len<0)?(-1):(int)len)); }
 
 GUTF8String::GUTF8String(const GBaseString &gs, int from, int len)

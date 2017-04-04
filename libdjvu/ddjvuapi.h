@@ -198,7 +198,7 @@ DDJVUAPI void*
 ddjvu_alloc(size_t size);
 
 DDJVUAPI void
-ddjvu_free(void*);
+ddjvu_free(void* block);
 
 /* -------------------------------------------------- */
 /* DDJVU_CONTEXT_T                                    */
