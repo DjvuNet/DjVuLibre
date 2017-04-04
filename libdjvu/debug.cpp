@@ -241,7 +241,9 @@ OP(unsigned long, "%lu")
 OP(float, "%g")
 OP(double, "%g")
 OP(const void * const, "0x%08x")
+#if defined _WIN64
 OP(size_t, "%d")
+#endif
 
 DjVuDebug& DjVuDebug::operator<<(const char * const ptr) 
 {

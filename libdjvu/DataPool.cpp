@@ -1031,11 +1031,11 @@ DataPool::add_data(const void * buffer, int offset, int size)
       // Add data to the data storage
    {
       GCriticalSectionLock lock(&data_lock);
-      if (offset>data->size())
+      if ((size_t)offset>data->size())
       {
 	 char ch=0;
 	 data->seek(0, SEEK_END);
-	 for(int i=data->size();i<offset;i++)
+	 for(size_t i=data->size();i<(size_t)offset;i++)
 	    data->write(&ch, 1);
       } else
       {
@@ -1079,7 +1079,7 @@ DataPool::added_data(const int offset, const int size)
       // is set, the master and slave DataPools disagree regarding if
       // all data is there or not. These two lines solve the problem
   GCriticalSectionLock lock(&data_lock);
-  if (length>=0 && data->size()>=length)
+  if (length>=0 && data->size()>=(size_t)length)
     set_eof();
 }
 

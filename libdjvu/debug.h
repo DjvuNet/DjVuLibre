@@ -215,7 +215,9 @@ public:
   DjVuDebug &	operator<<(float f);
   DjVuDebug &	operator<<(double d);
   DjVuDebug &	operator<<(const void * const p);
+#if defined _WIN64
   DjVuDebug &	operator<<(size_t p);
+#endif
 };
 
 class DjVuDebugIndent // DJVU_CLASS
