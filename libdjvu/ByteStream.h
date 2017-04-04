@@ -163,7 +163,7 @@ public:
   virtual size_t write(const void *buffer, size_t size);
   /** Returns the offset of the current position in the ByteStream.  This
       function {\em must} be implemented by each subclass of #ByteStream#. */
-  virtual long tell(void) const  = 0;
+  virtual size_t tell(void) const  = 0;
   /** Sets the current position for reading or writing the ByteStream.  Class
       #ByteStream# provides a default implementation able to seek forward by
       calling function #read# until reaching the desired position.  Subclasses
@@ -186,7 +186,7 @@ public:
       If #seek()# succeeds, #0# is returned. Otherwise it either returns
       #-1# (if #nothrow# is set to #FALSE#) or throws the \Ref{GException}
       exception. */
-  virtual int seek(long offset, int whence = SEEK_SET, bool nothrow=false);
+  virtual int seek(size_t offset, int whence = SEEK_SET, bool nothrow=false);
   /** Flushes all buffers in the ByteStream.  Calling this function
       guarantees that pending data have been actually written (i.e. passed to
       the operating system). Class #ByteStream# provides a default
@@ -267,7 +267,7 @@ public:
   /** Returns the total number of bytes contained in the buffer, file, etc.
       Valid offsets for function #seek# range from 0 to the value returned
       by this function. */
-  virtual long size(void) const;
+  virtual size_t size(void) const;
   /// Use at your own risk, only guarenteed to work for ByteStream::Memorys.
   TArray<char> get_data(void);
   /** Reads data from a random position. This function reads at most #sz#
@@ -344,19 +344,19 @@ inline size_t
 ByteStream::readat(void *buffer, size_t sz, long pos)
 {
   size_t retval;
-  long tpos=tell();
+  size_t tpos=tell();
   seek(pos, SEEK_SET, true);
   retval=readall(buffer,sz);
   seek(tpos, SEEK_SET, true);
   return retval;
 }
 
-inline long
+inline size_t
 ByteStream::size(void) const
 {
   ByteStream *bs=const_cast<ByteStream *>(this);
-  long bsize = -1;
-  long pos = tell();
+  size_t bsize = 0;
+  size_t pos = tell();
   if(bs->seek(0,SEEK_END,true))
     {
       bsize = tell();
@@ -383,7 +383,7 @@ public:
     { return bs->read(buffer,size); }
   virtual size_t write(const void *buffer, size_t size)
     { return bs->write(buffer,size); }
-  virtual long tell(void) const
+  virtual size_t tell(void) const
     { return bs->tell(); }
   virtual int seek(long offset, int whence = SEEK_SET, bool nothrow=false)
     { return bs->seek(offset,whence,nothrow); }

@@ -1662,7 +1662,7 @@ public:
 
    virtual size_t read(void *buffer, size_t size);
    virtual size_t write(const void *buffer, size_t size);
-   virtual long tell(void) const ;
+   virtual size_t tell(void) const ;
    virtual int seek(long offset, int whence = SEEK_SET, bool nothrow=false);
 private:
       // Don't make data_pool GP<>. The problem is that DataPool creates
@@ -1723,7 +1723,7 @@ PoolByteStream::write(const void *buffer, size_t size)
    return 0;	// For compiler not to bark
 }
 
-long
+size_t
 PoolByteStream::tell(void) const
 {
    return position;

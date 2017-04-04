@@ -186,8 +186,8 @@ DjVuDebug::lock(int lvl, int noindent)
   int threads_num=1;
   debug_lock.lock();
   // Get per-thread debug object
-  long threadid = (long) GThread::current();
-  DjVuDebug &dbg = debug_map()[threadid];
+  size_t threadid = (size_t) GThread::current();
+  DjVuDebug &dbg = debug_map()[(long)threadid];
   threads_num=debug_map().size();
   // Check level
   dbg.block = (lvl > debug_level);
@@ -241,6 +241,7 @@ OP(unsigned long, "%lu")
 OP(float, "%g")
 OP(double, "%g")
 OP(const void * const, "0x%08x")
+OP(size_t, "%d")
 
 DjVuDebug& DjVuDebug::operator<<(const char * const ptr) 
 {

@@ -129,7 +129,7 @@ public:
   {
     return str->seek(offset, whence);
   }
-  virtual long tell(void ) const { return str->tell(); }
+  virtual size_t tell(void ) const { return str->tell(); }
 
   void		set_progress_cb(void (* xprogress_cb)(int, void *),
   void * xprogress_cl_data)

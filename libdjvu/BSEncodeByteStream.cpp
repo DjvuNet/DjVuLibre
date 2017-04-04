@@ -798,15 +798,15 @@ BSByteStream::Encode::encode()
   /////////////////////////////////
   ////////////  Block Sort Tranform
 
-  int markerpos = size-1;
-  blocksort(data,size,markerpos);
+  int markerpos = (int) size-1;
+  blocksort(data,(int)size,markerpos);
 
   /////////////////////////////////
   //////////// Encode Output Stream
 
   // Header
   ZPCodec &zp=*gzp;
-  encode_raw(zp, 24, size);
+  encode_raw(zp, 24, (int)size);
   // Determine and Encode Estimation Speed
   int fshift = 0;
   if (size < FREQS0)
@@ -975,7 +975,7 @@ BSByteStream::Encode::write(const void *buffer, size_t sz)
   if (sz == 0)
     return 0;
   // Loop
-  int copied = 0;
+  size_t copied = 0;
   while (sz > 0)
     {
       // Initialize
@@ -985,8 +985,8 @@ BSByteStream::Encode::write(const void *buffer, size_t sz)
           gdata.resize(blocksize+OVERFLOW);
         }
       // Compute remaining
-      int bytes = blocksize - 1 - bptr;
-      if (bytes > (int)sz)
+      size_t bytes = blocksize - 1 - bptr;
+      if (bytes > sz)
         bytes = sz;
       // Store date (todo: rle)
       memcpy(data+bptr, buffer, bytes);

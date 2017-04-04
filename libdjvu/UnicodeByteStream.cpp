@@ -138,7 +138,7 @@ UnicodeByteStream::write(const void *buf, size_t size)
   return bs->write(buf,size);
 }
 
-long 
+size_t 
 UnicodeByteStream::tell(void) const
 {
   return bs->tell();

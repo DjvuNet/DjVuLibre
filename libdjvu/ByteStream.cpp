@@ -155,7 +155,7 @@ public:
   virtual size_t write(const void *buffer, size_t size);
   virtual void flush(void);
   virtual int seek(long offset, int whence = SEEK_SET, bool nothrow=false);
-  virtual long tell(void) const;
+  virtual size_t tell(void) const;
 private:
   // Cancel C++ default stuff
   Stdio(const Stdio &);
@@ -167,7 +167,7 @@ private:
   bool must_close;
 protected:
   FILE *fp;
-  long pos;
+  size_t pos;
 };
 
 inline GUTF8String
@@ -201,14 +201,14 @@ public:
   virtual size_t read(void *buffer, size_t size);
   virtual size_t write(const void *buffer, size_t size);
   virtual int    seek(long offset, int whence=SEEK_SET, bool nothrow=false);
-  virtual long   tell(void) const;
+  virtual size_t   tell(void) const;
   /** Erases everything in the Memory.
       The current location is reset to zero. */
   void empty();
   /** Returns the total number of bytes contained in the buffer.  Valid
       offsets for function #seek# range from 0 to the value returned by this
       function. */
-  virtual long size(void) const;
+  virtual size_t size(void) const;
   /** Returns a reference to the byte at offset #n#. This reference can be
       used to read (as in #mbs[n]#) or modify (as in #mbs[n]=c#) the contents
       of the buffer. */
@@ -238,7 +238,7 @@ protected:
 
 
 
-inline long
+inline size_t
 ByteStream::Memory::size(void) const
 {
   return bsize;
@@ -275,11 +275,11 @@ public:
   // Virtual functions
   virtual size_t read(void *buffer, size_t sz);
   virtual int    seek(long offset, int whence = SEEK_SET, bool nothrow=false);
-  virtual long tell(void) const;
+  virtual size_t tell(void) const;
   /** Returns the total number of bytes contained in the buffer, file, etc.
       Valid offsets for function #seek# range from 0 to the value returned
       by this function. */
-  virtual long size(void) const;
+  virtual size_t size(void) const;
 protected:
   const char *data;
   long bsize;
@@ -289,7 +289,7 @@ private:
 
 ByteStream::Static::~Static() {}
 
-inline long
+inline size_t
 ByteStream::Static::size(void) const
 {
   return bsize;
@@ -346,7 +346,7 @@ ByteStream::flush()
 }
 
 int
-ByteStream::seek(long offset, int whence, bool nothrow)
+ByteStream::seek(size_t offset, int whence, bool nothrow)
 {
   long nwhere = 0;
   long ncurrent = tell();
@@ -365,7 +365,7 @@ ByteStream::seek(long offset, int whence, bool nothrow)
             G_THROW( ERR_MSG("ByteStream.backward") );
           }
         char buffer[1024];
-        int bytes;
+        size_t bytes;
         while((bytes=read(buffer, sizeof(buffer))))
           EMPTY_LOOP;
         return 0;
@@ -404,7 +404,7 @@ ByteStream::readall(void *buffer, size_t size)
   size_t total = 0;
   while (size > 0)
     {
-      int nitems = read(buffer, size);
+      size_t nitems = read(buffer, size);
       // Replaced perror() below with G_THROW(). It still makes little sense
       // as there is no guarantee, that errno is right. Still, throwing
       // exception instead of continuing to loop is better.
@@ -432,7 +432,7 @@ ByteStream::format(const char *fmt, ... )
 size_t
 ByteStream::writestring(const GNativeString &s)
 {
-  int retval;
+  size_t retval;
   if(cp != UTF8)
   {
     retval=writall((const char *)s,s.length());
@@ -449,7 +449,7 @@ ByteStream::writestring(const GNativeString &s)
 size_t
 ByteStream::writestring(const GUTF8String &s)
 {
-  int retval;
+  size_t retval;
   if(cp != NATIVE)
   {
     retval=writall((const char *)s,s.length());
@@ -762,7 +762,7 @@ ByteStream::Stdio::flush()
     G_THROW(strerror(errno)); //  (No error in the DjVuMessageFile)
 }
 
-long 
+size_t 
 ByteStream::Stdio::tell(void) const
 {
   long x = ftell(fp);
@@ -911,7 +911,7 @@ ByteStream::Memory::read(void *buffer, size_t sz)
   return sz;
 }
 
-long 
+size_t 
 ByteStream::Memory::tell(void) const
 {
   return where;
@@ -991,7 +991,7 @@ ByteStream::Static::seek(long offset, int whence, bool nothrow)
   return 0;
 }
 
-long 
+size_t 
 ByteStream::Static::tell(void) const
 {
   return where;

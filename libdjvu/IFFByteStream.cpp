@@ -510,7 +510,7 @@ IFFByteStream::write(const void *buffer, size_t size)
 // IFFByteStream::tell
 // -- tell position
 
-long 
+size_t 
 IFFByteStream::tell() const
 {
   return (seekto>offset)?seekto:offset;

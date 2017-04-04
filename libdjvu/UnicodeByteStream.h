@@ -148,7 +148,7 @@ public:
   /// Not correctly implimented...
   virtual size_t write(const void *buffer, size_t size);
   /// tell will tell you the read position, including read ahead for gets()...
-  virtual long tell(void) const;
+  virtual size_t tell(void) const;
   /// Does a flush, and clears the read ahead buffer.
   virtual void flush(void);
 
@@ -160,7 +160,7 @@ protected:
   GUTF8String buffer;
   int bufferpos;
   int linesread;
-  long startpos;
+  size_t startpos;
 private:
   // Cancel C++ default stuff
   UnicodeByteStream & operator=(UnicodeByteStream &);

@@ -497,7 +497,7 @@ public:
   void replace(void *nptr,const size_t n);
   void set(const size_t t,const char c);
   ~GPBufferBase();
-  operator int(void) const { return ptr ? num : 0; }
+  operator size_t(void) const { return ptr ? num : 0; }
 private:
   void *&ptr;
   size_t num;
@@ -512,7 +512,7 @@ public:
   inline void resize(const size_t n) {GPBufferBase::resize(n,sizeof(TYPE));}
   inline void clear(void) {GPBufferBase::set(sizeof(TYPE),0);}
   inline void set(const char c) {GPBufferBase::set(sizeof(TYPE),c);}
-  inline operator int(void) const {return GPBufferBase::operator int();}
+  inline operator size_t(void) const {return GPBufferBase::operator size_t();}
 };
 
 

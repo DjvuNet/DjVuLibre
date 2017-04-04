@@ -190,7 +190,7 @@ public:
   ~IFFByteStream();
   virtual size_t read(void *buffer, size_t size);
   virtual size_t write(const void *buffer, size_t size);
-  virtual long tell(void) const;
+  virtual size_t tell(void) const;
   // -- NAVIGATING CHUNKS
   /** Enters a chunk for reading.  Function #get_chunk# returns zero when the
       last chunk has already been accessed.  Otherwise it parses a chunk

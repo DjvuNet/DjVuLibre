@@ -238,17 +238,17 @@ public:
 
   // ByteStream Interface
   ~BSByteStream();
-  virtual long tell(void) const;
+  virtual size_t tell(void) const;
   virtual void flush(void) = 0;
 protected:
   // Data
-  long            offset;
-  int             bptr;
-  unsigned int    blocksize;
-  int             size;
-  ByteStream *bs;
-  GP<ByteStream> gbs;
-  unsigned char  *data;
+  size_t            offset;
+  size_t            bptr;
+  size_t            blocksize;
+  size_t            size;
+  ByteStream        *bs;
+  GP<ByteStream>    gbs;
+  unsigned char     *data;
   GPBuffer<unsigned char> gdata;
   // Coder
   GP<ZPCodec> gzp;

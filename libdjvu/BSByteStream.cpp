@@ -92,7 +92,7 @@ public:
   virtual size_t read(void *buffer, size_t sz);
   virtual void flush(void);
 protected:
-  unsigned int decode(void);
+  size_t decode(void);
 private:
   bool eof;
 };
@@ -172,13 +172,13 @@ decode_binary(ZPCodec &zp, BitContext *ctx, int bits)
   return n - m;
 }
   
-unsigned int
+size_t
 BSByteStream::Decode::decode(void)
 {
   /////////////////////////////////
   ////////////  Decode input stream
   
-  int i;
+  size_t i;
   // Decode block size
   ZPCodec &zp=*gzp;
   size = decode_raw(zp, 24);
@@ -246,7 +246,7 @@ BSByteStream::Decode::decode(void)
   int fadd = 4;
   // Decode
   int mtfno = 3;
-  int markerpos = -1;
+  size_t markerpos = -1;
   for (i=0; i<size; i++)
     {
       int ctxid = CTXIDS-1;
@@ -323,7 +323,7 @@ BSByteStream::Decode::decode(void)
   GPBuffer<unsigned int> gposn(posn,blocksize);
   memset(posn, 0, sizeof(unsigned int)*size);
   // Prepare count buffer
-  int count[256];
+  size_t count[256];
   for (i=0; i<256; i++)
     count[i] = 0;
   // Fill count buffer
@@ -340,10 +340,10 @@ BSByteStream::Decode::decode(void)
       count[c] += 1;
     }
   // Compute sorted char positions
-  int last = 1;
+  size_t last = 1;
   for (i=0; i<256; i++)
     {
-      int tmp = count[i];
+      size_t tmp = count[i];
       count[i] = last;
       last += tmp;
     }
@@ -370,7 +370,7 @@ BSByteStream::Decode::decode(void)
 
 
 
-long 
+size_t 
 BSByteStream::tell() const
 {
   return offset;
@@ -382,7 +382,7 @@ BSByteStream::Decode::read(void *buffer, size_t sz)
   if (eof)
     return 0;
   // Loop
-  int copied = 0;
+  size_t copied = 0;
   while (sz>0 && !eof)
     {
       // Decode if needed
@@ -397,7 +397,7 @@ BSByteStream::Decode::read(void *buffer, size_t sz)
           size -= 1;
         }
       // Compute remaining
-      int bytes = size;
+      size_t bytes = size;
       if (bytes > (int)sz)
         bytes = sz;
       // Transfer
