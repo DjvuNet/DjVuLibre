@@ -92,7 +92,8 @@ class ByteStream;
 
 /** DjVuDumpHelper.
     This class can dump information on any DjVu file without decoding it.
-    Based upon old \Ref{djvudump.cpp} code.
+    Based upon old \Ref{djvudump.cpp} code. Improved to support output
+    in json format.
  */
 
 class DJVUAPI DjVuDumpHelper
@@ -105,9 +106,15 @@ public:
       /** Interprets the file passed in the \Ref{DataPool}, and returns
 	  the results in \Ref{ByteStream}. */
    GP<ByteStream>	dump(const GP<DataPool> & pool);
+       /** Interprets the file passed in the \Ref{DataPool}, and returns
+       the results in \Ref{ByteStream}. */
+   GP<ByteStream>	dump(const GP<DataPool> & pool, const bool json);
       /** Interprets the file passed in the \Ref{ByteStream}, and returns
 	  the results in \Ref{ByteStream}. */
    GP<ByteStream>	dump(GP<ByteStream> str);
+   /** Interprets the file passed in the \Ref{ByteStream}, and returns
+   the results in \Ref{ByteStream}. */
+   GP<ByteStream>	dump(GP<ByteStream> str, const bool json);
 };
 
 

@@ -102,7 +102,7 @@ namespace DJVU {
 // Overflow required when encoding
 static const int OVERFLOW=32;
 
-// Sorting tresholds
+// Sorting thresholds
 static const int RANKSORT_THRESH=10;
 static const int QUICKSORT_STACK=512;
 static const int PRESORT_THRESH=10;

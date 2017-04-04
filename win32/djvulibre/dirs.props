@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="UserMacros">
-    <DjvulibreRoot>$(SolutionDir)\..\..</DjvulibreRoot>
-    <ZlibRoot>$(SolutionDir)\..\zlib</ZlibRoot>
-    <TiffRoot>$(SolutionDir)\..\tiff</TiffRoot>
-    <JpegRoot>$(SolutionDir)\..\jpeg</JpegRoot>
-    <ZlibDir>$(ZlibRoot)\zlib</ZlibDir>
-    <TiffDir>$(TiffRoot)\tiff\libtiff</TiffDir>
-    <JpegDir>$(JpegRoot)\jpeg-6b</JpegDir>
+    <DjvulibreRoot>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), djvulibre.sln))</DjvulibreRoot>
+    <DjvuNetRoot>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), DjvuNet.sln))</DjvuNetRoot>
+    <ZlibRoot>$(DjvuNetRoot)\deps\$(PlatformTarget)\</ZlibRoot>
+    <TiffRoot>$(DjvuNetRoot)\deps\$(PlatformTarget)\</TiffRoot>
+    <JpegRoot>$(DjvuNetRoot)\deps\$(PlatformTarget)\</JpegRoot>
+    <ZlibDir>$(ZlibRoot)</ZlibDir>
+    <TiffDir>$(TiffRoot)</TiffDir>
+    <JpegDir>$(JpegRoot)</JpegDir>
   </PropertyGroup>
   <PropertyGroup>
-    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <ProjectFileVersion>10.0.30319.1</ProjectFileVersion>
   </PropertyGroup>
   <ItemGroup>
     <BuildMacro Include="DjvulibreRoot">

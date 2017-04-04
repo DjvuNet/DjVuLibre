@@ -5,12 +5,11 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(DjVuLibreRoot);$(DjVuLibreRoot)\libdjvu;$(DjVuLibreRoot)\tools;$(TiffRoot);$(TiffDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(DjVuLibreRoot);$(DjVuLibreRoot)\libdjvu;$(DjVuLibreRoot)\tools;$(TiffRoot)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_NAMESPACES;HAVE_TIFF;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <Link />
-    <Link />
     <Link>
+      <AdditionalLibraryDirectories>$(JpegRoot)$(Configuration)\static\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>setargv.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
