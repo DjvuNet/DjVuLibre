@@ -203,7 +203,7 @@ public:
       and #rawsizeptr#. These variables will be overwritten with the offset
       and the length of the file segment containing both the chunk header and
       the chunk data. */
-  int get_chunk(GUTF8String &chkid, int *rawoffsetptr=0, int *rawsizeptr=0);
+  int get_chunk(GUTF8String &chkid, int *rawoffsetptr=0, int *rawsizeptr=0, bool *successptr = 0);
   /** Enters a chunk for writing.  Function #put_chunk# prepares a chunk
       header and positions the IFFByteStream at the beginning of the chunk
       data.  Argument #chkid# defines a extended chunk identifier for this

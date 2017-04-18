@@ -65,7 +65,7 @@
 /** @name GString.h
 
     Files #"GString.h"# and #"GString.cpp"# implement a general
-    purpose string class \Ref{GBaseString}, with dirived types
+    purpose string class \Ref{GBaseString}, with derived types
     \Ref{GUTF8String} and \Ref{GNativeString} for UTF8 MBS encoding
     and the current Native MBS encoding respectively.  This
     implementation relies on smart pointers (see
@@ -455,18 +455,18 @@ protected:
 
 
 /** General purpose character string.
-    Each dirivied instance of class #GBaseString# represents a
+    Each derived instance of class #GBaseString# represents a
     character string.  Overloaded operators provide a value semantic
     to #GBaseString# objects.  Conversion operators and constructors
     transparently convert between #GBaseString# objects and
     #const char*# pointers.  The #GBaseString# class has no public
-    constructors, since a dirived type should always be used
+    constructors, since a derived type should always be used
     to specify the desired multibyte character encoding.
 
     Functions taking strings as arguments should declare their
     arguments as "#const char*#".  Such functions will work equally
-    well with dirived #GBaseString# objects since there is a fast
-    conversion operator from the dirivied #GBaseString# objects
+    well with derived #GBaseString# objects since there is a fast
+    conversion operator from the derived #GBaseString# objects
     to "#const char*#".  Functions returning strings should return
     #GUTF8String# or #GNativeString# objects because the class will
     automatically manage the necessary memory.
