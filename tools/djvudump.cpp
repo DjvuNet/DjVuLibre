@@ -139,8 +139,40 @@ display(const GURL &url, bool json)
     char *buf = str.getbuf(obs->size());
     obs->seek(0);
     obs->readall(buf, size);
+
+#if defined _WIN32
+
+    // Assume all UTF-8 chars will expand to 4 bytes on Win32
+    size_t wcslength = (size + 1) * sizeof(wchar_t) * 2;
+    // Allocate max theoretical memory needed 
+    wchar_t* wbuf =(wchar_t*) malloc(wcslength);
+    memset(wbuf, 0, wcslength);
+    str.ncopy(wbuf, wcslength - sizeof(wchar_t));
+
+    // ByteStream::size() is unreliable - find end of string
+    wchar_t* wbuft = wbuf;
+    wchar_t* wbufend = (wchar_t*) ((size_t)wbuf + wcslength);
+    wbufend--;
+    while (wbuft < wbufend) {
+        if ( wbuft[0] == NULL && wbuft[1] == NULL)
+            break;
+        else {
+            wbuft++;
+        }
+    }
+
+    // Overwrite BOM - (i) Unicode standards explicitly ask not to use BOM
+    // (ii) JSON standard - it's against the specs (RFC 7159), however,
+    // deserializers should ignore BOM if present.
+    fseek(outputf, 0, SEEK_SET);
+
+    // Write Unicode string to stream - string will be converted to UTF-8
+    fwrite(wbuf, (size_t)wbuft - (size_t)wbuf, 1, outputf);
+    free(wbuf);
+#else
     GNativeString ns = str;
     fputs((const char*)ns, outputf);
+#endif
 }
 
 
@@ -172,9 +204,10 @@ main(int argc, char **argv)
 
     DJVU_LOCALE;
 
+    bool json = false;
     // get output type
 check_format:
-    int json = !strcmp(argv[1], "-j");
+    int js = !strcmp(argv[1], "-j");
 
 check_output:
     int out = !strcmp(argv[1], "-o");
@@ -187,12 +220,12 @@ check_output:
         out = 0;
         goto check_format;
     }
-    else if (argc > 2 && json)
+    else if (argc > 2 && js)
     {
         json = true;
         argv += 1;
         argc -= 1;
-        json = 0;
+        js = 0;
         goto check_output;
     }
 
@@ -202,7 +235,13 @@ check_output:
     for (int i = 0;i<argc;++i)
         dargv[i] = GNativeString(argv[i]);
 
-    if (outputfile && !(outputf = fopen(outputfile, "w")))
+#if defined _WIN32
+    outputf = fopen(outputfile, "w+,ccs=UTF-8");
+#else
+    outputf = fopen(outputfile, "w");
+#endif
+
+    if (outputfile && !outputf)
     {
         DjVuPrintErrorUTF8("djvudump: Cannot open output file.\n");
         exit(1);
@@ -215,6 +254,8 @@ check_output:
             const GURL::Filename::UTF8 url(dargv[i]);
             display(url, json);
         }
+
+        fclose(outputf);
     }
     G_CATCH(ex)
     {

@@ -146,7 +146,7 @@ public:
       it may be connected to an existing \Ref{DjVuFile} or left as is.
 
       In the former case #DjVuImage# will look for its decoded components
-      (like #Sjbz# or #BG44#) by decending the hierarchy of \Ref{DjVuFile}s
+      (like #Sjbz# or #BG44#) by descending the hierarchy of \Ref{DjVuFile}s
       starting from the one passed to \Ref{connect}().
 
       In the latter case you can use \Ref{decode}() function to decode
@@ -161,7 +161,7 @@ public:
       by the passed \Ref{DjVuFile} and any file included into it. */
   void		connect(const GP<DjVuFile> & file);
 
-  /** This combines the above two steps for simplier code operations. */
+  /** This combines the above two steps for simplified code operations. */
   static GP<DjVuImage> create(const GP<DjVuFile> &file)
   { const GP<DjVuImage> retval=create(); retval->connect(file); return retval; }
       

@@ -95,35 +95,35 @@ putchar(ByteStream & str, char ch)
 
 static void
 display_djvu_info(ByteStream & out_str, IFFByteStream &iff,
-    GUTF8String, size_t size, DjVmInfo&, int, const bool dumpJson)
+    GUTF8String, size_t size, DjVmInfo&, int, const bool json)
 {
     GP<DjVuInfo> ginfo = DjVuInfo::create();
     DjVuInfo &info = *ginfo;
     info.decode(*iff.get_bytestream());
     if (size >= 4)
     {
-        if (!dumpJson)
+        if (!json)
             out_str.format("DjVu %dx%d", info.width, info.height);
         else
             out_str.format(", \"Width\": %d, \"Height\": %d", info.width, info.height);
     }
     if (size >= 5)
     {
-        if (!dumpJson)
+        if (!json)
             out_str.format(", v%d", info.version);
         else
             out_str.format(", \"Version\": %d", info.version);
     }
     if (size >= 8)
     {
-        if (!dumpJson)
+        if (!json)
             out_str.format(", %d dpi", info.dpi);
         else
             out_str.format(", \"Dpi\": %d", info.dpi);
     }
     if (size >= 9)
     {
-        if (!dumpJson)
+        if (!json)
             out_str.format(", gamma=%3.1f", info.gamma);
         else
             out_str.format(", \"Gamma\": %3.1f", info.gamma);
@@ -132,9 +132,9 @@ display_djvu_info(ByteStream & out_str, IFFByteStream &iff,
 
 static void
 display_djbz(ByteStream & out_str, IFFByteStream &iff,
-    GUTF8String, size_t, DjVmInfo&, int, const bool dumpJson)
+    GUTF8String, size_t, DjVmInfo&, int, const bool json)
 {
-    if (!dumpJson)
+    if (!json)
         out_str.format("JB2 shared dictionary");
     else
         out_str.format(", \"Description\": \"JB2 shared dictionary\"");
@@ -142,12 +142,12 @@ display_djbz(ByteStream & out_str, IFFByteStream &iff,
 
 static void
 display_fgbz(ByteStream & out_str, IFFByteStream &iff,
-    GUTF8String, size_t, DjVmInfo&, int, const bool dumpJson)
+    GUTF8String, size_t, DjVmInfo&, int, const bool json)
 {
     GP<ByteStream> gbs = iff.get_bytestream();
     int version = gbs->read8();
     int size = gbs->read16();
-    if (!dumpJson)
+    if (!json)
         out_str.format("JB2 colors data, v%d, %d colors",
             version & 0x7f, size);
     else
@@ -157,9 +157,9 @@ display_fgbz(ByteStream & out_str, IFFByteStream &iff,
 
 static void
 display_sjbz(ByteStream & out_str, IFFByteStream &iff,
-    GUTF8String, size_t, DjVmInfo&, int, const bool dumpJson)
+    GUTF8String, size_t, DjVmInfo&, int, const bool json)
 {
-    if (!dumpJson)
+    if (!json)
         out_str.format("JB2 bilevel data");
     else
         out_str.format(", \"Description\": \"JB2 bilevel data\"");
@@ -167,9 +167,9 @@ display_sjbz(ByteStream & out_str, IFFByteStream &iff,
 
 static void
 display_smmr(ByteStream & out_str, IFFByteStream &iff,
-    GUTF8String, size_t, DjVmInfo&, int, const bool dumpJson)
+    GUTF8String, size_t, DjVmInfo&, int, const bool json)
 {
-    if (!dumpJson)
+    if (!json)
         out_str.format("G4/MMR stencil data");
     else
         out_str.format(", \"Description\": \"G4/MMR stencil data\"");
@@ -177,12 +177,12 @@ display_smmr(ByteStream & out_str, IFFByteStream &iff,
 
 static void
 display_iw4(ByteStream & out_str, IFFByteStream &iff,
-    GUTF8String, size_t, DjVmInfo&, int, const bool dumpJson)
+    GUTF8String, size_t, DjVmInfo&, int, const bool json)
 {
     GP<ByteStream> gbs = iff.get_bytestream();
     unsigned char serial = gbs->read8();
     unsigned char slices = gbs->read8();
-    if (!dumpJson)
+    if (!json)
         out_str.format("IW4 data #%d, %d slices", serial + 1, slices);
     else
         out_str.format(", \"Description\": \"IW4 data #%d\", \"Slices\": %d", serial + 1, slices);
@@ -194,7 +194,7 @@ display_iw4(ByteStream & out_str, IFFByteStream &iff,
         unsigned char xlo = gbs->read8();
         unsigned char yhi = gbs->read8();
         unsigned char ylo = gbs->read8();
-        if (!dumpJson)
+        if (!json)
             out_str.format(", v%d.%d (%s), %dx%d", major & 0x7f, minor,
             (major & 0x80 ? "b&w" : "color"),
                 (xhi << 8) + xlo, (yhi << 8) + ylo);
@@ -207,13 +207,14 @@ display_iw4(ByteStream & out_str, IFFByteStream &iff,
 
 static void
 display_djvm_dirm(ByteStream & out_str, IFFByteStream & iff,
-    GUTF8String head, size_t, DjVmInfo& djvminfo, int, const bool dumpJson)
+    GUTF8String head, size_t, DjVmInfo& djvminfo, int, const bool json)
 {
     GP<DjVmDir> dir = DjVmDir::create();
     dir->decode(iff.get_bytestream());
     GPList<DjVmDir::File> list = dir->get_files_list();
     if (dir->is_indirect())
     {
+        // TODO json formatting for indirect DjVu document
         out_str.format("Document directory (indirect, %d files %d pages)",
             dir->get_files_num(), dir->get_pages_num());
         for (GPosition p = list; p; ++p)
@@ -223,7 +224,7 @@ display_djvm_dirm(ByteStream & out_str, IFFByteStream & iff,
     else
     {
         //if (!)
-        if (!dumpJson)
+        if (!json)
             out_str.format("Document directory (bundled, %d files %d pages)",
                 dir->get_files_num(), dir->get_pages_num());
         else
@@ -238,7 +239,7 @@ display_djvm_dirm(ByteStream & out_str, IFFByteStream & iff,
 
 static void
 display_th44(ByteStream & out_str, IFFByteStream & iff,
-    GUTF8String, size_t, DjVmInfo & djvminfo, int counter, const bool dumpJson)
+    GUTF8String, size_t, DjVmInfo & djvminfo, int counter, const bool json)
 {
     int start_page = -1;
     if (djvminfo.dir)
@@ -260,14 +261,14 @@ display_th44(ByteStream & out_str, IFFByteStream & iff,
     }
     if (start_page >= 0)
     {
-        if (!dumpJson)
+        if (!json)
             out_str.format("Thumbnail icon for page %d", start_page + counter + 1);
         else
             out_str.format(", \"Description\": \"Thumbnail icon for page\", \"PageNumber\": %d", start_page + counter + 1);
     }
     else
     {
-        if (!dumpJson)
+        if (!json)
             out_str.format("Thumbnail icon");
         else
             out_str.format(", \"Description\": \"Thumbnail icon\"");
@@ -276,29 +277,39 @@ display_th44(ByteStream & out_str, IFFByteStream & iff,
 
 static void
 display_incl(ByteStream & out_str, IFFByteStream & iff,
-    GUTF8String, size_t, DjVmInfo&, int, const bool dumpJson)
+    GUTF8String, size_t, DjVmInfo&, int, const bool json)
 {
     GUTF8String name;
     char ch;
-    while (iff.read(&ch, 1) && ch != '\n')
+    size_t length = 0;
+
+    while (iff.read(&ch, 1) && ch != '\n') {
         name += ch;
-    if (!dumpJson)
+        length++;
+    }
+
+    if (!json)
         out_str.format("Indirection chunk --> {%s}", (const char *)name);
-    else
-        out_str.format(", \"Description\": \"Indirection chunk\", \"Name\": \"{%s}\"", (const char *)name);
+    else {
+        out_str.format(", \"Description\": \"Indirection chunk\", \"Name\": \"");
+        out_str.writall((const char*)name, length);
+        out_str.format("\"");
+    }
 }
 
 static void
 display_anno(ByteStream & out_str, IFFByteStream &iff,
-    GUTF8String, size_t, DjVmInfo&, int, const bool dumpJson)
+    GUTF8String, size_t, DjVmInfo&, int, const bool json)
 {
-    if (!dumpJson)
+    if (!json)
         out_str.format("Page annotation");
     else
         out_str.format(", \"Description\": \"Page annotation");
+
     GUTF8String id;
     iff.short_id(id);
-    if (!dumpJson)
+
+    if (!json)
         out_str.format(" (hyperlinks, etc.)");
     else
         out_str.format(" (hyperlinks, etc.)\"");
@@ -306,15 +317,17 @@ display_anno(ByteStream & out_str, IFFByteStream &iff,
 
 static void
 display_text(ByteStream & out_str, IFFByteStream &iff,
-    GUTF8String, size_t, DjVmInfo&, int, const bool dumpJson)
+    GUTF8String, size_t, DjVmInfo&, int, const bool json)
 {
-    if (!dumpJson)
+    if (!json)
         out_str.format("Hidden text");
     else
         out_str.format(", \"Description\": \"Hidden text");
+
     GUTF8String id;
     iff.short_id(id);
-    if (!dumpJson)
+
+    if (!json)
         out_str.format(" (text, etc.)");
     else
         out_str.format(" (text, etc.)\"");
@@ -355,7 +368,7 @@ static displaysubr disproutines[] =
 
 // ---------- ROUTINES FOR DISPLAYING CHUNK STRUCTURE
 
-int indentSize = 0;
+int indentsize = 0;
 const GUTF8String headTempl = "    ";
 
 const GUTF8String
@@ -373,25 +386,29 @@ display_chunks(ByteStream & out_str, IFFByteStream &iff,
 {
     size_t size;
     GUTF8String id, fullid;
-    indentSize++;
-    GUTF8String head2 = json ? get_indent(indentSize + 1) : head + "  ";
+    indentsize++;
+    GUTF8String head2 = json ? get_indent(indentsize + 1) : head + "  ";
     GPMap<int, DjVmDir::File> djvmmap;
     int rawoffset;
+    int rawsize;
+    bool success;
     GMap<GUTF8String, int> counters;
     int index = 0;
-    bool compositeChunk = false;
+    bool compositechunk = false;
 
-    while ((size = iff.get_chunk(id, &rawoffset)))
+    while ((size = iff.get_chunk(id, &rawoffset, &rawsize, &success)) || success)
     {
-        if (!counters.contains(id)) counters[id] = 0;
-        else counters[id]++;
+        if (!counters.contains(id)) 
+            counters[id] = 0;
+        else 
+            counters[id]++;
 
         GUTF8String msg;
 
         if (json && index > 0)
         {
-            if (compositeChunk)
-                out_str.format("%s},\n", (const char*)get_indent(indentSize));
+            if (compositechunk)
+                out_str.format("%s},\n", (const char*)get_indent(indentsize));
             else
                 out_str.format(" },\n");
         }
@@ -399,8 +416,10 @@ display_chunks(ByteStream & out_str, IFFByteStream &iff,
         if (!json)
             msg.format("%s%s [%d] ", (const char *)head, (const char *)id, size);
         else
-            msg.format("%s{ \"ID\": \"%s\", \"Size\": %d", (const char*)get_indent(indentSize), (const char *)id, size);
+            msg.format("%s{ \"ID\": \"%s\", \"Size\": %d", (const char*)get_indent(indentsize), (const char *)id, size);
+        
         out_str.format("%s", (const char *)msg);
+
         // Display DJVM is when adequate
         if (djvminfo.dir && !json)
         {
@@ -409,15 +428,21 @@ display_chunks(ByteStream & out_str, IFFByteStream &iff,
             {
                 GUTF8String id = rec->get_load_name();
                 GUTF8String title = rec->get_title();
+
                 out_str.format("{%s}", (const char*)id);
+
                 if (rec->is_include())
                     out_str.format(" [I]");
+
                 if (rec->is_thumbnails())
                     out_str.format(" [T]");
+
                 if (rec->is_shared_anno())
                     out_str.format(" [S]");
+
                 if (rec->is_page())
                     out_str.format(" [P%d]", rec->get_page_num() + 1);
+
                 if (id != title)
                     out_str.format(" (%s)", (const char*)title);
             }
@@ -433,12 +458,12 @@ display_chunks(ByteStream & out_str, IFFByteStream &iff,
                 if (!json)
                     if (!iff.composite()) out_str.format("    ");
 
-                indentSize++;
+                indentsize++;
 
                 (*disproutines[i].subr)(out_str, iff, head2,
                     size, djvminfo, counters[id], json);
 
-                indentSize--;
+                indentsize--;
 
                 break;
             }
@@ -446,20 +471,18 @@ display_chunks(ByteStream & out_str, IFFByteStream &iff,
         if (!json)
             out_str.format("\n");
 
-        compositeChunk = iff.composite() != 0 ? true : false;
+        compositechunk = iff.composite() != 0 ? true : false;
 
-        if (compositeChunk)
+        if (compositechunk)
         {
             if (json)
                 out_str.format(", \"Children\": [\n");
-            indentSize++;
+            indentsize++;
             display_chunks(out_str, iff, head2, djvminfo, json);
             if (json)
-                out_str.format("%s]\n", (const char*)get_indent(indentSize));
-            indentSize--;
+                out_str.format("%s]\n", (const char*)get_indent(indentsize));
+            indentsize--;
         }
-
-
 
         // Terminate
         iff.close_chunk();
@@ -468,13 +491,13 @@ display_chunks(ByteStream & out_str, IFFByteStream &iff,
 
     if (json)
     {
-        if (compositeChunk)
-            out_str.format("%s}\n", (const char*)get_indent(indentSize));
+        if (compositechunk)
+            out_str.format("%s}\n", (const char*)get_indent(indentsize));
         else
             out_str.format(" }\n");
     }
 
-    indentSize--;
+    indentsize--;
 }
 
 GP<ByteStream>
@@ -499,6 +522,8 @@ GP<ByteStream>
 DjVuDumpHelper::dump(GP<ByteStream> gstr, const bool json)
 {
     GP<ByteStream> out_str = ByteStream::create();
+    if (json)
+        out_str->cp = DJVU::ByteStream::codepage_type::UTF8;
     GUTF8String head = json ? "    " : "  ";
     GP<IFFByteStream> iff = IFFByteStream::create(gstr);
     DjVmInfo djvminfo;
