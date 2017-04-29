@@ -89,8 +89,11 @@ namespace DJVU {
 
 GPEnabled::~GPEnabled()
 {
-  if (count > 0)
-    G_THROW( ERR_MSG("GSmartPointer.suspicious") );
+#pragma warning( disable : 4297) 
+    if (count > 0) {
+        G_THROW(ERR_MSG("GSmartPointer.suspicious"));
+    }
+#pragma warning( default : 4297)
 }
 
 void
