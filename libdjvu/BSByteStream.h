@@ -200,7 +200,7 @@ public:
 // Limits on block sizes
   enum { MINBLOCK=10, MAXBLOCK=4096 };
 
-// Sorting tresholds
+// Sorting thresholds
   enum { FREQMAX=4, CTXIDS=3 };
 
   class Decode;

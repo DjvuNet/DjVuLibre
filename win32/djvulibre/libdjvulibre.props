@@ -7,13 +7,19 @@
     <VcpkgTriplet>x86-windows-static</VcpkgTriplet>
     <VcpkgEnabled>false</VcpkgEnabled>
   </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration) == 'DebugStatic' Or $(Configuration) == 'ReleaseStatic'">
+    <LinkLibraryDir>$(JpegRoot)$(Configuration)\static\</LinkLibraryDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration) == 'Debug' Or $(Configuration) == 'Release'">
+    <LinkLibraryDir>$(JpegRoot)$(Configuration)\</LinkLibraryDir>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>$(JpegRoot)include;$(TiffRoot)include;$(ZlibRoot)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_NAMESPACES;NEED_JPEG_DECODER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(JpegRoot)$(Configuration)\static\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(LinkLibraryDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <!--<OutputFile Condition="$(DjvuNetRoot) != ''">$(DjvuNetRoot)\build\$(PlatformShortName)\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
       <ProgramDatabaseFile Condition="$(DjvuNetRoot) != ''">$(DjvuNetRoot)\build\$(PlatformShortName)\$(Configuration)\$(TargetName).pdb</ProgramDatabaseFile>-->

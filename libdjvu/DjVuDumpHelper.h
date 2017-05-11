@@ -114,7 +114,7 @@ public:
    GP<ByteStream>	dump(GP<ByteStream> str);
    /** Interprets the file passed in the \Ref{ByteStream}, and returns
    the results in \Ref{ByteStream}. */
-   GP<ByteStream>	dump(GP<ByteStream> str, const bool json);
+   GP<ByteStream>	dump(GP<ByteStream> str, const bool json, const char* fileName = 0);
 };
 
 
