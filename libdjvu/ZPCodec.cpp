@@ -1017,7 +1017,7 @@ ZPCodec::zemit(int b)
   /* Examine bit going out of the 3bytes buffer */
   b = (buffer >> 24);
   buffer = (buffer & 0xffffff);
-  /* The following lines have been changed in order to emphazise the
+  /* The following lines have been changed in order to emphasize the
    * similarity between this bit counting and the scheme of Witten, Neal & Cleary
    * (WN&C).  Corresponding changes have been made in outbit and eflush.
    * Variable 'nrun' is similar to the 'bits_to_follow' in the W&N code.
