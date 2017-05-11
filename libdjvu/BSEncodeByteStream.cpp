@@ -772,6 +772,7 @@ static void
 encode_raw(ZPCodec &zp, int bits, int x)
 {
     int n = 1;
+    int count = 0;
     int m = (1 << bits);
     while (n < m)
     {
@@ -779,6 +780,7 @@ encode_raw(ZPCodec &zp, int bits, int x)
         int b = (x >> bits);
         zp.encoder(b);
         n = (n << 1) | b;
+        count++;
     }
 }
 
@@ -879,49 +881,101 @@ BSByteStream::Encode::encode()
         // Get MTF data
         int c = data[i];
         int ctxid = CTXIDS - 1;
-        if (ctxid>mtfno) ctxid = mtfno;
+
+        if (ctxid > mtfno) 
+            ctxid = mtfno;
+
         mtfno = rmtf[c];
+
         if (i == markerpos)
             mtfno = 256;
 
         // Encode using ZPCoder
         int b;
         BitContext *cx = ctx;
+
         b = (mtfno == 0);
+
         zp.encoder(b, cx[ctxid]);
+
         if (b) goto rotate;
+
         cx += CTXIDS;
         b = (mtfno == 1);
         zp.encoder(b, cx[ctxid]);
+
         if (b) goto rotate;
+
         cx += CTXIDS;
         b = (mtfno<4);
         zp.encoder(b, cx[0]);
-        if (b) { encode_binary(zp, cx + 1, 1, mtfno - 2); goto rotate; }
+
+        if (b) 
+        { 
+            encode_binary(zp, cx + 1, 1, mtfno - 2); 
+            goto rotate; 
+        }
+
         cx += 1 + 1;
-        b = (mtfno<8);
+        b = (mtfno < 8);
         zp.encoder(b, cx[0]);
-        if (b) { encode_binary(zp, cx + 1, 2, mtfno - 4); goto rotate; }
+
+        if (b) 
+        { 
+            encode_binary(zp, cx + 1, 2, mtfno - 4); 
+            goto rotate; 
+        }
+
         cx += 1 + 3;
-        b = (mtfno<16);
+        b = (mtfno < 16);
         zp.encoder(b, cx[0]);
-        if (b) { encode_binary(zp, cx + 1, 3, mtfno - 8); goto rotate; }
+
+        if (b) 
+        { 
+            encode_binary(zp, cx + 1, 3, mtfno - 8); 
+            goto rotate; 
+        }
+
         cx += 1 + 7;
-        b = (mtfno<32);
+        b = (mtfno < 32);
         zp.encoder(b, cx[0]);
-        if (b) { encode_binary(zp, cx + 1, 4, mtfno - 16); goto rotate; }
+
+        if (b) 
+        { 
+            encode_binary(zp, cx + 1, 4, mtfno - 16); 
+            goto rotate; 
+        }
+
         cx += 1 + 15;
         b = (mtfno<64);
         zp.encoder(b, cx[0]);
-        if (b) { encode_binary(zp, cx + 1, 5, mtfno - 32); goto rotate; }
+
+        if (b) 
+        { 
+            encode_binary(zp, cx + 1, 5, mtfno - 32); 
+            goto rotate; 
+        }
+
         cx += 1 + 31;
         b = (mtfno<128);
         zp.encoder(b, cx[0]);
-        if (b) { encode_binary(zp, cx + 1, 6, mtfno - 64); goto rotate; }
+
+        if (b) 
+        { 
+            encode_binary(zp, cx + 1, 6, mtfno - 64); 
+            goto rotate; 
+        }
+
         cx += 1 + 63;
         b = (mtfno<256);
         zp.encoder(b, cx[0]);
-        if (b) { encode_binary(zp, cx + 1, 7, mtfno - 128); goto rotate; }
+
+        if (b) 
+        { 
+            encode_binary(zp, cx + 1, 7, mtfno - 128); 
+            goto rotate; 
+        }
+
         continue;
 
         // Rotate MTF according to empirical frequencies (new!)
