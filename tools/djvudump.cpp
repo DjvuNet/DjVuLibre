@@ -128,12 +128,24 @@ const char *outputfile = 0;
 FILE *outputf = stdout;
 bool json = false;
 
+const char* find_file_name(const GURL &url)
+{
+    char* urlPtr = (char*) (const char*) url;
+    char* ptr = (char*) urlPtr;
+    while (*urlPtr) {
+        if (*urlPtr++ == '/')
+            ptr = urlPtr;
+    }
+    return ptr;
+}
+
 void
 display(const GURL &url, bool json)
 {
     DjVuDumpHelper helper;
     GP<ByteStream> ibs = ByteStream::create(url, "rb");
-    GP<ByteStream> obs = helper.dump(ibs, json);
+    const char* filename = find_file_name(url);
+    GP<ByteStream> obs = helper.dump(ibs, json, filename);
     GUTF8String str;
     size_t size = obs->size();
     char *buf = str.getbuf(obs->size());

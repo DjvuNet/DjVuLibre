@@ -128,6 +128,14 @@ display_djvu_info(ByteStream & out_str, IFFByteStream &iff,
         else
             out_str.format(", \"Gamma\": %3.1f", info.gamma);
     }
+    if (size >= 10) 
+    {
+        if (!json)
+            out_str.format(", orientation=%d", info.orientation);
+        else
+            out_str.format(", \"Orientation\": %d", info.orientation);
+    }
+    
 }
 
 static void
@@ -333,6 +341,47 @@ display_text(ByteStream & out_str, IFFByteStream &iff,
         out_str.format(" (text, etc.)\"");
 }
 
+struct id_to_dotnet_type
+{
+    const char *id;
+    const char *dotnet_type;
+};
+
+static id_to_dotnet_type id2dotnet[] =
+{
+    { "DJVU.INFO", "DjvuNet.Serialization.Info" },
+    { "DJVU.Smmr", "DjvuNet.Serialization.Smmr" },
+    { "DJVU.Sjbz", "DjvuNet.Serialization.Sjbz" },
+    { "DJVU.Djbz", "DjvuNet.Serialization.Djbz" },
+    { "DJVU.FG44", "DjvuNet.Serialization.FG44" },
+    { "DJVU.BG44", "DjvuNet.Serialization.BG44" },
+    { "DJVU.FGbz", "DjvuNet.Serialization.FGbz" },
+    { "DJVI.Sjbz", "DjvuNet.Serialization.Sjbz" },
+    { "DJVI.Djbz", "DjvuNet.Serialization.Djbz" },
+    { "DJVI.FGbz", "DjvuNet.Serialization.FGbz" },
+    { "DJVI.FG44", "DjvuNet.Serialization.FG44" },
+    { "DJVI.BG44", "DjvuNet.Serialization.BG44" },
+    { "BM44.BM44", "DjvuNet.Serialization.BM44" },
+    { "PM44.PM44", "DjvuNet.Serialization.PM44" },
+    { "DJVM.DIRM", "DjvuNet.Serialization.Dirm" },
+    { "DJVM.NAVM", "DjvuNet.Serialization.Navm" },
+    { "THUM.TH44", "DjvuNet.Serialization.TH44" },
+    { "INCL", "DjvuNet.Serialization.Incl" },
+    { "ANTa", "DjvuNet.Serialization.Anta" },
+    { "ANTz", "DjvuNet.Serialization.Antz" },
+    { "TXTa", "DjvuNet.Serialization.Txta" },
+    { "TXTz", "DjvuNet.Serialization.Txtz" },
+    { "CIDa", "DjvuNet.Serialization.Cida" },
+    { "Wmrm", "DjvuNet.Serialization.Wmrm" },
+    { "FORM:DJVI", "DjvuNet.Serialization.DjviForm" },
+    { "FORM:DJVM", "DjvuNet.Serialization.DjvmForm" },
+    { "FORM:DJVU", "DjvuNet.Serialization.DjvuForm" },
+    { "FORM:THUM", "DjvuNet.Serialization.ThumForm" },
+    { "FORM:BM44", "DjvuNet.Serialization.BM44Form" },
+    { "FORM:PM44", "DjvuNet.Serialization.PM44Form" },
+    { 0, 0}
+};
+
 struct displaysubr
 {
     const char *id;
@@ -413,10 +462,19 @@ display_chunks(ByteStream & out_str, IFFByteStream &iff,
                 out_str.format(" },\n");
         }
 
+        const char *dotnet_type = 0;
+        iff.full_id(fullid);
+        for (int i = 0; id2dotnet[i].id; i++)
+            if (fullid == id2dotnet[i].id || id == id2dotnet[i].id)
+            {
+                dotnet_type = id2dotnet[i].dotnet_type;
+                break;
+            }
+
         if (!json)
             msg.format("%s%s [%d] ", (const char *)head, (const char *)id, size);
         else
-            msg.format("%s{ \"ID\": \"%s\", \"Size\": %d", (const char*)get_indent(indentsize), (const char *)id, size);
+            msg.format("%s{ \"$type\": \"%s\", \"ID\": \"%s\", \"NodeOffset\": %d, \"Size\": %d", (const char*)get_indent(indentsize), dotnet_type, (const char *)id, rawoffset, size);
         
         out_str.format("%s", (const char *)msg);
 
@@ -519,7 +577,7 @@ DjVuDumpHelper::dump(GP<ByteStream> gstr)
 }
 
 GP<ByteStream>
-DjVuDumpHelper::dump(GP<ByteStream> gstr, const bool json)
+DjVuDumpHelper::dump(GP<ByteStream> gstr, const bool json, const char* fileName)
 {
     GP<ByteStream> out_str = ByteStream::create();
     if (json)
@@ -527,8 +585,12 @@ DjVuDumpHelper::dump(GP<ByteStream> gstr, const bool json)
     GUTF8String head = json ? "    " : "  ";
     GP<IFFByteStream> iff = IFFByteStream::create(gstr);
     DjVmInfo djvminfo;
-    if (json)
-        out_str->format("{ \"DjvuData\":\n");
+    if (json) {
+        if (fileName)
+            out_str->format("{ \"$type\":\"DjvuNet.Serialization.DjvuDoc\", \"File\": \"%s\", \"DjvuData\":\n", fileName);
+        else
+            out_str->format("{ \"$type\":\"DjvuNet.Serialization.DjvuDoc\", \"DjvuData\":\n");
+    }
     display_chunks(*out_str, *iff, head, djvminfo, json);
     if (json)
         out_str->format("}\n");
