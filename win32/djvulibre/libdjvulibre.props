@@ -1,10 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-  </PropertyGroup>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="Globals">
-    <VcpkgTriplet>x86-windows-static</VcpkgTriplet>
+    <VcpkgTriplet Condition="$(PlatformShortName) == 'x86'" >x86-windows-static</VcpkgTriplet>
+    <VcpkgTriplet Condition="$(PlatformShortName) == 'x64'" >x64-windows-static</VcpkgTriplet>
     <VcpkgEnabled>false</VcpkgEnabled>
   </PropertyGroup>
   <PropertyGroup Condition="$(Configuration) == 'DebugStatic' Or $(Configuration) == 'ReleaseStatic'">
@@ -25,9 +23,11 @@
       <ProgramDatabaseFile Condition="$(DjvuNetRoot) != ''">$(DjvuNetRoot)\build\$(PlatformShortName)\$(Configuration)\$(TargetName).pdb</ProgramDatabaseFile>-->
     </Link>
   </ItemDefinitionGroup>
-  <PropertyGroup>
-    <SolutionDir Condition="$(DjvuNetRoot) != ''">$(DjvuNetRoot)\</SolutionDir>
-    <OutDir Condition="$(DjvuNetRoot) != ''">$(DjvuNetRoot)\build\$(PlatformShortName)\$(Configuration)\</OutDir>
-    <IntDir Condition="$(DjvuNetRoot) != ''">$(DjvuNetRoot)\build\obj\$(PlatformShortName)\$(Configuration)\</IntDir>
+  <PropertyGroup Condition="$(SolutionFileName) != 'djvulibre.sln'">
+    <SolutionDir>$(DjvuNetRoot)\</SolutionDir>
+    <OutDir>$(DjvuNetRoot)\build\$(PlatformShortName)\$(Configuration)\</OutDir>
+    <IntDir>$(DjvuNetRoot)\build\obj\$(PlatformShortName)\$(Configuration)\</IntDir>
+    <OutDir Condition="$(TargetFramework) != ''">$(OutDir)$(TargetFramework)\</OutDir>
+    <IntDir Condition="$(TargetFramework) != ''">$(IntDir)$(TargetFramework)\</IntDir>
   </PropertyGroup>
 </Project>
