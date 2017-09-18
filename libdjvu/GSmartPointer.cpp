@@ -183,7 +183,7 @@ GPBufferBase::resize(const size_t n, const size_t t)
     }
   else
     {
-      const size_t s=ptr?(((num<n)?num:n)*t):0;
+      const size_t s = ptr ? (((num < n) ? num : n) * t) : 0;
       void *nptr;
       GPBufferBase gnptr(nptr, n, t);
       if(s)

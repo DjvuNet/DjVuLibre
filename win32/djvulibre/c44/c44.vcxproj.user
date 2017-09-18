@@ -4,4 +4,9 @@
     <LocalDebuggerCommandArguments> nasa001B.jpg</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LocalDebuggerWorkingDirectory>$(TargetDir)</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArguments>-dpi 300 -gamma 2.2 -crcbfull -slice 74+15+11+7 nasa001B.jpg nasa001B.test.djvu</LocalDebuggerCommandArguments>
+  </PropertyGroup>
 </Project>
