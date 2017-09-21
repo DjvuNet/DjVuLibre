@@ -19,8 +19,6 @@
     <Link>
       <AdditionalLibraryDirectories>$(LinkLibraryDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <!--<OutputFile Condition="$(DjvuNetRoot) != ''">$(DjvuNetRoot)\build\$(PlatformShortName)\$(Configuration)\$(TargetName)$(TargetExt)</OutputFile>
-      <ProgramDatabaseFile Condition="$(DjvuNetRoot) != ''">$(DjvuNetRoot)\build\$(PlatformShortName)\$(Configuration)\$(TargetName).pdb</ProgramDatabaseFile>-->
     </Link>
   </ItemDefinitionGroup>
   <PropertyGroup Condition="$(SolutionFileName) != 'djvulibre.sln'">
