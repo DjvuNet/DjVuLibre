@@ -11,7 +11,7 @@
     <JpegDir>$(JpegRoot)</JpegDir>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net471</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <BuildMacro Include="DjvulibreRoot">
