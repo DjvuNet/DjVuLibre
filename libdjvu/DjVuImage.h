@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -164,7 +164,7 @@ public:
   /** This combines the above two steps for simplified code operations. */
   static GP<DjVuImage> create(const GP<DjVuFile> &file)
   { const GP<DjVuImage> retval=create(); retval->connect(file); return retval; }
-      
+
   //@}
 
   // COMPONENTS
@@ -193,7 +193,7 @@ public:
       this implementation. This function returns a null pointer until the
       decoder actually processes an #"FG44"# chunk. */
   GP<GPixmap>     get_fgpm() const;
-  /** Returns a pointer to a palette object containing colors for the 
+  /** Returns a pointer to a palette object containing colors for the
       foreground components of a DjVu image.  These colors are only
       pertinent with respect to the JB2Image. */
   GP<DjVuPalette> get_fgbc() const;
@@ -214,12 +214,12 @@ public:
   /** @name New style decoding. */
   //@{
   /** The decoder is now started when the image is created
-      by function \Ref{DjVuDocument::get_page} in \Ref{DjVuDocument}. 
+      by function \Ref{DjVuDocument::get_page} in \Ref{DjVuDocument}.
       This function waits until the decoding thread terminates
       and returns TRUE if the image has been successfully decoded. */
   bool wait_for_complete_decode(void);
   //@}
-  
+
   // OLD STYLE DECODING
   /** @name Old style decoding (backward compatibility). */
   //@{
@@ -229,7 +229,7 @@ public:
       documents though, we still have this wrapper. */
   void decode(ByteStream & str, DjVuInterface *notifier=0);
   //@}
-  
+
   // UTILITIES
   /** @name Utilities */
   //@{
@@ -328,8 +328,8 @@ public:
   int is_legal_compound() const;
   //@}
 
-  // RENDERING 
-  /** @name Rendering.  
+  // RENDERING
+  /** @name Rendering.
       All these functions take two rectangles as argument.  Conceptually,
       these function first render the whole image into a rectangular area
       defined by rectangle #all#.  The relation between this rectangle and the
@@ -345,12 +345,12 @@ public:
       and #all# are used as explained above. Color correction is performed
       according to argument #gamma#, which represents the gamma coefficient of
       the display device on which the pixmap will be rendered.  The default
-      value, zero, means that no color correction should be performed. 
+      value, zero, means that no color correction should be performed.
       This function returns a null pointer if there is not enough information
       in the DjVu image to properly render the desired image. */
-  GP<GPixmap>  get_pixmap(const GRect &rect, const GRect &all, 
+  GP<GPixmap>  get_pixmap(const GRect &rect, const GRect &all,
                           double gamma, GPixel white) const;
-  GP<GPixmap>  get_pixmap(const GRect &rect, const GRect &all, 
+  GP<GPixmap>  get_pixmap(const GRect &rect, const GRect &all,
                           double gamma=0) const;
   /** Renders the mask of the foreground layer of the DjVu image.  This
       functions is a wrapper for \Ref{JB2Image::get_bitmap}.  Argument #align#
@@ -360,7 +360,7 @@ public:
       byte) boundary.  This function returns a null pointer if there is not
       enough information in the DjVu image to properly render the desired
       image. */
-  GP<GBitmap>  get_bitmap(const GRect &rect, const GRect &all, 
+  GP<GBitmap>  get_bitmap(const GRect &rect, const GRect &all,
                           int align = 1) const;
   /** Renders the background layer of the DjVu image.  Rectangles #rect# and
       #all# are used as explained above. Color correction is performed
@@ -369,9 +369,9 @@ public:
       value, zero, means that no color correction should be performed.  This
       function returns a null pointer if there is not enough information in
       the DjVu image to properly render the desired image. */
-  GP<GPixmap>  get_bg_pixmap(const GRect &rect, const GRect &all, 
+  GP<GPixmap>  get_bg_pixmap(const GRect &rect, const GRect &all,
                              double gamma, GPixel white) const;
-  GP<GPixmap>  get_bg_pixmap(const GRect &rect, const GRect &all, 
+  GP<GPixmap>  get_bg_pixmap(const GRect &rect, const GRect &all,
                              double gamma=0) const;
   /** Renders the foreground layer of the DjVu image.  Rectangles #rect# and
       #all# are used as explained above. Color correction is performed
@@ -380,9 +380,9 @@ public:
       value, zero, means that no color correction should be performed.  This
       function returns a null pointer if there is not enough information in
       the DjVu image to properly render the desired image. */
-  GP<GPixmap>  get_fg_pixmap(const GRect &rect, const GRect &all, 
+  GP<GPixmap>  get_fg_pixmap(const GRect &rect, const GRect &all,
                              double gamma, GPixel white) const;
-  GP<GPixmap>  get_fg_pixmap(const GRect &rect, const GRect &all, 
+  GP<GPixmap>  get_fg_pixmap(const GRect &rect, const GRect &all,
                              double gamma=0) const;
 
 
@@ -394,16 +394,16 @@ public:
   /** returns decoded annotations in DjVuAnno object in which all hyperlinks
       and hilighted areas are rotated as per rotation setting*/
   GP<DjVuAnno> get_decoded_anno();
-  /** maps the given #rect# from rotated co-ordinates to unrotated document 
+  /** maps the given #rect# from rotated co-ordinates to unrotated document
       co-ordinates*/
   void map(GRect &rect) const;
-  /** unmaps the given #rect# from unrotated document co-ordinates to rotated  
+  /** unmaps the given #rect# from unrotated document co-ordinates to rotated
       co-ordinates*/
   void unmap(GRect &rect) const;
-  /** maps the given #x#, #y# from rotated co-ordinates to unrotated document 
+  /** maps the given #x#, #y# from rotated co-ordinates to unrotated document
       co-ordinates*/
   void map(int &x, int &y) const;
-  /** unmaps the given #x#, #y# from unrotated document co-ordinates to rotated  
+  /** unmaps the given #x#, #y# from unrotated document co-ordinates to rotated
       co-ordinates*/
   void unmap(int &x, int &y) const;
 
@@ -426,7 +426,7 @@ private:
   GP<DjVuFile>		file;
   int			rotate_count;
   bool			relayout_sent;
-  
+
   // HELPERS
   int stencil(GPixmap *pm, const GRect &rect, int s, double g, GPixel w) const;
   GP<DjVuInfo>		get_info(const GP<DjVuFile> & file) const;
