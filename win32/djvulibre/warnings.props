@@ -2,7 +2,8 @@
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemDefinitionGroup>
     <ClCompile>
-      <DisableSpecificWarnings>4275;4996;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <!-- TODO Warnnings C4244 and C4267 for x64 platform should be fixed rather than suppressed-->
+      <DisableSpecificWarnings>4244;4267;4275;4996;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
   </ItemDefinitionGroup>
 </Project>
