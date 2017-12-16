@@ -23,9 +23,11 @@
   </ItemDefinitionGroup>
   <PropertyGroup Condition="$(SolutionFileName) != 'djvulibre.sln'">
     <SolutionDir>$(DjvuNetRoot)\</SolutionDir>
-    <OutDir>$(DjvuNetRoot)\build\$(PlatformShortName)\$(Configuration)\</OutDir>
-    <IntDir>$(DjvuNetRoot)\build\obj\$(PlatformShortName)\$(Configuration)\</IntDir>
-    <OutDir Condition="$(TargetFramework) != ''">$(OutDir)$(TargetFramework)\</OutDir>
-    <IntDir Condition="$(TargetFramework) != ''">$(IntDir)$(TargetFramework)\</IntDir>
+    <PlatformManaged Condition="$(Platform) == 'Win32'">x86</PlatformManaged>
+    <PlatformManaged Condition="$(PlatformManaged) == ''">$(Platform)</PlatformManaged>
+    <OutDir>$(DjvuNetRoot)/build/bin/$(OS).$(PlatformManaged).$(Configuration)/binaries/</OutDir>
+    <IntDir>$(DjvuNetRoot)/build/bin/$(OS).$(PlatformManaged).$(Configuration)/obj/native/</IntDir>
+    <!--<OutDir Condition="$(TargetFramework) != ''">$(OutDir)$(TargetFramework)\</OutDir>
+    <IntDir Condition="$(TargetFramework) != ''">$(IntDir)$(TargetFramework)\</IntDir>-->
   </PropertyGroup>
 </Project>
