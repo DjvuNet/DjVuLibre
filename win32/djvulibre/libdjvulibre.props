@@ -18,7 +18,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(LinkLibraryDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>jpeg.lib;Advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <PropertyGroup Condition="$(SolutionFileName) != 'djvulibre.sln'">
