@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -87,7 +87,7 @@ class GPixmap;
     @memo
     Decoding interface to the IJG JPEG library.
     @author
-    Parag Deshmukh <parag@sanskrit.lz.att.com> 
+    Parag Deshmukh <parag@sanskrit.lz.att.com>
 */
 //@{
 
@@ -97,21 +97,21 @@ class GUTF8String;
 class JPEGDecoder
 {
 public:
-  class Impl;
+    class Impl;
 
-  /** Decodes the JPEG formated ByteStream */ 
-  static GP<GPixmap> decode(ByteStream & bs);
-  static void decode(ByteStream & bs,GPixmap &pix);
+    /** Decodes the JPEG formated ByteStream */
+    static GP<GPixmap> decode(ByteStream& bs);
+    static void decode(ByteStream& bs, GPixmap& pix);
 #ifdef LIBJPEGNAME
-  static void *jpeg_lookup(const GUTF8String &name);
-  static jpeg_error_mgr *jpeg_std_error(jpeg_error_mgr *x);
-  static void jpeg_CreateDecompress(jpeg_decompress_struct *x,int v, size_t s);
-  static void jpeg_destroy_decompress(j_decompress_ptr x);
-  static int jpeg_read_header(j_decompress_ptr x,boolean y);
-  static JDIMENSION jpeg_read_scanlines(j_decompress_ptr x,JSAMPARRAY y,JDIMENSION z);
-  static boolean jpeg_finish_decompress(j_decompress_ptr x);
-  static boolean jpeg_resync_to_restart(jpeg_decompress_struct *x,int d);
-  static boolean jpeg_start_decompress(j_decompress_ptr x);
+    static void* jpeg_lookup(const GUTF8String& name);
+    static jpeg_error_mgr* jpeg_std_error(jpeg_error_mgr* x);
+    static void jpeg_CreateDecompress(jpeg_decompress_struct* x, int v, size_t s);
+    static void jpeg_destroy_decompress(j_decompress_ptr x);
+    static int jpeg_read_header(j_decompress_ptr x, boolean y);
+    static JDIMENSION jpeg_read_scanlines(j_decompress_ptr x, JSAMPARRAY y, JDIMENSION z);
+    static boolean jpeg_finish_decompress(j_decompress_ptr x);
+    static boolean jpeg_resync_to_restart(jpeg_decompress_struct* x, int d);
+    static boolean jpeg_start_decompress(j_decompress_ptr x);
 #endif // LIBJPEGNAME
 };
 
@@ -128,4 +128,3 @@ using namespace DJVU;
 
 #endif // NEED_JPEG_DECODER
 #endif // _JPEGDECODER_H_
-

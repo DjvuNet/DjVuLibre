@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -82,88 +82,92 @@ DjVuErrorList::DjVuErrorList() {}
 GURL
 DjVuErrorList::set_stream(GP<ByteStream> xibs)
 {
-  GUTF8String name;
-  static unsigned long serial=0;
-  pool=DataPool::create(xibs);
-  name.format("data://%08lx/%08lx.djvu",
-    ++serial,(unsigned long)(size_t)((const ByteStream *)xibs));
-  pool_url=GURL::UTF8(name);
-  return pool_url;
+    GUTF8String name;
+    static unsigned long serial = 0;
+    pool = DataPool::create(xibs);
+    name.format("data://%08lx/%08lx.djvu",
+        ++serial, (unsigned long)(size_t)((const ByteStream*)xibs));
+    pool_url = GURL::UTF8(name);
+    return pool_url;
 }
 
 bool
-DjVuErrorList::notify_error(const DjVuPort * source, const GUTF8String & msg)
+DjVuErrorList::notify_error(const DjVuPort* source, const GUTF8String& msg)
 {
-  Errors.append(msg);
-  return 1;
+    Errors.append(msg);
+    return 1;
 }
 
 bool
-DjVuErrorList::notify_status(const DjVuPort * source, const GUTF8String &msg)
+DjVuErrorList::notify_status(const DjVuPort* source, const GUTF8String& msg)
 {
-  Status.append(msg);
-  return 1;
-}  
+    Status.append(msg);
+    return 1;
+}
 
 GUTF8String
 DjVuErrorList::GetError(void)
 {
-  GUTF8String PrevError;
-  GPosition pos;
-  if((pos=Errors))
-  {
-    PrevError=Errors[pos];
-    Errors.del(pos);
-  }
-  return PrevError;
+    GUTF8String PrevError;
+    GPosition pos;
+    if ((pos = Errors))
+    {
+        PrevError = Errors[pos];
+        Errors.del(pos);
+    }
+    return PrevError;
 }
 
 GUTF8String
 DjVuErrorList::GetStatus(void)
 {
-  GUTF8String PrevStatus;
-  GPosition pos;
-  if((pos=Status))
-  {
-    PrevStatus=Status[pos];
-    Status.del(pos);
-  }
-  return PrevStatus;
+    GUTF8String PrevStatus;
+    GPosition pos;
+    if ((pos = Status))
+    {
+        PrevStatus = Status[pos];
+        Status.del(pos);
+    }
+    return PrevStatus;
 }
 
 GP<DataPool>
-DjVuErrorList::request_data(const DjVuPort * source, const GURL & url)
+DjVuErrorList::request_data(const DjVuPort* source, const GURL& url)
 {
-   GP<DataPool> retval;
-   G_TRY
-   {
-     if (pool && url.protocol().downcase() == "data")
-     {
-       if(url == pool_url)
-       {
-         retval=pool;
-       }else if(url.base() == pool_url)
-       {
-         GUTF8String name=url.fname();
-         GP<DjVmDoc> doc=DjVmDoc::create();
-         GP<ByteStream> bs=pool->get_stream();
-         doc->read(*bs);
-         retval=doc->get_data(name);
-       }
-     }else if (url.is_local_file_url())
-     {
-//       GUTF8String fname=GOS::url_to_filename(url);
-//       if (GOS::basename(fname)=="-") fname="-";
-       retval=DataPool::create(url);
-     }
-   }
-   G_CATCH_ALL
-   {
-     retval=0;
-   } G_ENDCATCH;
-   return retval;
+    GP<DataPool> retval;
+    G_TRY
+    {
+        if (pool && url.protocol().downcase() == "data")
+        {
+            if (url == pool_url)
+            {
+                retval = pool;
+            }
+            else if (url.base() == pool_url)
+            {
+                GUTF8String name = url.fname();
+                GP<DjVmDoc> doc = DjVmDoc::create();
+                GP<ByteStream> bs = pool->get_stream();
+                doc->read(*bs);
+                retval = doc->get_data(name);
+            }
+        }
+        else if (url.is_local_file_url())
+        {
+            // GUTF8String fname=GOS::url_to_filename(url);
+            // if (GOS::basename(fname)=="-") fname="-";
+            retval = DataPool::create(url);
+        }
+    }
+    G_CATCH_ALL
+    {
+        retval = 0;
+    }
+    G_ENDCATCH;
+
+    return retval;
 }
- 
+
 
 #ifdef HAVE_NAMESPACES
 }

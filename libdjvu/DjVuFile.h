@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -136,21 +136,21 @@ class DjVuNavDir;
     dictionary (to be implemented). To avoid putting these chunks into
     every page, we have invented new chunk called #INCL# which purpose is
     to make the decoder open the specified file and decode it.
-    
+
     {\bf Source of data.} The #DjVuFile# can be initialized in two ways:
     \begin{itemize}
        \item With #URL# and \Ref{DjVuPort}. In this case #DjVuFile# will
              request its data thru the communication mechanism provided by
-	     \Ref{DjVuPort} in the constructor. If this file references
-	     (includes) any other file, data for them will also be requested
-	     in the same way.
+         \Ref{DjVuPort} in the constructor. If this file references
+         (includes) any other file, data for them will also be requested
+         in the same way.
        \item With \Ref{ByteStream}. In this case the #DjVuFile# will read
              its data directly from the passed stream. This constructor
-	     has been added to simplify creation of #DjVuFile#s, which do
-	     no include anything else. In this case the \Ref{ByteStream}
-	     is enough for the #DjVuFile# to initialize.
+         has been added to simplify creation of #DjVuFile#s, which do
+         no include anything else. In this case the \Ref{ByteStream}
+         is enough for the #DjVuFile# to initialize.
     \end{itemize}
-	     
+
     {\bf Progress information.} #DjVuFile# does not do decoding silently.
     Instead, it sends a whole set of notifications through the mechanism
     provided by \Ref{DjVuPort} and \Ref{DjVuPortcaster}. It tells the user
@@ -162,8 +162,8 @@ class DjVuNavDir;
     \begin{itemize}
        \item By providing #URL# and pointer to \Ref{DjVuPort}. In this case
              #DjVuFile# will request data using communication mechanism
-	     provided by \Ref{DjVuPort}. This is useful when the data is on
-	     the web or when this file includes other files.
+         provided by \Ref{DjVuPort}. This is useful when the data is on
+         the web or when this file includes other files.
        \item By providing a \Ref{ByteStream} with the data for the file. Use
              it only when the file doesn't include other files.
     \end{itemize}
@@ -199,632 +199,634 @@ class DjVuNavDir;
 class DJVUAPI DjVuFile : public DjVuPort
 {
 public:
-   enum { DECODING=1, DECODE_OK=2, DECODE_FAILED=4, DECODE_STOPPED=8,
-	  DATA_PRESENT=16, ALL_DATA_PRESENT=32, INCL_FILES_CREATED=64,
-          MODIFIED=128, DONT_START_DECODE=256, STOPPED=512,
-	  BLOCKED_STOPPED=1024, CAN_COMPRESS=2048, NEEDS_COMPRESSION=4096 };
-   enum { STARTED=1, FINISHED=2 };
+    enum {
+        DECODING = 1, DECODE_OK = 2, DECODE_FAILED = 4, DECODE_STOPPED = 8,
+        DATA_PRESENT = 16, ALL_DATA_PRESENT = 32, INCL_FILES_CREATED = 64,
+        MODIFIED = 128, DONT_START_DECODE = 256, STOPPED = 512,
+        BLOCKED_STOPPED = 1024, CAN_COMPRESS = 2048, NEEDS_COMPRESSION = 4096
+    };
+    enum { STARTED = 1, FINISHED = 2 };
 
-      /** @name Decoded file contents */
-      //@{
-      /// Pointer to the DjVu file information component.
-   GP<DjVuInfo>		info;
-      /// Pointer to the background component of DjVu image (IW44 encoded).
-   GP<IW44Image>	bg44;
-      /// Pointer to the background component of DjVu image (Raw).
-   GP<GPixmap>		bgpm;
-      /// Pointer to the mask of foreground component of DjVu image (JB2 encoded).
-   GP<JB2Image>		fgjb;
-      /// Pointer to the optional shape dictionary for the mask (JB2 encoded).
-   GP<JB2Dict>		fgjd;
-      /// Pointer to a colors layer for the foreground component of DjVu image.
-   GP<GPixmap>		fgpm;
-      /// Pointer to a colors vector for the foreground component of DjVu image.
-   GP<DjVuPalette>	fgbc;
-      /// Pointer to collected annotation chunks.
-   GP<ByteStream>	anno;
-      /// Pointer to collected hiddentext chunks.
-   GP<ByteStream>	text;
-      /// Pointer to meta data chunks.
-   GP<ByteStream>	meta;
-      /// Pointer to the *old* navigation directory contained in this file
-   GP<DjVuNavDir>	dir;
-      /// Description of the file formed during decoding
-   GUTF8String		description;
-      /// MIME type string describing the DjVu data.
-   GUTF8String		mimetype;
-      /// Size of the file.
-   int			file_size;
-      //@}
+    /** @name Decoded file contents */
+    //@{
+    /// Pointer to the DjVu file information component.
+    GP<DjVuInfo>		info;
+    /// Pointer to the background component of DjVu image (IW44 encoded).
+    GP<IW44Image>	bg44;
+    /// Pointer to the background component of DjVu image (Raw).
+    GP<GPixmap>		bgpm;
+    /// Pointer to the mask of foreground component of DjVu image (JB2 encoded).
+    GP<JB2Image>		fgjb;
+    /// Pointer to the optional shape dictionary for the mask (JB2 encoded).
+    GP<JB2Dict>		fgjd;
+    /// Pointer to a colors layer for the foreground component of DjVu image.
+    GP<GPixmap>		fgpm;
+    /// Pointer to a colors vector for the foreground component of DjVu image.
+    GP<DjVuPalette>	fgbc;
+    /// Pointer to collected annotation chunks.
+    GP<ByteStream>	anno;
+    /// Pointer to collected hiddentext chunks.
+    GP<ByteStream>	text;
+    /// Pointer to meta data chunks.
+    GP<ByteStream>	meta;
+    /// Pointer to the *old* navigation directory contained in this file
+    GP<DjVuNavDir>	dir;
+    /// Description of the file formed during decoding
+    GUTF8String		description;
+    /// MIME type string describing the DjVu data.
+    GUTF8String		mimetype;
+    /// Size of the file.
+    int			file_size;
+    //@}
 
 protected:
-      /** Default constructor.  Must follow with an init() */
-   DjVuFile(void);
+    /** Default constructor.  Must follow with an init() */
+    DjVuFile(void);
 public:
-   virtual ~DjVuFile(void);
+    virtual ~DjVuFile(void);
 
-      /** Initializes a #DjVuFile# object. This is a simplified initializer,
-	  which is not supposed to be used for decoding or creating
-	  #DjVuFile#s, which include other files.
+    /** Initializes a #DjVuFile# object. This is a simplified initializer,
+    which is not supposed to be used for decoding or creating
+    #DjVuFile#s, which include other files.
 
-	  If the file is stored on the hard drive, you may also use the
-	  other constructor and pass it the file's URL and #ZERO# #port#.
-	  The #DjVuFile# will read the data itself.
+    If the file is stored on the hard drive, you may also use the
+    other constructor and pass it the file's URL and #ZERO# #port#.
+    The #DjVuFile# will read the data itself.
 
-	  If you want to receive error messages and notifications, you
-	  may connect the #DjVuFile# to your own \Ref{DjVuPort} after
-	  it has been constructed.
+    If you want to receive error messages and notifications, you
+    may connect the #DjVuFile# to your own \Ref{DjVuPort} after
+    it has been constructed.
 
-	  @param str The stream containing data for the file. */
-   void init(const GP<ByteStream> & str);
+    @param str The stream containing data for the file. */
+    void init(const GP<ByteStream>& str);
 
-      /** Creator, does the init(ByteStream &str) */
-   static GP<DjVuFile> create( const GP<ByteStream> & str,
-     const ErrorRecoveryAction recover_action=ABORT,
-     const bool verbose_eof=true);
-   
-      /** Initializes a #DjVuFile# object. As you can notice, the data is not
-	  directly passed to this function. The #DjVuFile# will ask for it
-	  through the \Ref{DjVuPort} mechanism before the constructor
-	  finishes. If the data is stored locally on the hard disk then the
-	  pointer to \Ref{DjVuPort} may be set to #ZERO#, which will make
-	  #DjVuFile# read all data from the hard disk and report all errors
-	  to #stderr#.
+    /** Creator, does the init(ByteStream &str) */
+    static GP<DjVuFile> create(const GP<ByteStream>& str,
+        const ErrorRecoveryAction recover_action = ABORT,
+        const bool verbose_eof = true);
 
-	  {\bf Note}. If the file includes (by means of #INCL# chunks) other
-	  files then you should be ready to
-	  \begin{enumerate}
-	     \item Reply to requests \Ref{DjVuPort::id_to_url}() issued to
-	           translate IDs (used in #INCL# chunks) to absolute URLs.
-		   Usually, when the file is created by \Ref{DjVuDocument}
-		   this job is done by it. If you construct such a file
-		   manually, be prepared to do the ID to URL translation
-	     \item Provide data for all included files.
-	  \end{enumerate}
+    /** Initializes a #DjVuFile# object. As you can notice, the data is not
+    directly passed to this function. The #DjVuFile# will ask for it
+    through the \Ref{DjVuPort} mechanism before the constructor
+    finishes. If the data is stored locally on the hard disk then the
+    pointer to \Ref{DjVuPort} may be set to #ZERO#, which will make
+    #DjVuFile# read all data from the hard disk and report all errors
+    to #stderr#.
 
-	  @param url The URL assigned to this file. It will be used when
-	         the #DjVuFile# asks for data.
-	  @param port All communication between #DjVuFile#s and \Ref{DjVuDocument}s
-	         is done through the \Ref{DjVuPort} mechanism. If the {\em url}
-		 is not local or the data does not reside on the hard disk,
-		 the {\em port} parameter must not be #ZERO#. If the {\em port}
-		 is #ZERO# then #DjVuFile# will create an internal instance
-		 of \Ref{DjVuSimplePort} for accessing local files and
-		 reporting errors. It can later be disabled by means
-		 of \Ref{disable_standard_port}() function. */
-   void init(const GURL & url, GP<DjVuPort> port=0);
+    {\bf Note}. If the file includes (by means of #INCL# chunks) other
+    files then you should be ready to
+    \begin{enumerate}
+       \item Reply to requests \Ref{DjVuPort::id_to_url}() issued to
+             translate IDs (used in #INCL# chunks) to absolute URLs.
+         Usually, when the file is created by \Ref{DjVuDocument}
+         this job is done by it. If you construct such a file
+         manually, be prepared to do the ID to URL translation
+       \item Provide data for all included files.
+    \end{enumerate}
 
-      /** Creator, does the init(const GURL &url, GP<DjVuPort> port=0) */
-   static GP<DjVuFile> create(
-     const GURL & url, GP<DjVuPort> port=0,
-     const ErrorRecoveryAction recover_action=ABORT,
-     const bool verbose_eof=true);
+    @param url The URL assigned to this file. It will be used when
+           the #DjVuFile# asks for data.
+    @param port All communication between #DjVuFile#s and \Ref{DjVuDocument}s
+           is done through the \Ref{DjVuPort} mechanism. If the {\em url}
+       is not local or the data does not reside on the hard disk,
+       the {\em port} parameter must not be #ZERO#. If the {\em port}
+       is #ZERO# then #DjVuFile# will create an internal instance
+       of \Ref{DjVuSimplePort} for accessing local files and
+       reporting errors. It can later be disabled by means
+       of \Ref{disable_standard_port}() function. */
+    void init(const GURL& url, GP<DjVuPort> port = 0);
 
-      /** Disables the built-in port for accessing local files, which may
-	  have been created in the case when the #port# argument to
-	  the \Ref{DjVuFile::DjVuFile}() constructor is #ZERO# */
-   void		disable_standard_port(void);
+    /** Creator, does the init(const GURL &url, GP<DjVuPort> port=0) */
+    static GP<DjVuFile> create(
+        const GURL& url, GP<DjVuPort> port = 0,
+        const ErrorRecoveryAction recover_action = ABORT,
+        const bool verbose_eof = true);
 
-      /** Looks for #decoded# navigation directory (\Ref{DjVuNavDir}) in this
-	  or included files. Returns #ZERO# if nothing could be found.
+    /** Disables the built-in port for accessing local files, which may
+    have been created in the case when the #port# argument to
+    the \Ref{DjVuFile::DjVuFile}() constructor is #ZERO# */
+    void		disable_standard_port(void);
 
-	  {\bf Note.} This function does {\bf not} attempt to decode #NDIR#
-	  chunks. It is looking for predecoded components. #NDIR# can be
-	  decoded either during regular decoding (initiated by
-	  \Ref{start_decode}() function) or by \Ref{decode_ndir}() function,
-	  which processes this and included files recursively in search
-	  of #NDIR# chunks and decodes them. */
-   GP<DjVuNavDir>	find_ndir(void);
+    /** Looks for #decoded# navigation directory (\Ref{DjVuNavDir}) in this
+    or included files. Returns #ZERO# if nothing could be found.
 
-      /** @name #DjVuFile# flags query functions */
-      //@{
-      /** Returns the #DjVuFile# flags. The value returned is the
-	  result of ORing one or more of the following constants:
-	  \begin{itemize}
-	     \item #DECODING# The decoding is in progress
-	     \item #DECODE_OK# The decoding has finished successfully
-	     \item #DECODE_FAILED# The decoding has failed
-	     \item #DECODE_STOPPED# The decoding has been stopped by
-	           \Ref{stop_decode}() function
-	     \item #DATA_PRESENT# All data for this file has been received.
-	           It's especially important in the case of Netscape or IE
-		   plugins when the data is being received while the
-		   decoding is done.
-	     \item #ALL_DATA_PRESENT# Not only data for this file, but also
-	           for all included file has been received.
-	     \item #INCL_FILES_CREATED# All #INCL# and #INCF# chunks have been
-	           processed and the corresponding #DjVuFile#s created. This
-		   is important to know to be sure that the list returned by
-		   \Ref{get_included_files}() is OK.
-	  \end{itemize} */
-   long		get_flags(void) const;
-      /// Returns #TRUE# if the file is being decoded.
-   bool		is_decoding(void) const;
-      /// Returns #TRUE# if decoding of the file has finished successfully.
-   bool		is_decode_ok(void) const;
-      /// Returns #TRUE# if decoding of the file has failed.
-   bool		is_decode_failed(void) const;
-      /** Returns #TRUE# if decoding of the file has been stopped by
-	  \Ref{stop_decode}() function. */
-   bool		is_decode_stopped(void) const;
-      /// Returns #TRUE# if this file has received all data.
-   bool		is_data_present(void) const;
-      /** Returns #TRUE# if this file {\bf and} all included files have
-	  received all data. */
-   bool		is_all_data_present(void) const;
-      /** Returns #TRUE# if all included files have been created. Only when
-	  this function returns 1, the \Ref{get_included_files}() returns
-	  the correct information. */
-   bool		are_incl_files_created(void) const;
-   bool		is_modified(void) const;
-   bool		needs_compression(void) const;
-   bool		can_compress(void) const;
-   void		set_modified(bool m);
-   void		set_needs_compression(bool m);
-   void		set_can_compress(bool m);
-      //@}
+    {\bf Note.} This function does {\bf not} attempt to decode #NDIR#
+    chunks. It is looking for predecoded components. #NDIR# can be
+    decoded either during regular decoding (initiated by
+    \Ref{start_decode}() function) or by \Ref{decode_ndir}() function,
+    which processes this and included files recursively in search
+    of #NDIR# chunks and decodes them. */
+    GP<DjVuNavDir>	find_ndir(void);
 
-      /// Returns the URL assigned to this file
-   GURL		get_url(void) const;
+    /** @name #DjVuFile# flags query functions */
+    //@{
+    /** Returns the #DjVuFile# flags. The value returned is the
+    result of ORing one or more of the following constants:
+    \begin{itemize}
+       \item #DECODING# The decoding is in progress
+       \item #DECODE_OK# The decoding has finished successfully
+       \item #DECODE_FAILED# The decoding has failed
+       \item #DECODE_STOPPED# The decoding has been stopped by
+             \Ref{stop_decode}() function
+       \item #DATA_PRESENT# All data for this file has been received.
+             It's especially important in the case of Netscape or IE
+         plugins when the data is being received while the
+         decoding is done.
+       \item #ALL_DATA_PRESENT# Not only data for this file, but also
+             for all included file has been received.
+       \item #INCL_FILES_CREATED# All #INCL# and #INCF# chunks have been
+             processed and the corresponding #DjVuFile#s created. This
+         is important to know to be sure that the list returned by
+         \Ref{get_included_files}() is OK.
+    \end{itemize} */
+    long		get_flags(void) const;
+    /// Returns #TRUE# if the file is being decoded.
+    bool		is_decoding(void) const;
+    /// Returns #TRUE# if decoding of the file has finished successfully.
+    bool		is_decode_ok(void) const;
+    /// Returns #TRUE# if decoding of the file has failed.
+    bool		is_decode_failed(void) const;
+    /** Returns #TRUE# if decoding of the file has been stopped by
+    \Ref{stop_decode}() function. */
+    bool		is_decode_stopped(void) const;
+    /// Returns #TRUE# if this file has received all data.
+    bool		is_data_present(void) const;
+    /** Returns #TRUE# if this file {\bf and} all included files have
+    received all data. */
+    bool		is_all_data_present(void) const;
+    /** Returns #TRUE# if all included files have been created. Only when
+    this function returns 1, the \Ref{get_included_files}() returns
+    the correct information. */
+    bool		are_incl_files_created(void) const;
+    bool		is_modified(void) const;
+    bool		needs_compression(void) const;
+    bool		can_compress(void) const;
+    void		set_modified(bool m);
+    void		set_needs_compression(bool m);
+    void		set_can_compress(bool m);
+    //@}
 
-      /** @name Decode control routines */
-      //@{
-      /** Starts decode. If threads are enabled, the decoding will be
-	  done in another thread. Be sure to use \Ref{wait_for_finish}()
-	  or listen for notifications sent through the \Ref{DjVuPortcaster}
-	  to remain in sync. */
-   void		start_decode(void);
-      /** Start the decode iff not already decoded.  If sync is true, wait
-          wait for decode to complete.  Returns true of start_decode is called.
-          */
-   bool   resume_decode(const bool sync=false);
-      /** Stops decode. If #sync# is 1 then the function will not return
-	  until the decoding thread actually dies. Otherwise it will
-	  just signal the thread to stop and will return immediately.
-	  Decoding of all included files will be stopped too. */
-   void		stop_decode(bool sync);
-      /** Recursively stops all data-related operations.
+    /// Returns the URL assigned to this file
+    GURL		get_url(void) const;
 
-	  Depending on the value of #only_blocked# flag this works as follows:
-	  \begin{itemize}
-	     \item If #only_blocked# is #TRUE#, the function will make sure,
-	           that any further access to the file's data will result
-		   in a #STOP# exception if the desired data is not available
-		   (and the thread would normally block).
-	     \item If #only_blocked# is #FALSE#, then {\bf any} further
-	           access to the file's data will result in immediate
-		   #STOP# exception.
-	  \end{itemize}
+    /** @name Decode control routines */
+    //@{
+    /** Starts decode. If threads are enabled, the decoding will be
+    done in another thread. Be sure to use \Ref{wait_for_finish}()
+    or listen for notifications sent through the \Ref{DjVuPortcaster}
+    to remain in sync. */
+    void		start_decode(void);
+    /** Start the decode iff not already decoded.  If sync is true, wait
+        wait for decode to complete.  Returns true of start_decode is called.
+        */
+    bool   resume_decode(const bool sync = false);
+    /** Stops decode. If #sync# is 1 then the function will not return
+    until the decoding thread actually dies. Otherwise it will
+    just signal the thread to stop and will return immediately.
+    Decoding of all included files will be stopped too. */
+    void		stop_decode(bool sync);
+    /** Recursively stops all data-related operations.
 
-	  The action of this function is recursive, meaning that any #DjVuFile#
-	  included into this one will also be stopped.
+    Depending on the value of #only_blocked# flag this works as follows:
+    \begin{itemize}
+       \item If #only_blocked# is #TRUE#, the function will make sure,
+             that any further access to the file's data will result
+         in a #STOP# exception if the desired data is not available
+         (and the thread would normally block).
+       \item If #only_blocked# is #FALSE#, then {\bf any} further
+             access to the file's data will result in immediate
+         #STOP# exception.
+    \end{itemize}
 
-	  Use this function when you don't need the #DjVuFile# anymore. The
-	  results cannot be undone, and the whole idea is to make all threads
-	  working with this file exit with the #STOP# exception. */
-   void		stop(bool only_blocked);
-      /** Wait for the decoding to finish. This will wait for the
-	  termination of included files too. */
-   void		wait_for_finish(void);
-      /** Looks for #NDIR# chunk (navigation directory), and decodes its
-	  contents. If the #NDIR# chunk has not been found in {\em this} file,
-	  but this file includes others, the procedure will continue
-	  recursively. This function is useful to obtain the document
-	  navigation directory before any page has been decoded. After it
-	  returns the directory can be obtained by calling \Ref{find_ndir}()
-	  function.
+    The action of this function is recursive, meaning that any #DjVuFile#
+    included into this one will also be stopped.
 
-	  {\bf Warning.} Contrary to \Ref{start_decode}(), this function
-	  does not return before it completely decodes the directory.
-	  Make sure, that this file and all included files have enough data. */
-   GP<DjVuNavDir>	decode_ndir(void);
-      /// Clears all decoded components.
-   void		reset(void);
-      /** Processes #INCL# chunks and creates included files.
-	  Normally you won't need to call this function because included
-	  files are created automatically when the file is being decoded.
-	  But if due to some reason you'd like to obtain the list of included
-	  files without decoding this file, this is an ideal function to call.
+    Use this function when you don't need the #DjVuFile# anymore. The
+    results cannot be undone, and the whole idea is to make all threads
+    working with this file exit with the #STOP# exception. */
+    void		stop(bool only_blocked);
+    /** Wait for the decoding to finish. This will wait for the
+    termination of included files too. */
+    void		wait_for_finish(void);
+    /** Looks for #NDIR# chunk (navigation directory), and decodes its
+    contents. If the #NDIR# chunk has not been found in {\em this} file,
+    but this file includes others, the procedure will continue
+    recursively. This function is useful to obtain the document
+    navigation directory before any page has been decoded. After it
+    returns the directory can be obtained by calling \Ref{find_ndir}()
+    function.
 
-	  {\bf Warning.} This function does not return before it reads the
-	  whole file, which may block your application under some circumstances
-	  if not all data is available. */
-   void		process_incl_chunks(void);
-      //@}
-   
-      // Function needed by the cache
-   unsigned int	get_memory_usage(void) const;
+    {\bf Warning.} Contrary to \Ref{start_decode}(), this function
+    does not return before it completely decodes the directory.
+    Make sure, that this file and all included files have enough data. */
+    GP<DjVuNavDir>	decode_ndir(void);
+    /// Clears all decoded components.
+    void		reset(void);
+    /** Processes #INCL# chunks and creates included files.
+    Normally you won't need to call this function because included
+    files are created automatically when the file is being decoded.
+    But if due to some reason you'd like to obtain the list of included
+    files without decoding this file, this is an ideal function to call.
 
-      /** Returns the list of included DjVuFiles.
-	  
-	  {\bf Warning.} Included files are normally created during decoding.
-	  Before that they do not exist.   If you call this function at
-	  that time and set #only_created# to #FALSE# then it will have to
-	  read all the data from this file in order to find #INCL# chunks,
-	  which may block your application, if not all data is available.
+    {\bf Warning.} This function does not return before it reads the
+    whole file, which may block your application under some circumstances
+    if not all data is available. */
+    void		process_incl_chunks(void);
+    //@}
 
-	  @param only_created If #TRUE#, the file will not try to process
-	         #INCL# chunks and load referenced files. It will return
-		 just those files, which have already been created during
-		 the decoding procedure. */
-   GPList<DjVuFile>	get_included_files(bool only_created=true);
+    // Function needed by the cache
+    unsigned int	get_memory_usage(void) const;
 
-      /** Includes a #DjVuFile# with the specified #id# into this one.
-	  This function will also insert an #INCL# chunk at position
-	  #chunk_num#. The function will request data for the included
-	  file and will create it before returning. */
-   void		insert_file(const GUTF8String &id, int chunk_num=1);
-      /// Will get rid of included file with the given #id#
-   void		unlink_file(const GUTF8String &id);
-      /** Will find an #INCL# chunk containing #name# in input #data# and
-	  will remove it */
-   static GP<DataPool>	unlink_file(const GP<DataPool> & data, const GUTF8String &name);
+    /** Returns the list of included DjVuFiles.
 
-      /// Returns the number of chunks in the IFF file data
-   int		get_chunks_number(void);
-      /// Returns the name of chunk number #chunk_num#
-   GUTF8String	get_chunk_name(int chunk_num);
-      /// Returns 1 if this file contains chunk with name #chunk_name#
-   bool		contains_chunk(const GUTF8String &chunk_name);
+    {\bf Warning.} Included files are normally created during decoding.
+    Before that they do not exist.   If you call this function at
+    that time and set #only_created# to #FALSE# then it will have to
+    read all the data from this file in order to find #INCL# chunks,
+    which may block your application, if not all data is available.
 
-      /** Processes the included files hierarchy and returns merged
-	  annotations. This function may be used even when the #DjVuFile#
-	  has not been decoded yet. If all data has been received for
-	  this #DjVuFile# and all included #DjVuFile#s, it will will
-	  gather annotations from them and will return the result.
-	  If no annotations have been found, #ZERO# will be returned.
-	  If either this #DjVuFile# or any of the included files do not
-	  have all the data, the function will use the results of
-	  decoding, which may have been started with the \Ref{start_decode}()
-	  function. Otherwise #ZERO# will be returned as well.
+    @param only_created If #TRUE#, the file will not try to process
+           #INCL# chunks and load referenced files. It will return
+       just those files, which have already been created during
+       the decoding procedure. */
+    GPList<DjVuFile>	get_included_files(bool only_created = true);
 
-	  If #max_level_ptr# pointer is not zero, the function will use
-	  it to store the maximum level number from which annotations
-	  have been obtained. #ZERO# level corresponds to the top-level
-	  page file.
+    /** Includes a #DjVuFile# with the specified #id# into this one.
+    This function will also insert an #INCL# chunk at position
+    #chunk_num#. The function will request data for the included
+    file and will create it before returning. */
+    void		insert_file(const GUTF8String& id, int chunk_num = 1);
+    /// Will get rid of included file with the given #id#
+    void		unlink_file(const GUTF8String& id);
+    /** Will find an #INCL# chunk containing #name# in input #data# and
+    will remove it */
+    static GP<DataPool>	unlink_file(const GP<DataPool>& data, const GUTF8String& name);
 
-	  {\bf Summary:} This function will return complete annotations only
-	  when the \Ref{is_all_data_present}() returns #TRUE#. */
-   GP<ByteStream>	get_merged_anno(int * max_level_ptr=0);
+    /// Returns the number of chunks in the IFF file data
+    int		get_chunks_number(void);
+    /// Returns the name of chunk number #chunk_num#
+    GUTF8String	get_chunk_name(int chunk_num);
+    /// Returns 1 if this file contains chunk with name #chunk_name#
+    bool		contains_chunk(const GUTF8String& chunk_name);
 
-      /** Returns the annotation chunks (#"ANTa"# and #"ANTz"#).  This
-          function may be used even when the #DjVuFile# has not been decoded
-          yet. If all data has been received for this #DjVuFile#, it will
-          gather hidden text and return the result.  If no hidden text has
-          been found, #ZERO# will be returned.
+    /** Processes the included files hierarchy and returns merged
+    annotations. This function may be used even when the #DjVuFile#
+    has not been decoded yet. If all data has been received for
+    this #DjVuFile# and all included #DjVuFile#s, it will will
+    gather annotations from them and will return the result.
+    If no annotations have been found, #ZERO# will be returned.
+    If either this #DjVuFile# or any of the included files do not
+    have all the data, the function will use the results of
+    decoding, which may have been started with the \Ref{start_decode}()
+    function. Otherwise #ZERO# will be returned as well.
 
-	  {\bf Summary:} This function will return complete annotations
-	  only when the \Ref{is_all_data_present}() returns #TRUE#. */
-   GP<ByteStream>	get_anno(void);
+    If #max_level_ptr# pointer is not zero, the function will use
+    it to store the maximum level number from which annotations
+    have been obtained. #ZERO# level corresponds to the top-level
+    page file.
 
-      /** Returns the text chunks (#"TXTa"# and #"TXTz"#).  This function may
-          be used even when the #DjVuFile# has not been decoded yet. If all
-          data has been received for this #DjVuFile#, it will gather hidden
-          text and return the result.  If no hidden text has been found,
-          #ZERO# will be returned.
+    {\bf Summary:} This function will return complete annotations only
+    when the \Ref{is_all_data_present}() returns #TRUE#. */
+    GP<ByteStream>	get_merged_anno(int* max_level_ptr = 0);
 
-	  {\bf Summary:} This function will return complete hidden text layers
-	  only when the \Ref{is_all_data_present}() returns #TRUE#. */
-   GP<ByteStream>	get_text(void);
+    /** Returns the annotation chunks (#"ANTa"# and #"ANTz"#).  This
+        function may be used even when the #DjVuFile# has not been decoded
+        yet. If all data has been received for this #DjVuFile#, it will
+        gather hidden text and return the result.  If no hidden text has
+        been found, #ZERO# will be returned.
 
-      /** Returns the meta chunks (#"METa"# and #"METz"#).  This function may
-          be used even when the #DjVuFile# has not been decoded yet. If all
-          data has been received for this #DjVuFile#, it will gather metadata
-          and return the result.  If no hidden text has been found, #ZERO#
-          will be returned.
+    {\bf Summary:} This function will return complete annotations
+    only when the \Ref{is_all_data_present}() returns #TRUE#. */
+    GP<ByteStream>	get_anno(void);
 
-	  {\bf Summary:} This function will return complete meta data only
-	  when the \Ref{is_all_data_present}() returns #TRUE#. */
-   GP<ByteStream>	get_meta(void);
+    /** Returns the text chunks (#"TXTa"# and #"TXTz"#).  This function may
+        be used even when the #DjVuFile# has not been decoded yet. If all
+        data has been received for this #DjVuFile#, it will gather hidden
+        text and return the result.  If no hidden text has been found,
+        #ZERO# will be returned.
 
-      /** Goes down the hierarchy of #DjVuFile#s and merges their annotations.
-          (shouldn't this one be private?).
-	  @param max_level_ptr If this pointer is not ZERO, the function
-	         will use it to store the maximum level at which annotations
-		 were found. Top-level page files have ZERO #level#.
-	  @param ignore_list The function will not process included #DjVuFile#s
-	         with URLs matching those mentioned in this #ignore_list#. */
-   GP<ByteStream>	get_merged_anno(const GList<GURL> & ignore_list,
-					int * max_level_ptr);
+    {\bf Summary:} This function will return complete hidden text layers
+    only when the \Ref{is_all_data_present}() returns #TRUE#. */
+    GP<ByteStream>	get_text(void);
 
-      /** Clears this file of all annotations. */
-   void	remove_anno(void);
+    /** Returns the meta chunks (#"METa"# and #"METz"#).  This function may
+        be used even when the #DjVuFile# has not been decoded yet. If all
+        data has been received for this #DjVuFile#, it will gather metadata
+        and return the result.  If no hidden text has been found, #ZERO#
+        will be returned.
 
-      /** Clears the hidden text. */
-   void	remove_text(void);
+    {\bf Summary:} This function will return complete meta data only
+    when the \Ref{is_all_data_present}() returns #TRUE#. */
+    GP<ByteStream>	get_meta(void);
 
-      /// Clears the meta data.
-   void remove_meta(void);
+    /** Goes down the hierarchy of #DjVuFile#s and merges their annotations.
+        (shouldn't this one be private?).
+    @param max_level_ptr If this pointer is not ZERO, the function
+           will use it to store the maximum level at which annotations
+       were found. Top-level page files have ZERO #level#.
+    @param ignore_list The function will not process included #DjVuFile#s
+           with URLs matching those mentioned in this #ignore_list#. */
+    GP<ByteStream>	get_merged_anno(const GList<GURL>& ignore_list,
+        int* max_level_ptr);
 
-      /** Returns #TRUE# if the file contains annotation chunks.
-	  Known annotation chunks at the time of writing this help are:
-	  {\bf ANTa}, {\bf ANTz}, {\bf FORM:ANNO}. */
-   bool		contains_anno(void);
+    /** Clears this file of all annotations. */
+    void	remove_anno(void);
 
-      /** Returns #TRUE# if the file contains hiddentext chunks.
-	  Known hiddentext chunks at the time of writing this help are:
-	  {\bf TXTa}, and {\bf TXTz}. */
-   bool		contains_text(void);
+    /** Clears the hidden text. */
+    void	remove_text(void);
 
-      /** Returns #TRUE# if the file contains metadata chunks.
-	  Known metadata chunks at the time of writing this help are:
-	  {\bf METa}, and {\bf METz}. */
-   bool		contains_meta(void);
+    /// Clears the meta data.
+    void remove_meta(void);
 
-     /** Changes the value of the hiddentext. */
-   void change_info(GP<DjVuInfo> info, const bool do_reset=false);
-   
-     /** Changes the value of the hiddentext. */
-   void change_text(GP<DjVuTXT> txt, const bool do_reset=false);
-   
-     /** Changes the value of the metadata. */
-   void change_meta(const GUTF8String &meta, const bool do_reset=false);
-   
-      /** @name Encoding routines */
-      //@{
-      /** The main function that encodes data back into binary stream.
-	  The data returned will reflect possible changes made into the
-	  chunk structure, annotation chunks and navigation directory
-	  chunk #NDIR#.
+    /** Returns #TRUE# if the file contains annotation chunks.
+    Known annotation chunks at the time of writing this help are:
+    {\bf ANTa}, {\bf ANTz}, {\bf FORM:ANNO}. */
+    bool		contains_anno(void);
 
-	  {\bf Note:} The file stream will not have the magic
-          #0x41,0x54,0x26,0x54#
-	  at the beginning.
-	  
-	  @param included_too Process included files too. */
-   GP<ByteStream>	get_djvu_bytestream(const bool included_too, const bool no_ndir=true);
+    /** Returns #TRUE# if the file contains hiddentext chunks.
+    Known hiddentext chunks at the time of writing this help are:
+    {\bf TXTa}, and {\bf TXTz}. */
+    bool		contains_text(void);
 
-      /** Same as \Ref{get_djvu_bytestream}(), returning a DataPool.
-	  @param included_too Process included files too. */
-   GP<DataPool>		get_djvu_data(const bool included_too, const bool no_ndir=true );
-      //@}
+    /** Returns #TRUE# if the file contains metadata chunks.
+    Known metadata chunks at the time of writing this help are:
+    {\bf METa}, and {\bf METz}. */
+    bool		contains_meta(void);
 
-      // Internal. Used by DjVuDocument
-   GP<DataPool>		get_init_data_pool(void) const { return data_pool; };
+    /** Changes the value of the hiddentext. */
+    void change_info(GP<DjVuInfo> info, const bool do_reset = false);
 
-      // Internal. Used by DjVuDocument. May block for data.
-   void			move(const GURL & dir_url);
+    /** Changes the value of the hiddentext. */
+    void change_text(GP<DjVuTXT> txt, const bool do_reset = false);
 
-      /** Internal. Used by DjVuDocument. The #name# should {\bf not}
-	  be encoded with \Ref{GOS::encode_reserved}(). */
-   void			set_name(const GUTF8String &name);
+    /** Changes the value of the metadata. */
+    void change_meta(const GUTF8String& meta, const bool do_reset = false);
 
-      // Internal. Used by DjVuDocument
-   GSafeFlags &		get_safe_flags(void);
+    /** @name Encoding routines */
+    //@{
+    /** The main function that encodes data back into binary stream.
+    The data returned will reflect possible changes made into the
+    chunk structure, annotation chunks and navigation directory
+    chunk #NDIR#.
 
-      // Internal. Used by DjVuImage
-   void                 merge_anno(ByteStream &out);
+    {\bf Note:} The file stream will not have the magic
+        #0x41,0x54,0x26,0x54#
+    at the beginning.
 
-      // Internal. Used by DjVuImage
-   void                 get_text(ByteStream &out);
+    @param included_too Process included files too. */
+    GP<ByteStream>	get_djvu_bytestream(const bool included_too, const bool no_ndir = true);
 
-      // Internal. Used by DjVuImage
-   void                 get_meta(ByteStream &out);
+    /** Same as \Ref{get_djvu_bytestream}(), returning a DataPool.
+    @param included_too Process included files too. */
+    GP<DataPool>		get_djvu_data(const bool included_too, const bool no_ndir = true);
+    //@}
 
-      // Internal. Used by DjVuDocEditor
-   void			rebuild_data_pool(void);
+    // Internal. Used by DjVuDocument
+    GP<DataPool>		get_init_data_pool(void) const { return data_pool; };
 
-      // Functions inherited from DjVuPort
-   virtual bool		inherits(const GUTF8String &class_name) const;
-   virtual void		notify_chunk_done(const DjVuPort * source, const GUTF8String &name);
-   virtual void		notify_file_flags_changed(const DjVuFile * source,
-						  long set_mask, long clr_mask);
-   virtual void		set_recover_errors(const ErrorRecoveryAction=ABORT);
-   virtual void		set_verbose_eof(const bool verbose_eof=true);
-   virtual void		report_error(const GException &ex,const bool=true);
-   static void set_decode_codec(GP<GPixmap> (*codec)(ByteStream &bs));
+    // Internal. Used by DjVuDocument. May block for data.
+    void			move(const GURL& dir_url);
+
+    /** Internal. Used by DjVuDocument. The #name# should {\bf not}
+    be encoded with \Ref{GOS::encode_reserved}(). */
+    void			set_name(const GUTF8String& name);
+
+    // Internal. Used by DjVuDocument
+    GSafeFlags& get_safe_flags(void);
+
+    // Internal. Used by DjVuImage
+    void                 merge_anno(ByteStream& out);
+
+    // Internal. Used by DjVuImage
+    void                 get_text(ByteStream& out);
+
+    // Internal. Used by DjVuImage
+    void                 get_meta(ByteStream& out);
+
+    // Internal. Used by DjVuDocEditor
+    void			rebuild_data_pool(void);
+
+    // Functions inherited from DjVuPort
+    virtual bool		inherits(const GUTF8String& class_name) const;
+    virtual void		notify_chunk_done(const DjVuPort* source, const GUTF8String& name);
+    virtual void		notify_file_flags_changed(const DjVuFile* source,
+        long set_mask, long clr_mask);
+    virtual void		set_recover_errors(const ErrorRecoveryAction = ABORT);
+    virtual void		set_verbose_eof(const bool verbose_eof = true);
+    virtual void		report_error(const GException& ex, const bool = true);
+    static void set_decode_codec(GP<GPixmap>(*codec)(ByteStream& bs));
 
 protected:
-   GURL			url;
-   GP<DataPool>		data_pool;
+    GURL			url;
+    GP<DataPool>		data_pool;
 
-   GPList<DjVuFile>	inc_files_list;
-   GCriticalSection	inc_files_lock;
-   GCriticalSection	anno_lock;
-   GCriticalSection	text_lock;
-   GCriticalSection	meta_lock;
-   ErrorRecoveryAction	recover_errors;
-   bool			verbose_eof;
-   int			chunks_number;
+    GPList<DjVuFile>	inc_files_list;
+    GCriticalSection	inc_files_lock;
+    GCriticalSection	anno_lock;
+    GCriticalSection	text_lock;
+    GCriticalSection	meta_lock;
+    ErrorRecoveryAction	recover_errors;
+    bool			verbose_eof;
+    int			chunks_number;
 private:
-   bool                 initialized;
-   GSafeFlags		flags;
+    bool                 initialized;
+    GSafeFlags		flags;
 
-   GThread		* decode_thread;
-   GP<DataPool>		decode_data_pool;
-   GP<DjVuFile>		decode_life_saver;
+    GThread* decode_thread;
+    GP<DataPool>		decode_data_pool;
+    GP<DjVuFile>		decode_life_saver;
 
-   GP<DjVuPort>		simple_port;
+    GP<DjVuPort>		simple_port;
 
-   GMonitor		chunk_mon, finish_mon;
+    GMonitor		chunk_mon, finish_mon;
 
-      // Functions called when the decoding thread starts
-   static void	static_decode_func(void *);
-   void	decode_func(void);
-   void	decode(const GP<ByteStream> &str);
-   GUTF8String decode_chunk(const GUTF8String &chkid,
-     const GP<ByteStream> &str, bool djvi, bool djvu, bool iw44);
-   int		get_dpi(int w, int h);
+    // Functions called when the decoding thread starts
+    static void	static_decode_func(void*);
+    void	decode_func(void);
+    void	decode(const GP<ByteStream>& str);
+    GUTF8String decode_chunk(const GUTF8String& chkid,
+        const GP<ByteStream>& str, bool djvi, bool djvu, bool iw44);
+    int		get_dpi(int w, int h);
 
-      // Functions dealing with the shape directory (fgjd)
-   static GP<JB2Dict> static_get_fgjd(void *);
-   GP<JB2Dict> get_fgjd(int block=0);
+    // Functions dealing with the shape directory (fgjd)
+    static GP<JB2Dict> static_get_fgjd(void*);
+    GP<JB2Dict> get_fgjd(int block = 0);
 
-      // Functions used to wait for smth
-   void		wait_for_chunk(void);
-   bool		wait_for_finish(bool self);
+    // Functions used to wait for smth
+    void		wait_for_chunk(void);
+    bool		wait_for_finish(bool self);
 
-      // INCL chunk processor
-   GP<DjVuFile>	process_incl_chunk(ByteStream & str, int file_num=-1);
+    // INCL chunk processor
+    GP<DjVuFile>	process_incl_chunk(ByteStream& str, int file_num = -1);
 
-      // Trigger: called when DataPool has all data
-   static void	static_trigger_cb(void *);
-   void		trigger_cb(void);
-   
-      // Progress callback: called from time to time
-   static void	progress_cb(int pos, void *);
-   static void	get_merged_anno(const GP<DjVuFile> & file,
-     const GP<ByteStream> &str_out, const GList<GURL> & ignore_list,
-     int level, int & max_level, GMap<GURL, void *> & map);
-   static void	get_anno(const GP<DjVuFile> & file,
-     const GP<ByteStream> &str_out);
-   static void	get_text(const GP<DjVuFile> & file,
-     const GP<ByteStream> &str_out);
-   static void	get_meta(const GP<DjVuFile> & file,
-     const GP<ByteStream> &str_out);
+    // Trigger: called when DataPool has all data
+    static void	static_trigger_cb(void*);
+    void		trigger_cb(void);
 
-   void          check() const;
-   GP<DjVuNavDir>find_ndir(GMap<GURL, void *> & map);
-   GP<DjVuNavDir>decode_ndir(GMap<GURL, void *> & map);
-   void		add_djvu_data(IFFByteStream & str,
-			      GMap<GURL, void *> & map,
-			      const bool included_too, const bool no_ndir=true);
-   void		move(GMap<GURL, void *> & map, const GURL & dir_url);
+    // Progress callback: called from time to time
+    static void	progress_cb(int pos, void*);
+    static void	get_merged_anno(const GP<DjVuFile>& file,
+        const GP<ByteStream>& str_out, const GList<GURL>& ignore_list,
+        int level, int& max_level, GMap<GURL, void*>& map);
+    static void	get_anno(const GP<DjVuFile>& file,
+        const GP<ByteStream>& str_out);
+    static void	get_text(const GP<DjVuFile>& file,
+        const GP<ByteStream>& str_out);
+    static void	get_meta(const GP<DjVuFile>& file,
+        const GP<ByteStream>& str_out);
+
+    void          check() const;
+    GP<DjVuNavDir>find_ndir(GMap<GURL, void*>& map);
+    GP<DjVuNavDir>decode_ndir(GMap<GURL, void*>& map);
+    void		add_djvu_data(IFFByteStream& str,
+        GMap<GURL, void*>& map,
+        const bool included_too, const bool no_ndir = true);
+    void		move(GMap<GURL, void*>& map, const GURL& dir_url);
 private: // dummy stuff
-   static void decode(ByteStream *);
-   static GUTF8String decode_chunk(const GUTF8String &, ByteStream *,bool,bool,bool);
-   static void	get_merged_anno(const GP<DjVuFile> &,ByteStream *,
-     const GList<GURL> &, int, int &, GMap<GURL, void *> &);
-   static void	get_text(const GP<DjVuFile> &,ByteStream *);
-   static void	get_meta(const GP<DjVuFile> &,ByteStream *);
+    static void decode(ByteStream*);
+    static GUTF8String decode_chunk(const GUTF8String&, ByteStream*, bool, bool, bool);
+    static void	get_merged_anno(const GP<DjVuFile>&, ByteStream*,
+        const GList<GURL>&, int, int&, GMap<GURL, void*>&);
+    static void	get_text(const GP<DjVuFile>&, ByteStream*);
+    static void	get_meta(const GP<DjVuFile>&, ByteStream*);
 
 };
 
 inline long
 DjVuFile::get_flags(void) const
 {
-   return flags;
+    return flags;
 }
 
-inline GSafeFlags &
+inline GSafeFlags&
 DjVuFile::get_safe_flags(void)
 {
-   return flags;
+    return flags;
 }
 
 inline bool
 DjVuFile::is_decoding(void) const
 {
-   return (flags & DECODING)!=0;
+    return (flags & DECODING) != 0;
 }
 
 inline bool
 DjVuFile::is_decode_ok(void) const
 {
-   return (flags & DECODE_OK)!=0;
+    return (flags & DECODE_OK) != 0;
 }
 
 inline bool
 DjVuFile::is_decode_failed(void) const
 {
-   return (flags & DECODE_FAILED)!=0;
+    return (flags & DECODE_FAILED) != 0;
 }
 
 inline bool
 DjVuFile::is_decode_stopped(void) const
 {
-   return (flags & DECODE_STOPPED)!=0;
+    return (flags & DECODE_STOPPED) != 0;
 }
 
 inline bool
 DjVuFile::is_data_present(void) const
 {
-   return (flags & DATA_PRESENT)!=0;
+    return (flags & DATA_PRESENT) != 0;
 }
 
 inline bool
 DjVuFile::is_all_data_present(void) const
 {
-   return (flags & ALL_DATA_PRESENT)!=0;
+    return (flags & ALL_DATA_PRESENT) != 0;
 }
 
 inline bool
 DjVuFile::are_incl_files_created(void) const
 {
-   return (flags & INCL_FILES_CREATED)!=0;
+    return (flags & INCL_FILES_CREATED) != 0;
 }
 
 inline bool
 DjVuFile::is_modified(void) const
 {
-   return (flags & MODIFIED)!=0;
+    return (flags & MODIFIED) != 0;
 }
 
 inline void
 DjVuFile::set_modified(bool m)
 {
-  flags=m ? (flags | MODIFIED) : (flags & ~MODIFIED);
+    flags = m ? (flags | MODIFIED) : (flags & ~MODIFIED);
 }
 
 inline bool
 DjVuFile::needs_compression(void) const
 {
-   return (flags & NEEDS_COMPRESSION)!=0;
+    return (flags & NEEDS_COMPRESSION) != 0;
 }
 
 inline void
 DjVuFile::set_needs_compression(bool m)
 {
-   if (m) flags=flags | NEEDS_COMPRESSION;
-   else flags=flags & ~NEEDS_COMPRESSION;
+    if (m) flags = flags | NEEDS_COMPRESSION;
+    else flags = flags & ~NEEDS_COMPRESSION;
 }
 
 inline bool
 DjVuFile::can_compress(void) const
 {
-   return (flags & CAN_COMPRESS)!=0;
+    return (flags & CAN_COMPRESS) != 0;
 }
 
 inline void
 DjVuFile::set_can_compress(bool m)
 {
-   if (m)
-     flags=flags | CAN_COMPRESS;
-   else
-     flags=flags & ~CAN_COMPRESS;
+    if (m)
+        flags = flags | CAN_COMPRESS;
+    else
+        flags = flags & ~CAN_COMPRESS;
 }
 
 inline void
 DjVuFile::disable_standard_port(void)
 {
-   simple_port=0;
+    simple_port = 0;
 }
 
 inline bool
-DjVuFile::inherits(const GUTF8String &class_name) const
+DjVuFile::inherits(const GUTF8String& class_name) const
 {
-   return
-      (GUTF8String("DjVuFile") == class_name) ||
-      DjVuPort::inherits(class_name);
-//      !strcmp("DjVuFile", class_name) ||
-//      DjVuPort::inherits(class_name);
+    return
+        (GUTF8String("DjVuFile") == class_name) ||
+        DjVuPort::inherits(class_name);
+    //      !strcmp("DjVuFile", class_name) ||
+    //      DjVuPort::inherits(class_name);
 }
 
 inline void
 DjVuFile::wait_for_finish(void)
 {
-   while(wait_for_finish(1))
-     EMPTY_LOOP;
+    while (wait_for_finish(1))
+        EMPTY_LOOP;
 }
 
 inline GURL
 DjVuFile::get_url(void) const
 {
-   return url;
+    return url;
 }
 
 inline void
 DjVuFile::set_verbose_eof
 (const bool verbose)
 {
-  verbose_eof=verbose;
+    verbose_eof = verbose;
 }
 
 inline void
 DjVuFile::set_recover_errors
 (const ErrorRecoveryAction action)
 {
-  recover_errors=action;
+    recover_errors = action;
 }
 
 //@}

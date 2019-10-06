@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -115,7 +115,7 @@ class DataPool;
     The \Ref{DjVuPortcaster} is responsible for keeping the map up to date by
     getting rid of destinations that have been destroyed.  Map updates are
     performed from a single place and are serialized by a global monitor.
-    
+
     @memo DjVu decoder communication mechanism.
     @author Andrei Erofeev <eaf@geocities.com>\\
             L\'eon Bottou <leonb@research.att.com>
@@ -141,133 +141,133 @@ class DjVuFile;
 class DJVUAPI DjVuPort : public GPEnabled
 {
 public:
-   DjVuPort();
-   virtual ~DjVuPort();
-   static void *operator new (size_t sz);
-   static void operator delete(void *addr);
+    DjVuPort();
+    virtual ~DjVuPort();
+    static void* operator new (size_t sz);
+    static void operator delete(void* addr);
 
-      /**  Use this function to get a copy of the global \Ref{DjVuPortcaster}. */
-   static DjVuPortcaster *get_portcaster(void);
+    /**  Use this function to get a copy of the global \Ref{DjVuPortcaster}. */
+    static DjVuPortcaster* get_portcaster(void);
 
-      /** Copy constructor. When #DjVuPort#s are copied, the portcaster
-          copies all incoming and outgoing routes of the original. */
-   DjVuPort(const DjVuPort & port);
+    /** Copy constructor. When #DjVuPort#s are copied, the portcaster
+        copies all incoming and outgoing routes of the original. */
+    DjVuPort(const DjVuPort& port);
 
-      /** Copy operator. Similarly to the copy constructor, the portcaster
-          copies all incoming and outgoing coming routes of the original. */
-   DjVuPort & operator=(const DjVuPort & port);
+    /** Copy operator. Similarly to the copy constructor, the portcaster
+        copies all incoming and outgoing coming routes of the original. */
+    DjVuPort& operator=(const DjVuPort& port);
 
-      /** Should return 1 if the called class inherits class #class_name#.
-	  When a destination receives a request, it can retrieve the pointer
-	  to the source #DjVuPort#. This virtual function should be able
-	  to help to identify the source of the request. For example,
-	  \Ref{DjVuFile} is also derived from #DjVuPort#. In order for
-	  the receiver to recognize the sender, the \Ref{DjVuFile} should
-	  override this function to return #TRUE# when the #class_name#
-	  is either #DjVuPort# or #DjVuFile# */
-   virtual bool		inherits(const GUTF8String &class_name) const;
+    /** Should return 1 if the called class inherits class #class_name#.
+    When a destination receives a request, it can retrieve the pointer
+    to the source #DjVuPort#. This virtual function should be able
+    to help to identify the source of the request. For example,
+    \Ref{DjVuFile} is also derived from #DjVuPort#. In order for
+    the receiver to recognize the sender, the \Ref{DjVuFile} should
+    override this function to return #TRUE# when the #class_name#
+    is either #DjVuPort# or #DjVuFile# */
+    virtual bool		inherits(const GUTF8String& class_name) const;
 
-      /** @name Notifications. 
-          These virtual functions may be overridden by the subclasses
-          of #DjVuPort#.  They are called by the \Ref{DjVuPortcaster}
-          when the port is alive and when there is a route between the 
-          source of the notification and this port. */
-      //@{
+    /** @name Notifications.
+        These virtual functions may be overridden by the subclasses
+        of #DjVuPort#.  They are called by the \Ref{DjVuPortcaster}
+        when the port is alive and when there is a route between the
+        source of the notification and this port. */
+        //@{
 
-      /** This request is issued to request translation of the ID, used
-	  in an DjVu INCL chunk to a URL, which may be used to request
-	  data associated with included file. \Ref{DjVuDocument} usually
-	  intercepts all such requests, and the user doesn't have to
-	  worry about the translation */
-   virtual GURL		id_to_url(const DjVuPort * source, const GUTF8String &id);
+        /** This request is issued to request translation of the ID, used
+        in an DjVu INCL chunk to a URL, which may be used to request
+        data associated with included file. \Ref{DjVuDocument} usually
+        intercepts all such requests, and the user doesn't have to
+        worry about the translation */
+    virtual GURL		id_to_url(const DjVuPort* source, const GUTF8String& id);
 
-      /** This request is used to get a file corresponding to the
-	  given ID. \Ref{DjVuDocument} is supposed to intercept it
-	  and either create a new instance of \Ref{DjVuFile} or reuse
-	  an existing one from the cache. */
-   virtual GP<DjVuFile>	id_to_file(const DjVuPort * source, const GUTF8String &id);
+    /** This request is used to get a file corresponding to the
+    given ID. \Ref{DjVuDocument} is supposed to intercept it
+    and either create a new instance of \Ref{DjVuFile} or reuse
+    an existing one from the cache. */
+    virtual GP<DjVuFile>	id_to_file(const DjVuPort* source, const GUTF8String& id);
 
-      /** This request is issued when decoder needs additional data
-	  for decoding.  Both \Ref{DjVuFile} and \Ref{DjVuDocument} are
-	  initialized with a URL, not the document data.  As soon as
-	  they need the data, they call this function, whose responsibility
-	  is to locate the source of the data basing on the #URL# passed
-	  and return it back in the form of the \Ref{DataPool}. If this
-	  particular receiver is unable to fullfil the request, it should
-	  return #0#. */
-   virtual GP<DataPool>	request_data(const DjVuPort * source, const GURL & url);
+    /** This request is issued when decoder needs additional data
+    for decoding.  Both \Ref{DjVuFile} and \Ref{DjVuDocument} are
+    initialized with a URL, not the document data.  As soon as
+    they need the data, they call this function, whose responsibility
+    is to locate the source of the data basing on the #URL# passed
+    and return it back in the form of the \Ref{DataPool}. If this
+    particular receiver is unable to fullfil the request, it should
+    return #0#. */
+    virtual GP<DataPool>	request_data(const DjVuPort* source, const GURL& url);
 
-      /** This notification is sent when an error occurs and the error message
-	  should be shown to the user.  The receiver should return #0# if it is 
-          unable to process the request. Otherwise the receiver should return 1. */
-   virtual bool		notify_error(const DjVuPort * source, const GUTF8String &msg);
+    /** This notification is sent when an error occurs and the error message
+    should be shown to the user.  The receiver should return #0# if it is
+        unable to process the request. Otherwise the receiver should return 1. */
+    virtual bool		notify_error(const DjVuPort* source, const GUTF8String& msg);
 
-      /** This notification is sent to update the decoding status.  The
-          receiver should return #0# if it is unable to process the
-          request. Otherwise the receiver should return 1. */
-   virtual bool		notify_status(const DjVuPort * source, const GUTF8String &msg);
+    /** This notification is sent to update the decoding status.  The
+        receiver should return #0# if it is unable to process the
+        request. Otherwise the receiver should return 1. */
+    virtual bool		notify_status(const DjVuPort* source, const GUTF8String& msg);
 
-      /** This notification is sent by \Ref{DjVuImage} when it should be
-	  redrawn. It may be used to implement progressive redisplay.
+    /** This notification is sent by \Ref{DjVuImage} when it should be
+    redrawn. It may be used to implement progressive redisplay.
 
-	  @param source The sender of the request */
-   virtual void		notify_redisplay(const class DjVuImage * source);
+    @param source The sender of the request */
+    virtual void		notify_redisplay(const class DjVuImage* source);
 
-      /** This notification is sent by \ref{DjVuImage} when its geometry
-	  has been changed as a result of decoding. It may be used to
-	  implement progressive redisplay. */
-   virtual void		notify_relayout(const class DjVuImage * source);
+    /** This notification is sent by \ref{DjVuImage} when its geometry
+    has been changed as a result of decoding. It may be used to
+    implement progressive redisplay. */
+    virtual void		notify_relayout(const class DjVuImage* source);
 
-      /** This notification is sent when a new chunk has been decoded. */
-   virtual void		notify_chunk_done(const DjVuPort * source, const GUTF8String &name);
+    /** This notification is sent when a new chunk has been decoded. */
+    virtual void		notify_chunk_done(const DjVuPort* source, const GUTF8String& name);
 
-      /** This notification is sent after the \Ref{DjVuFile} flags have
-	  been changed. This happens, for example, when:
-	  \begin{itemize}
-	    \item Decoding succeeded, failed or just stopped
-	    \item All data has been received
-	    \item All included files have been created
-	  \end{itemize}
-	  
-	  @param source \Ref{DjVuFile}, which flags have been changed
-	  @param set_mask bits, which have been set
-	  @param clr_mask bits, which have been cleared */
-   virtual void		notify_file_flags_changed(const class DjVuFile * source,
-						  long set_mask, long clr_mask);
+    /** This notification is sent after the \Ref{DjVuFile} flags have
+    been changed. This happens, for example, when:
+    \begin{itemize}
+      \item Decoding succeeded, failed or just stopped
+      \item All data has been received
+      \item All included files have been created
+    \end{itemize}
 
-      /** This notification is sent after the \Ref{DjVuDocument} flags have
-	  been changed. This happens, for example, after it receives enough
-	  data and can determine its structure (#BUNDLED#, #OLD_INDEXED#, etc.).
+    @param source \Ref{DjVuFile}, which flags have been changed
+    @param set_mask bits, which have been set
+    @param clr_mask bits, which have been cleared */
+    virtual void		notify_file_flags_changed(const class DjVuFile* source,
+        long set_mask, long clr_mask);
 
-	  @param source \Ref{DjVuDocument}, which flags have been changed
-	  @param set_mask bits, which have been set
-	  @param clr_mask bits, which have been cleared */
-   virtual void		notify_doc_flags_changed(const class DjVuDocument * source,
-						 long set_mask, long clr_mask);
-   
-      /** This notification is sent from time to time while decoding is in
-	  progress. The purpose is obvious: to provide a way to know how much
-	  is done and how long the decoding will continue.  Argument #done# is
-	  a number from 0 to 1 reflecting the progress. */
-   virtual void		notify_decode_progress(const DjVuPort * source, float done);
+    /** This notification is sent after the \Ref{DjVuDocument} flags have
+    been changed. This happens, for example, after it receives enough
+    data and can determine its structure (#BUNDLED#, #OLD_INDEXED#, etc.).
 
-      /** This is the standard types for defining what to do in case of errors.
-          This is only used by some of the subclasses, but it needs to be 
-          defined here to guarantee all subclasses use the same enum types.
-          In general, many errors are non recoverable.  Using a setting
-          other than ABORT may just result in even more errors. */
-   enum ErrorRecoveryAction {ABORT=0,SKIP_PAGES=1,SKIP_CHUNKS=2,KEEP_ALL=3 }; 
-      //@}
+    @param source \Ref{DjVuDocument}, which flags have been changed
+    @param set_mask bits, which have been set
+    @param clr_mask bits, which have been cleared */
+    virtual void		notify_doc_flags_changed(const class DjVuDocument* source,
+        long set_mask, long clr_mask);
+
+    /** This notification is sent from time to time while decoding is in
+    progress. The purpose is obvious: to provide a way to know how much
+    is done and how long the decoding will continue.  Argument #done# is
+    a number from 0 to 1 reflecting the progress. */
+    virtual void		notify_decode_progress(const DjVuPort* source, float done);
+
+    /** This is the standard types for defining what to do in case of errors.
+        This is only used by some of the subclasses, but it needs to be
+        defined here to guarantee all subclasses use the same enum types.
+        In general, many errors are non recoverable.  Using a setting
+        other than ABORT may just result in even more errors. */
+    enum ErrorRecoveryAction { ABORT = 0, SKIP_PAGES = 1, SKIP_CHUNKS = 2, KEEP_ALL = 3 };
+    //@}
 public:
-   class DjVuPortCorpse;
+    class DjVuPortCorpse;
 private:
-   static GCriticalSection	* corpse_lock;
-   static DjVuPortCorpse	* corpse_head;
-   static DjVuPortCorpse        * corpse_tail;
-   static int			corpse_num;
+    static GCriticalSection* corpse_lock;
+    static DjVuPortCorpse* corpse_head;
+    static DjVuPortCorpse* corpse_tail;
+    static int			corpse_num;
 };
 
-/** Simple port.  
+/** Simple port.
     An instance of #DjVuSimplePort# is automatically created when you create a
     \Ref{DjVuFile} or a \Ref{DjVuDocument} without specifying a port.  This
     simple port can retrieve data for local urls (i.e. urls referring to local
@@ -277,18 +277,18 @@ private:
 class DJVUAPI DjVuSimplePort : public DjVuPort
 {
 public:
-      /// Returns 1 if #class_name# is #"DjVuPort"# or #"DjVuSimplePort"#.
-   virtual bool		inherits(const GUTF8String &class_name) const;
+    /// Returns 1 if #class_name# is #"DjVuPort"# or #"DjVuSimplePort"#.
+    virtual bool		inherits(const GUTF8String& class_name) const;
 
-      /** If #url# is local, it created a \Ref{DataPool}, connects it to the
-	  file with the given name and returns.  Otherwise returns #0#. */
-   virtual GP<DataPool>	request_data(const DjVuPort * source, const GURL & url);
+    /** If #url# is local, it created a \Ref{DataPool}, connects it to the
+    file with the given name and returns.  Otherwise returns #0#. */
+    virtual GP<DataPool>	request_data(const DjVuPort* source, const GURL& url);
 
-      /// Displays error on #stderr#. Always returns 1.
-   virtual bool		notify_error(const DjVuPort * source, const GUTF8String &msg);
-   
-      /// Displays status on #stderr#. Always returns 1.
-   virtual bool		notify_status(const DjVuPort * source, const GUTF8String &msg);
+    /// Displays error on #stderr#. Always returns 1.
+    virtual bool		notify_error(const DjVuPort* source, const GUTF8String& msg);
+
+    /// Displays status on #stderr#. Always returns 1.
+    virtual bool		notify_status(const DjVuPort* source, const GUTF8String& msg);
 };
 
 
@@ -302,21 +302,21 @@ public:
 class DJVUAPI DjVuMemoryPort : public DjVuPort
 {
 public:
-      /// Returns 1 if #class_name# is #"DjVuPort"# or #"DjVuMemoryPort"#
-   virtual bool		inherits(const GUTF8String &class_name) const;
+    /// Returns 1 if #class_name# is #"DjVuPort"# or #"DjVuMemoryPort"#
+    virtual bool		inherits(const GUTF8String& class_name) const;
 
-      /** If #url# is one of those, that have been added before by means
-	  of \Ref{add_data}() function, it will return the associated
-	  \Ref{DataPool}. #ZERO# otherwize. */
-   virtual GP<DataPool>	request_data(const DjVuPort * source, const GURL & url);
+    /** If #url# is one of those, that have been added before by means
+    of \Ref{add_data}() function, it will return the associated
+    \Ref{DataPool}. #ZERO# otherwize. */
+    virtual GP<DataPool>	request_data(const DjVuPort* source, const GURL& url);
 
-      /** Adds #<url, pool># pair to the internal map. From now on, if
-	  somebody asks for data corresponding to the #url#, it will
-	  be returning the #pool# */
-   void		add_data(const GURL & url, const GP<DataPool> & pool);
+    /** Adds #<url, pool># pair to the internal map. From now on, if
+    somebody asks for data corresponding to the #url#, it will
+    be returning the #pool# */
+    void		add_data(const GURL& url, const GP<DataPool>& pool);
 private:
-   GCriticalSection	lock;
-   GPMap<GURL, DataPool>map;
+    GCriticalSection	lock;
+    GPMap<GURL, DataPool>map;
 };
 
 
@@ -329,7 +329,7 @@ private:
     The caller can modify the route map any way he likes (see
     \Ref{add_route}(), \Ref{del_route}(), \Ref{copy_routes}(),
     etc. functions). Any port can be either a sender of a message, an
-    intermediary receiver or a final destination.  
+    intermediary receiver or a final destination.
 
     When a request is sent, the #DjVuPortcaster# computes the list of
     destinations by consulting with the route map.  Notifications are only
@@ -357,154 +357,156 @@ private:
 class DJVUAPI DjVuPortcaster
 {
 public:
-      /**  Use this function to get a copy of the global \Ref{DjVuPortcaster}. */
-   static DjVuPortcaster *get_portcaster(void)
-    { return DjVuPort::get_portcaster(); } ;
+    /**  Use this function to get a copy of the global \Ref{DjVuPortcaster}. */
+    static DjVuPortcaster* get_portcaster(void)
+    {
+        return DjVuPort::get_portcaster();
+    };
 
-      /** The default constructor. */
-   DjVuPortcaster(void);
+    /** The default constructor. */
+    DjVuPortcaster(void);
 
-   virtual ~DjVuPortcaster(void);
+    virtual ~DjVuPortcaster(void);
 
-      /** Removes the specified port from all routes. It will no longer
-	  be able to receive or generate messages and will be considered
-    {\bf "dead"} by \Ref{is_port_alive}() function. */
-   void		del_port(const DjVuPort * port);
-   
-      /** Adds route from #src# to #dst#. Whenever a request is
-	  sent or received by #src#, it will be forwarded to #dst# as well.
-	  @param src The source
-	  @param dst The destination */
-   void		add_route(const DjVuPort *src, DjVuPort *dst);
+    /** Removes the specified port from all routes. It will no longer
+    be able to receive or generate messages and will be considered
+  {\bf "dead"} by \Ref{is_port_alive}() function. */
+    void		del_port(const DjVuPort* port);
 
-      /** The opposite of \Ref{add_route}(). Removes the association
-	  between #src# and #dst# */
-   void		del_route(const DjVuPort *src, DjVuPort *dst);
+    /** Adds route from #src# to #dst#. Whenever a request is
+    sent or received by #src#, it will be forwarded to #dst# as well.
+    @param src The source
+    @param dst The destination */
+    void		add_route(const DjVuPort* src, DjVuPort* dst);
 
-      /** Copies all incoming and outgoing routes from #src# to
-	  #dst#. This function should be called when a \Ref{DjVuPort} is
-	  copied, if you want to preserve the connectivity. */
-   void		copy_routes(DjVuPort *dst, const DjVuPort *src);
+    /** The opposite of \Ref{add_route}(). Removes the association
+    between #src# and #dst# */
+    void		del_route(const DjVuPort* src, DjVuPort* dst);
 
-      /** Returns a smart pointer to the port if #port# is a valid pointer
-          to an existing #DjVuPort#.  Returns a null pointer otherwise. */
-   GP<DjVuPort> is_port_alive(DjVuPort *port);
+    /** Copies all incoming and outgoing routes from #src# to
+    #dst#. This function should be called when a \Ref{DjVuPort} is
+    copied, if you want to preserve the connectivity. */
+    void		copy_routes(DjVuPort* dst, const DjVuPort* src);
 
-      /** Assigns one more {\em alias} for the specified \Ref{DjVuPort}.
-	  {\em Aliases} are names, which can be used later to retrieve this
-	  \Ref{DjVuPort}, if it still exists. Any \Ref{DjVuPort} may have
-	  more than one {\em alias}. But every {\em alias} must correspond
-	  to only one \Ref{DjVuPort}. Thus, if the specified alias is
-	  already associated with another port, this association will be
-	  removed. */
-   void		add_alias(const DjVuPort * port, const GUTF8String &alias);
+    /** Returns a smart pointer to the port if #port# is a valid pointer
+        to an existing #DjVuPort#.  Returns a null pointer otherwise. */
+    GP<DjVuPort> is_port_alive(DjVuPort* port);
 
-      /** Removes all the aliases */
-   static void		clear_all_aliases(void);
+    /** Assigns one more {\em alias} for the specified \Ref{DjVuPort}.
+    {\em Aliases} are names, which can be used later to retrieve this
+    \Ref{DjVuPort}, if it still exists. Any \Ref{DjVuPort} may have
+    more than one {\em alias}. But every {\em alias} must correspond
+    to only one \Ref{DjVuPort}. Thus, if the specified alias is
+    already associated with another port, this association will be
+    removed. */
+    void		add_alias(const DjVuPort* port, const GUTF8String& alias);
 
-      /** Removes all aliases associated with the given \Ref{DjVuPort}. */
-   void		clear_aliases(const DjVuPort * port);
+    /** Removes all the aliases */
+    static void		clear_all_aliases(void);
 
-      /** Returns \Ref{DjVuPort} associated with the given #alias#. If nothing
-	  is known about name #alias#, or the port associated with it has
-	  already been destroyed #ZERO# pointer will be returned. */
-   GP<DjVuPort>	alias_to_port(const GUTF8String &name);
+    /** Removes all aliases associated with the given \Ref{DjVuPort}. */
+    void		clear_aliases(const DjVuPort* port);
 
-      /** Returns a list of \Ref{DjVuPort}s with aliases starting with
-	  #prefix#. If no \Ref{DjVuPort}s have been found, empty
-	  list is returned. */
-   GPList<DjVuPort>	prefix_to_ports(const GUTF8String &prefix);
+    /** Returns \Ref{DjVuPort} associated with the given #alias#. If nothing
+    is known about name #alias#, or the port associated with it has
+    already been destroyed #ZERO# pointer will be returned. */
+    GP<DjVuPort>	alias_to_port(const GUTF8String& name);
 
-      /** Computes destination list for #source# and calls the corresponding
-	  function in each of the ports from the destination list starting from
-	  the closest until one of them returns non-empty \Ref{GURL}. */
-   virtual GURL		id_to_url(const DjVuPort * source, const GUTF8String &id);
+    /** Returns a list of \Ref{DjVuPort}s with aliases starting with
+    #prefix#. If no \Ref{DjVuPort}s have been found, empty
+    list is returned. */
+    GPList<DjVuPort>	prefix_to_ports(const GUTF8String& prefix);
 
-      /** Computes destination list for #source# and calls the corresponding
-	  function in each of the ports from the destination list starting from
-	  the closest until one of them returns non-zero pointer to
-	  \Ref{DjVuFile}. */
-   virtual GP<DjVuFile>	id_to_file(const DjVuPort * source, const GUTF8String &id);
+    /** Computes destination list for #source# and calls the corresponding
+    function in each of the ports from the destination list starting from
+    the closest until one of them returns non-empty \Ref{GURL}. */
+    virtual GURL		id_to_url(const DjVuPort* source, const GUTF8String& id);
 
-      /** Computes destination list for #source# and calls the corresponding
-	  function in each of the ports from the destination list starting from
-	  the closest until one of them returns non-zero \Ref{DataPool}. */
-   virtual GP<DataPool>	request_data(const DjVuPort * source, const GURL & url);
+    /** Computes destination list for #source# and calls the corresponding
+    function in each of the ports from the destination list starting from
+    the closest until one of them returns non-zero pointer to
+    \Ref{DjVuFile}. */
+    virtual GP<DjVuFile>	id_to_file(const DjVuPort* source, const GUTF8String& id);
 
-      /** Computes destination list for #source# and calls the corresponding.
-	  function in each of the ports from the destination starting from
-	  the closest until one of them returns 1. */
-   virtual bool		notify_error(const DjVuPort * source, const GUTF8String &msg);
+    /** Computes destination list for #source# and calls the corresponding
+    function in each of the ports from the destination list starting from
+    the closest until one of them returns non-zero \Ref{DataPool}. */
+    virtual GP<DataPool>	request_data(const DjVuPort* source, const GURL& url);
 
-      /** Computes destination list for #source# and calls the corresponding
-	  function in each of the ports from the destination list starting from
-	  the closest until one of them returns 1. */
-   virtual bool		notify_status(const DjVuPort * source, const GUTF8String &msg);
+    /** Computes destination list for #source# and calls the corresponding.
+    function in each of the ports from the destination starting from
+    the closest until one of them returns 1. */
+    virtual bool		notify_error(const DjVuPort* source, const GUTF8String& msg);
 
-      /** Computes destination list for #source# and calls the corresponding
-	  function in each of the ports from the destination list starting from
-	  the closest. */
-   virtual void		notify_redisplay(const class DjVuImage * source);
+    /** Computes destination list for #source# and calls the corresponding
+    function in each of the ports from the destination list starting from
+    the closest until one of them returns 1. */
+    virtual bool		notify_status(const DjVuPort* source, const GUTF8String& msg);
 
-      /** Computes destination list for #source# and calls the corresponding
-	  function in each of the ports from the destination list starting from
-	  the closest. */
-   virtual void		notify_relayout(const class DjVuImage * source);
+    /** Computes destination list for #source# and calls the corresponding
+    function in each of the ports from the destination list starting from
+    the closest. */
+    virtual void		notify_redisplay(const class DjVuImage* source);
 
-      /** Computes destination list for #source# and calls the corresponding
-	  function in each of the ports from the destination list starting from
-	  the closest. */
-   virtual void		notify_chunk_done(const DjVuPort * source, const GUTF8String &name);
+    /** Computes destination list for #source# and calls the corresponding
+    function in each of the ports from the destination list starting from
+    the closest. */
+    virtual void		notify_relayout(const class DjVuImage* source);
 
-      /** Computes destination list for #source# and calls the corresponding
-	  function in each of the ports from the destination list starting from
-	  the closest. */
-   virtual void		notify_file_flags_changed(const class DjVuFile * source,
-						  long set_mask, long clr_mask);
+    /** Computes destination list for #source# and calls the corresponding
+    function in each of the ports from the destination list starting from
+    the closest. */
+    virtual void		notify_chunk_done(const DjVuPort* source, const GUTF8String& name);
 
-      /** Computes destination list for #source# and calls the corresponding
-	  function in each of the ports from the destination list starting from
-	  the closest. */
-   virtual void		notify_doc_flags_changed(const class DjVuDocument * source,
-						 long set_mask, long clr_mask);
-   
-      /** Computes destination list for #source# and calls the corresponding
-	  function in each of the ports from the destination list starting from
-	  the closest. */
-   virtual void		notify_decode_progress(const DjVuPort * source, float done);
+    /** Computes destination list for #source# and calls the corresponding
+    function in each of the ports from the destination list starting from
+    the closest. */
+    virtual void		notify_file_flags_changed(const class DjVuFile* source,
+        long set_mask, long clr_mask);
+
+    /** Computes destination list for #source# and calls the corresponding
+    function in each of the ports from the destination list starting from
+    the closest. */
+    virtual void		notify_doc_flags_changed(const class DjVuDocument* source,
+        long set_mask, long clr_mask);
+
+    /** Computes destination list for #source# and calls the corresponding
+    function in each of the ports from the destination list starting from
+    the closest. */
+    virtual void		notify_decode_progress(const DjVuPort* source, float done);
 
 private:
-      // We use these 'void *' to minimize template instantiations.
-   friend class DjVuPort;
-   GCriticalSection		map_lock;
-   GMap<const void *, void *>	route_map;	// GMap<DjVuPort *, GList<DjVuPort *> *>
-   GMap<const void *, void *>	cont_map;	// GMap<DjVuPort *, DjVuPort *>
-   GMap<GUTF8String, const void *>	a2p_map;	// GMap<GUTF8String, DjVuPort *>
-   void add_to_closure(GMap<const void*, void*> & set,
-                       const DjVuPort *dst, int distance);
-   void compute_closure(const DjVuPort *src, GPList<DjVuPort> &list,
-                        bool sorted=false);
+    // We use these 'void *' to minimize template instantiations.
+    friend class DjVuPort;
+    GCriticalSection		map_lock;
+    GMap<const void*, void*>	route_map;	// GMap<DjVuPort *, GList<DjVuPort *> *>
+    GMap<const void*, void*>	cont_map;	// GMap<DjVuPort *, DjVuPort *>
+    GMap<GUTF8String, const void*>	a2p_map;	// GMap<GUTF8String, DjVuPort *>
+    void add_to_closure(GMap<const void*, void*>& set,
+        const DjVuPort* dst, int distance);
+    void compute_closure(const DjVuPort* src, GPList<DjVuPort>& list,
+        bool sorted = false);
 };
 
 
 inline bool
-DjVuPort::inherits(const GUTF8String &class_name) const
+DjVuPort::inherits(const GUTF8String& class_name) const
 {
-   return (class_name == "DjVuPort");
+    return (class_name == "DjVuPort");
 }
 
 inline bool
-DjVuSimplePort::inherits(const GUTF8String &class_name) const
+DjVuSimplePort::inherits(const GUTF8String& class_name) const
 {
-   return
-      (class_name == "DjVuSimplePort") || DjVuPort::inherits(class_name);
+    return
+        (class_name == "DjVuSimplePort") || DjVuPort::inherits(class_name);
 }
 
 inline bool
-DjVuMemoryPort::inherits(const GUTF8String &class_name) const
+DjVuMemoryPort::inherits(const GUTF8String& class_name) const
 {
-   return
-      (class_name == "DjVuMemoryPort") || DjVuPort::inherits(class_name);
+    return
+        (class_name == "DjVuMemoryPort") || DjVuPort::inherits(class_name);
 }
 
 //@}

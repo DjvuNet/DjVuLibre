@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -86,7 +86,7 @@ struct DjVmInfo
 };
 
 inline static void
-putchar(ByteStream & str, char ch)
+putchar(ByteStream& str, char ch)
 {
     str.write(&ch, 1);
 }
@@ -94,11 +94,11 @@ putchar(ByteStream & str, char ch)
 // ---------- ROUTINES FOR SUMMARIZING CHUNK DATA
 
 static void
-display_djvu_info(ByteStream & out_str, IFFByteStream &iff,
+display_djvu_info(ByteStream& out_str, IFFByteStream& iff,
     GUTF8String, size_t size, DjVmInfo&, int, const bool json)
 {
     GP<DjVuInfo> ginfo = DjVuInfo::create();
-    DjVuInfo &info = *ginfo;
+    DjVuInfo& info = *ginfo;
     info.decode(*iff.get_bytestream());
     if (size >= 4)
     {
@@ -128,18 +128,18 @@ display_djvu_info(ByteStream & out_str, IFFByteStream &iff,
         else
             out_str.format(", \"Gamma\": %3.1f", info.gamma);
     }
-    if (size >= 10) 
+    if (size >= 10)
     {
         if (!json)
             out_str.format(", orientation=%d", info.orientation);
         else
             out_str.format(", \"Orientation\": %d", info.orientation);
     }
-    
+
 }
 
 static void
-display_djbz(ByteStream & out_str, IFFByteStream &iff,
+display_djbz(ByteStream& out_str, IFFByteStream& iff,
     GUTF8String, size_t, DjVmInfo&, int, const bool json)
 {
     if (!json)
@@ -149,7 +149,7 @@ display_djbz(ByteStream & out_str, IFFByteStream &iff,
 }
 
 static void
-display_fgbz(ByteStream & out_str, IFFByteStream &iff,
+display_fgbz(ByteStream& out_str, IFFByteStream& iff,
     GUTF8String, size_t, DjVmInfo&, int, const bool json)
 {
     GP<ByteStream> gbs = iff.get_bytestream();
@@ -164,7 +164,7 @@ display_fgbz(ByteStream & out_str, IFFByteStream &iff,
 }
 
 static void
-display_sjbz(ByteStream & out_str, IFFByteStream &iff,
+display_sjbz(ByteStream& out_str, IFFByteStream& iff,
     GUTF8String, size_t, DjVmInfo&, int, const bool json)
 {
     if (!json)
@@ -174,7 +174,7 @@ display_sjbz(ByteStream & out_str, IFFByteStream &iff,
 }
 
 static void
-display_smmr(ByteStream & out_str, IFFByteStream &iff,
+display_smmr(ByteStream& out_str, IFFByteStream& iff,
     GUTF8String, size_t, DjVmInfo&, int, const bool json)
 {
     if (!json)
@@ -184,7 +184,7 @@ display_smmr(ByteStream & out_str, IFFByteStream &iff,
 }
 
 static void
-display_iw4(ByteStream & out_str, IFFByteStream &iff,
+display_iw4(ByteStream& out_str, IFFByteStream& iff,
     GUTF8String, size_t, DjVmInfo&, int, const bool json)
 {
     GP<ByteStream> gbs = iff.get_bytestream();
@@ -214,7 +214,7 @@ display_iw4(ByteStream & out_str, IFFByteStream &iff,
 }
 
 static void
-display_djvm_dirm(ByteStream & out_str, IFFByteStream & iff,
+display_djvm_dirm(ByteStream& out_str, IFFByteStream& iff,
     GUTF8String head, size_t, DjVmInfo& djvminfo, int, const bool json)
 {
     GP<DjVmDir> dir = DjVmDir::create();
@@ -246,18 +246,18 @@ display_djvm_dirm(ByteStream & out_str, IFFByteStream & iff,
 }
 
 static void
-display_th44(ByteStream & out_str, IFFByteStream & iff,
-    GUTF8String, size_t, DjVmInfo & djvminfo, int counter, const bool json)
+display_th44(ByteStream& out_str, IFFByteStream& iff,
+    GUTF8String, size_t, DjVmInfo& djvminfo, int counter, const bool json)
 {
     int start_page = -1;
     if (djvminfo.dir)
     {
         GPList<DjVmDir::File> files_list = djvminfo.dir->get_files_list();
-        for (GPosition pos = files_list;pos;++pos)
+        for (GPosition pos = files_list; pos; ++pos)
         {
             GP<DjVmDir::File> frec = files_list[pos];
             if (iff.tell() >= frec->offset &&
-                iff.tell()<frec->offset + frec->size)
+                iff.tell() < frec->offset + frec->size)
             {
                 while (pos && !files_list[pos]->is_page())
                     ++pos;
@@ -284,7 +284,7 @@ display_th44(ByteStream & out_str, IFFByteStream & iff,
 }
 
 static void
-display_incl(ByteStream & out_str, IFFByteStream & iff,
+display_incl(ByteStream& out_str, IFFByteStream& iff,
     GUTF8String, size_t, DjVmInfo&, int, const bool json)
 {
     GUTF8String name;
@@ -297,7 +297,7 @@ display_incl(ByteStream & out_str, IFFByteStream & iff,
     }
 
     if (!json)
-        out_str.format("Indirection chunk --> {%s}", (const char *)name);
+        out_str.format("Indirection chunk --> {%s}", (const char*)name);
     else {
         out_str.format(", \"Description\": \"Indirection chunk\", \"Name\": \"");
         out_str.writall((const char*)name, length);
@@ -306,7 +306,7 @@ display_incl(ByteStream & out_str, IFFByteStream & iff,
 }
 
 static void
-display_anno(ByteStream & out_str, IFFByteStream &iff,
+display_anno(ByteStream& out_str, IFFByteStream& iff,
     GUTF8String, size_t, DjVmInfo&, int, const bool json)
 {
     if (!json)
@@ -324,7 +324,7 @@ display_anno(ByteStream & out_str, IFFByteStream &iff,
 }
 
 static void
-display_text(ByteStream & out_str, IFFByteStream &iff,
+display_text(ByteStream& out_str, IFFByteStream& iff,
     GUTF8String, size_t, DjVmInfo&, int, const bool json)
 {
     if (!json)
@@ -343,8 +343,8 @@ display_text(ByteStream & out_str, IFFByteStream &iff,
 
 struct id_to_dotnet_type
 {
-    const char *id;
-    const char *dotnet_type;
+    const char* id;
+    const char* dotnet_type;
 };
 
 static id_to_dotnet_type id2dotnet[] =
@@ -384,8 +384,8 @@ static id_to_dotnet_type id2dotnet[] =
 
 struct displaysubr
 {
-    const char *id;
-    void(*subr)(ByteStream &, IFFByteStream &, GUTF8String,
+    const char* id;
+    void(*subr)(ByteStream&, IFFByteStream&, GUTF8String,
         size_t, DjVmInfo&, int counter, const bool);
 };
 
@@ -421,7 +421,7 @@ int indentsize = 0;
 const GUTF8String headTempl = "    ";
 
 const GUTF8String
-get_indent(int indent) 
+get_indent(int indent)
 {
     GUTF8String result;
     for (int i = 0; i < indent; i++)
@@ -430,8 +430,8 @@ get_indent(int indent)
 }
 
 static void
-display_chunks(ByteStream & out_str, IFFByteStream &iff,
-    const GUTF8String &head, DjVmInfo djvminfo, const bool json)
+display_chunks(ByteStream& out_str, IFFByteStream& iff,
+    const GUTF8String& head, DjVmInfo djvminfo, const bool json)
 {
     size_t size;
     GUTF8String id, fullid;
@@ -447,9 +447,9 @@ display_chunks(ByteStream & out_str, IFFByteStream &iff,
 
     while ((size = iff.get_chunk(id, &rawoffset, &rawsize, &success)) || success)
     {
-        if (!counters.contains(id)) 
+        if (!counters.contains(id))
             counters[id] = 0;
-        else 
+        else
             counters[id]++;
 
         GUTF8String msg;
@@ -462,7 +462,7 @@ display_chunks(ByteStream & out_str, IFFByteStream &iff,
                 out_str.format(" },\n");
         }
 
-        const char *dotnet_type = 0;
+        const char* dotnet_type = 0;
         iff.full_id(fullid);
         for (int i = 0; id2dotnet[i].id; i++)
             if (fullid == id2dotnet[i].id || id == id2dotnet[i].id)
@@ -472,11 +472,11 @@ display_chunks(ByteStream & out_str, IFFByteStream &iff,
             }
 
         if (!json)
-            msg.format("%s%s [%d] ", (const char *)head, (const char *)id, size);
+            msg.format("%s%s [%d] ", (const char*)head, (const char*)id, size);
         else
-            msg.format("%s{ \"$type\": \"%s\", \"ID\": \"%s\", \"NodeOffset\": %d, \"Size\": %d", (const char*)get_indent(indentsize), dotnet_type, (const char *)id, rawoffset, size);
-        
-        out_str.format("%s", (const char *)msg);
+            msg.format("%s{ \"$type\": \"%s\", \"ID\": \"%s\", \"NodeOffset\": %d, \"Size\": %d", (const char*)get_indent(indentsize), dotnet_type, (const char*)id, rawoffset, size);
+
+        out_str.format("%s", (const char*)msg);
 
         // Display DJVM is when adequate
         if (djvminfo.dir && !json)
@@ -559,13 +559,13 @@ display_chunks(ByteStream & out_str, IFFByteStream &iff,
 }
 
 GP<ByteStream>
-DjVuDumpHelper::dump(const GP<DataPool> & pool)
+DjVuDumpHelper::dump(const GP<DataPool>& pool)
 {
     return dump(pool, false);
 }
 
 GP<ByteStream>
-DjVuDumpHelper::dump(const GP<DataPool> & pool, const bool json)
+DjVuDumpHelper::dump(const GP<DataPool>& pool, const bool json)
 {
     return dump(pool->get_stream(), json);
 }

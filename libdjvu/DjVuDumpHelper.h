@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -99,22 +99,22 @@ class ByteStream;
 class DJVUAPI DjVuDumpHelper
 {
 public:
-      /// Default constructor
-   DjVuDumpHelper(void) {}
-      /// Destructor
-   ~DjVuDumpHelper(void) {}
-      /** Interprets the file passed in the \Ref{DataPool}, and returns
-	  the results in \Ref{ByteStream}. */
-   GP<ByteStream>	dump(const GP<DataPool> & pool);
-       /** Interprets the file passed in the \Ref{DataPool}, and returns
-       the results in \Ref{ByteStream}. */
-   GP<ByteStream>	dump(const GP<DataPool> & pool, const bool json);
-      /** Interprets the file passed in the \Ref{ByteStream}, and returns
-	  the results in \Ref{ByteStream}. */
-   GP<ByteStream>	dump(GP<ByteStream> str);
-   /** Interprets the file passed in the \Ref{ByteStream}, and returns
-   the results in \Ref{ByteStream}. */
-   GP<ByteStream>	dump(GP<ByteStream> str, const bool json, const char* fileName = 0);
+    /// Default constructor
+    DjVuDumpHelper(void) {}
+    /// Destructor
+    ~DjVuDumpHelper(void) {}
+    /** Interprets the file passed in the \Ref{DataPool}, and returns
+    the results in \Ref{ByteStream}. */
+    GP<ByteStream>	dump(const GP<DataPool>& pool);
+    /** Interprets the file passed in the \Ref{DataPool}, and returns
+    the results in \Ref{ByteStream}. */
+    GP<ByteStream>	dump(const GP<DataPool>& pool, const bool json);
+    /** Interprets the file passed in the \Ref{ByteStream}, and returns
+    the results in \Ref{ByteStream}. */
+    GP<ByteStream>	dump(GP<ByteStream> str);
+    /** Interprets the file passed in the \Ref{ByteStream}, and returns
+    the results in \Ref{ByteStream}. */
+    GP<ByteStream>	dump(GP<ByteStream> str, const bool json, const char* fileName = 0);
 };
 
 

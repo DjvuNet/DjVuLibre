@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -84,7 +84,7 @@ class ByteStream;
     This is {\bf not} a navigation directory, which lists all the pages
     in a multipage document. The navigation directory is supported by class
     \Ref{DjVuNavDir}. This is the directory of a DjVm archive.
-    
+
 
     @memo Directory of DjVu all-in-one-file DjVu documents.
     @author Andrei Erofeev <eaf@geocities.com>
@@ -108,77 +108,77 @@ class ByteStream;
 class DjVmDir0 : public GPEnabled
 {
 public:
-      /** Describes a file record inside a DjVm document (archive) */
-   class FileRec;
+    /** Describes a file record inside a DjVm document (archive) */
+    class FileRec;
 private:
-   GMap<GUTF8String, GP<FileRec> >	name2file;
-   GPArray<FileRec>		num2file;
+    GMap<GUTF8String, GP<FileRec> >	name2file;
+    GPArray<FileRec>		num2file;
 protected:
-      /// Default constructor
-   DjVmDir0(void) {};
+    /// Default constructor
+    DjVmDir0(void) {};
 public:
-      /// Copy constructor
-   DjVmDir0(const DjVmDir0 & d);
+    /// Copy constructor
+    DjVmDir0(const DjVmDir0& d);
 
-   static GP<DjVmDir0> create(void) {return new DjVmDir0;}
+    static GP<DjVmDir0> create(void) { return new DjVmDir0; }
 
-   virtual ~DjVmDir0(void) {};
+    virtual ~DjVmDir0(void) {};
 
-      /// Returns the number of files in the DjVm archive
-   int		get_files_num(void) const;
-   
-      /// Returns the file record with name #name#
-   GP<FileRec>	get_file(const GUTF8String &name);
+    /// Returns the number of files in the DjVm archive
+    int		get_files_num(void) const;
 
-      /// Returns the file record number #file_num#
-   GP<FileRec>	get_file(int file_num);
+    /// Returns the file record with name #name#
+    GP<FileRec>	get_file(const GUTF8String& name);
 
-      /** Creates a new file record with name #name# at offset
-	  #offset# and size #size#, which is in IFF format if
-	  #iff_file# is #TRUE#. */
-   void		add_file(const GUTF8String &name, bool iff_file,
-			 int offset=-1, int size=-1);
+    /// Returns the file record number #file_num#
+    GP<FileRec>	get_file(int file_num);
 
-      /// Returns the size of the directory if it were encoded in #DIR0# chunk
-   int		get_size(void) const;
+    /** Creates a new file record with name #name# at offset
+    #offset# and size #size#, which is in IFF format if
+    #iff_file# is #TRUE#. */
+    void		add_file(const GUTF8String& name, bool iff_file,
+        int offset = -1, int size = -1);
 
-      /** Encodes the directory in #DIR0# chunk into the specified
-	  \Ref{ByteStream} */
-   void		encode(ByteStream & bs);
+    /// Returns the size of the directory if it were encoded in #DIR0# chunk
+    int		get_size(void) const;
 
-      /** Decodes the directory from #DIR0# chunk from the specified
-	  \Ref{ByteStream} */
-   void		decode(ByteStream & bs);
+    /** Encodes the directory in #DIR0# chunk into the specified
+    \Ref{ByteStream} */
+    void		encode(ByteStream& bs);
+
+    /** Decodes the directory from #DIR0# chunk from the specified
+    \Ref{ByteStream} */
+    void		decode(ByteStream& bs);
 
 };
 
-      /** Describes a file record inside a DjVm document (archive) */
+/** Describes a file record inside a DjVm document (archive) */
 class DjVmDir0::FileRec : public GPEnabled
 {
 public:
-  /// Name of the file.
-  GUTF8String		name;
-  /// 1 if the file is in IFF format.
-  bool		iff_file;
-  /// Offset of the file in the archive.
-  int		offset;
-  /// Size of the file
-  int		size;
+    /// Name of the file.
+    GUTF8String		name;
+    /// 1 if the file is in IFF format.
+    bool		iff_file;
+    /// Offset of the file in the archive.
+    int		offset;
+    /// Size of the file
+    int		size;
 
-  friend int	operator==(const FileRec & f1, const FileRec & f2);
+    friend int	operator==(const FileRec& f1, const FileRec& f2);
 
-  /// Constructs the #FileRec# object
-  FileRec(const GUTF8String &name, bool iff_file,
-	      int offset=-1, int size=-1);
-  /// Default constructor
-  FileRec(void);
-  virtual ~FileRec(void);
+    /// Constructs the #FileRec# object
+    FileRec(const GUTF8String& name, bool iff_file,
+        int offset = -1, int size = -1);
+    /// Default constructor
+    FileRec(void);
+    virtual ~FileRec(void);
 };
 
 inline
 DjVmDir0::FileRec::FileRec(
-  const GUTF8String &name_in, bool iff_file_in, int offset_in, int size_in)
-: name(name_in), iff_file(iff_file_in), offset(offset_in), size(size_in)
+    const GUTF8String& name_in, bool iff_file_in, int offset_in, int size_in)
+    : name(name_in), iff_file(iff_file_in), offset(offset_in), size(size_in)
 {
 }
 
@@ -195,12 +195,12 @@ DjVmDir0::FileRec::~FileRec(void)
 inline int
 DjVmDir0::get_files_num(void) const
 {
-   return num2file.size();
+    return num2file.size();
 }
 
 inline
-DjVmDir0::DjVmDir0(const DjVmDir0 & d) :
-      name2file(d.name2file), num2file(d.num2file)
+DjVmDir0::DjVmDir0(const DjVmDir0& d) :
+    name2file(d.name2file), num2file(d.num2file)
 {
 }
 

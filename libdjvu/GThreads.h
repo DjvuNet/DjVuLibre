@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -145,7 +145,7 @@ namespace DJVU {
     Several static member functions control the thread scheduler.  Function
     \Ref{GThread::yield} relinquishes the processor to another thread.
     Function \Ref{GThread::select} (#COTHREADS# only) provides a thread-aware
-    replacement for the well-known unix system call #select#.  
+    replacement for the well-known unix system call #select#.
 
     {\bf Note} --- Both the copy constructor and the copy operator are declared
     as private members. It is therefore not possible to make multiple copies
@@ -153,56 +153,56 @@ namespace DJVU {
 
 class GThread {
 public:
-  /** Constructs a new thread object.  Memory is allocated for the
-      thread, but the thread is not started. 
-      Argument #stacksize# is used by the #COTHREADS# model only for
-      specifying the amount of memory needed for the processor stack. A
-      negative value will be replaced by a suitable default value of 128Kb.
-      A minimum value of 32Kb is silently enforced. */
-  GThread(int stacksize = -1);
-  /** Destructor.  Destroying the thread object while the thread is running is
-      perfectly ok since it only destroys the thread identifier.  Execution
-      will continue without interference. */
-  ~GThread();
-  /** Starts the thread. The new thread executes function #entry# with
-      argument #arg#.  The thread terminates when the function returns.  A
-      thread cannot be restarted after its termination. You must create a new
-      #GThread# object. */
-  int  create(void (*entry)(void*), void *arg);
-  /** Terminates a thread with extreme prejudice. The thread is removed from
-      the scheduling list.  Execution terminates regardless of the execution
-      status of the thread function. Automatic variables may or may not be
-      destroyed. This function must be considered as a last resort since
-      memory may be lost. */
-  void terminate();
-  /** Causes the current thread to relinquish the processor.  The scheduler
-      selects a thread ready to run and transfers control to that thread.  The
-      actual effect of #yield# heavily depends on the selected implementation.
-      Function #yield# usually returns zero when the execution of the current
-      thread is resumed.  It may return a positive number when it can
-      determine that the current thread will remain the only runnable thread
-      for some time.  You may then call function \Ref{get_select} to
-      obtain more information. */
-  static int yield();
-  /** Returns a value which uniquely identifies the current thread. */
-  static void *current();
+    /** Constructs a new thread object.  Memory is allocated for the
+        thread, but the thread is not started.
+        Argument #stacksize# is used by the #COTHREADS# model only for
+        specifying the amount of memory needed for the processor stack. A
+        negative value will be replaced by a suitable default value of 128Kb.
+        A minimum value of 32Kb is silently enforced. */
+    GThread(int stacksize = -1);
+    /** Destructor.  Destroying the thread object while the thread is running is
+        perfectly ok since it only destroys the thread identifier.  Execution
+        will continue without interference. */
+    ~GThread();
+    /** Starts the thread. The new thread executes function #entry# with
+        argument #arg#.  The thread terminates when the function returns.  A
+        thread cannot be restarted after its termination. You must create a new
+        #GThread# object. */
+    int  create(void (*entry)(void*), void* arg);
+    /** Terminates a thread with extreme prejudice. The thread is removed from
+        the scheduling list.  Execution terminates regardless of the execution
+        status of the thread function. Automatic variables may or may not be
+        destroyed. This function must be considered as a last resort since
+        memory may be lost. */
+    void terminate();
+    /** Causes the current thread to relinquish the processor.  The scheduler
+        selects a thread ready to run and transfers control to that thread.  The
+        actual effect of #yield# heavily depends on the selected implementation.
+        Function #yield# usually returns zero when the execution of the current
+        thread is resumed.  It may return a positive number when it can
+        determine that the current thread will remain the only runnable thread
+        for some time.  You may then call function \Ref{get_select} to
+        obtain more information. */
+    static int yield();
+    /** Returns a value which uniquely identifies the current thread. */
+    static void* current();
 #if WINTHREADS
 private:
-  HANDLE hthr;
-  DWORD  thrid;
+    HANDLE hthr;
+    DWORD  thrid;
 #elif POSIXTHREADS
 private:
-  pthread_t hthr;
-  static void *start(void *arg);
+    pthread_t hthr;
+    static void* start(void* arg);
 #endif
 public:
-  // Should be considered as private
-  void (*xentry)(void*);
-  void  *xarg;
+    // Should be considered as private
+    void (*xentry)(void*);
+    void* xarg;
 private:
-  // Disable default members
-  GThread(const GThread&);
-  GThread& operator=(const GThread&);
+    // Disable default members
+    GThread(const GThread&);
+    GThread& operator=(const GThread&);
 };
 
 
@@ -210,14 +210,14 @@ private:
     Communications of the ACM, 17(10), 1974).  This mechanism provides the
     basic mutual exclusion (mutex) and thread notification facilities
     (condition variables).
-    
+
     Only one thread can own the monitor at a given time.  Functions
     \Ref{enter} and \Ref{leave} can be used to acquire and release the
     monitor. This mutual exclusion provides an efficient way to protect
     segment of codes ({\em critical sections}) which should not be
     simultaneously executed by two threads. Class \Ref{GMonitorLock} provides
     a convenient way to do this effectively.
-    
+
     When the thread owning the monitor calls function \Ref{wait}, the monitor
     is released and the thread starts waiting until another thread calls
     function \Ref{signal} or \Ref{broadcast}.  When the thread wakes-up, it
@@ -225,7 +225,7 @@ private:
     thread must acquire the monitor before calling functions #signal# and
     #broadcast#, the signaled thread will not be able to re-acquire the
     monitor until the signaling thread(s) releases the monitor.
-    
+
     {\bf Note} --- Both the copy constructor and the copy operator are declared
     as private members. It is therefore not possible to make multiple copies
     of instances of this class, as implied by the class semantic. */
@@ -233,58 +233,58 @@ private:
 class GMonitor
 {
 public:
-  GMonitor();
-  ~GMonitor();
-  /** Enters the monitor.  If the monitor is acquired by another thread this
-      function waits until the monitor is released.  The current thread then
-      acquires the monitor.  Calls to #enter# and #leave# may be nested. */
-  void enter();
-  /** Leaves the monitor.  The monitor counts how many times the current
-      thread has entered the monitor.  Function #leave# decrement this count.
-      The monitor is released when this count reaches zero.  An exception is
-      thrown if this function is called by a thread which does not own the
-      monitor. */
-  void leave();
-  /** Waits until the monitor is signaled.  The current thread atomically
-      releases the monitor and waits until another thread calls function
-      #signal# or #broadcast#.  Function #wait# then re-acquires the monitor
-      and returns.  An exception is thrown if this function is called by a
-      thread which does not own the monitor. */
-  void wait();
-  /** Waits until the monitor is signaled or a timeout is reached.  The
-      current thread atomically releases the monitor and waits until another
-      thread calls function #signal# or #broadcast# or a maximum of #timeout#
-      milliseconds.  Function #wait# then re-acquires the monitor and returns.
-      An exception is thrown if this function is called by a thread which does
-      not own the monitor. */
-  void wait(unsigned long timeout);
-  /** Signals one waiting thread.  Function #signal# wakes up at most one of
-      the waiting threads for this monitor.  An exception is thrown if this
-      function is called by a thread which does not own the monitor. */
-  void signal();
-  /** Signals all waiting threads. Function #broadcast# wakes up all the
-      waiting threads for this monitor.  An exception is thrown if this
-      function is called by a thread which does not own the monitor. */
-  void broadcast();
+    GMonitor();
+    ~GMonitor();
+    /** Enters the monitor.  If the monitor is acquired by another thread this
+        function waits until the monitor is released.  The current thread then
+        acquires the monitor.  Calls to #enter# and #leave# may be nested. */
+    void enter();
+    /** Leaves the monitor.  The monitor counts how many times the current
+        thread has entered the monitor.  Function #leave# decrement this count.
+        The monitor is released when this count reaches zero.  An exception is
+        thrown if this function is called by a thread which does not own the
+        monitor. */
+    void leave();
+    /** Waits until the monitor is signaled.  The current thread atomically
+        releases the monitor and waits until another thread calls function
+        #signal# or #broadcast#.  Function #wait# then re-acquires the monitor
+        and returns.  An exception is thrown if this function is called by a
+        thread which does not own the monitor. */
+    void wait();
+    /** Waits until the monitor is signaled or a timeout is reached.  The
+        current thread atomically releases the monitor and waits until another
+        thread calls function #signal# or #broadcast# or a maximum of #timeout#
+        milliseconds.  Function #wait# then re-acquires the monitor and returns.
+        An exception is thrown if this function is called by a thread which does
+        not own the monitor. */
+    void wait(unsigned long timeout);
+    /** Signals one waiting thread.  Function #signal# wakes up at most one of
+        the waiting threads for this monitor.  An exception is thrown if this
+        function is called by a thread which does not own the monitor. */
+    void signal();
+    /** Signals all waiting threads. Function #broadcast# wakes up all the
+        waiting threads for this monitor.  An exception is thrown if this
+        function is called by a thread which does not own the monitor. */
+    void broadcast();
 private:
 #if WINTHREADS
-  int ok;
-  int count;
-  DWORD locker;
-  CRITICAL_SECTION cs;
-  struct thr_waiting *head;
-  struct thr_waiting *tail;
+    int ok;
+    int count;
+    DWORD locker;
+    CRITICAL_SECTION cs;
+    struct thr_waiting* head;
+    struct thr_waiting* tail;
 #elif POSIXTHREADS
-  int ok;
-  int count;
-  pthread_t locker;
-  pthread_mutex_t mutex;
-  pthread_cond_t cond;
-#endif  
+    int ok;
+    int count;
+    pthread_t locker;
+    pthread_mutex_t mutex;
+    pthread_cond_t cond;
+#endif
 private:
-  // Disable default members
-  GMonitor(const GMonitor&);
-  GMonitor& operator=(const GMonitor&);
+    // Disable default members
+    GMonitor(const GMonitor&);
+    GMonitor& operator=(const GMonitor&);
 };
 
 
@@ -310,20 +310,24 @@ private:
          GMonitorLock lock(&theMonitor)
          ... -- protected code
       }
-    \end{verbatim} 
+    \end{verbatim}
     This construct will do nothing when passed a null pointer.
 */
-class GMonitorLock 
+class GMonitorLock
 {
 private:
-  GMonitor *gsec;
+    GMonitor* gsec;
 public:
-  /** Constructor. Enters the monitor #gsec#. */
-  GMonitorLock(GMonitor *gsec) : gsec(gsec) 
-    { if (gsec) gsec->enter(); };
-  /** Destructor. Leaves the associated monitor. */
-  ~GMonitorLock() 
-    { if (gsec) gsec->leave(); };
+    /** Constructor. Enters the monitor #gsec#. */
+    GMonitorLock(GMonitor* gsec) : gsec(gsec)
+    {
+        if (gsec) gsec->enter();
+    };
+    /** Destructor. Leaves the associated monitor. */
+    ~GMonitorLock()
+    {
+        if (gsec) gsec->leave();
+    };
 };
 
 
@@ -343,79 +347,79 @@ public:
 class GSafeFlags : public GMonitor
 {
 private:
-   volatile long flags;
+    volatile long flags;
 public:
-      /// Constructs #GSafeFlags# object.
-   GSafeFlags(long flags=0);
+    /// Constructs #GSafeFlags# object.
+    GSafeFlags(long flags = 0);
 
-      /** Assignment operator. Will also wake up threads waiting for the
-	  flags to change. */
-   GSafeFlags & operator=(long flags);
+    /** Assignment operator. Will also wake up threads waiting for the
+    flags to change. */
+    GSafeFlags& operator=(long flags);
 
-      /** Returns the value of the flags */
-   operator long(void) const;
-      /** Modifies the flags by ORing them with the provided mask. A broadcast
-	  will be sent after the modification is done. */
-   GSafeFlags &	operator|=(long mask);
-      /** Modifies the flags by ANDing them with the provided mask. A broadcast
-	  will be sent after the modification is done. */
-   GSafeFlags &	operator&=(long mask);
+    /** Returns the value of the flags */
+    operator long(void) const;
+    /** Modifies the flags by ORing them with the provided mask. A broadcast
+    will be sent after the modification is done. */
+    GSafeFlags& operator|=(long mask);
+    /** Modifies the flags by ANDing them with the provided mask. A broadcast
+    will be sent after the modification is done. */
+    GSafeFlags& operator&=(long mask);
 
-      /** If all bits mentioned in #set_mask# are set in the flags and all
-	  bits mentioned in #clr_mask# are cleared in the flags, it sets all
-	  bits from #set_mask1# in the flags, clears all flags from
-	  #clr_mask1# in the flags and returns #TRUE#. Otherwise returns
-	  #FALSE#. */
-   bool	test_and_modify(long set_mask, long clr_mask,
-			long set_mask1, long clr_mask1);
+    /** If all bits mentioned in #set_mask# are set in the flags and all
+    bits mentioned in #clr_mask# are cleared in the flags, it sets all
+    bits from #set_mask1# in the flags, clears all flags from
+    #clr_mask1# in the flags and returns #TRUE#. Otherwise returns
+    #FALSE#. */
+    bool	test_and_modify(long set_mask, long clr_mask,
+        long set_mask1, long clr_mask1);
 
-      /** Waits until all bits mentioned in #set_mask# are set in the flags
-	  and all bits mentioned in #clr_flags# are cleared in the flags.
-	  After that it sets bits from #set_mask1# and clears bits from
-	  #clr_mask1# in the flags. */
-   void	wait_and_modify(long set_mask, long clr_mask,
-			long set_mask1, long clr_mask1);
+    /** Waits until all bits mentioned in #set_mask# are set in the flags
+    and all bits mentioned in #clr_flags# are cleared in the flags.
+    After that it sets bits from #set_mask1# and clears bits from
+    #clr_mask1# in the flags. */
+    void	wait_and_modify(long set_mask, long clr_mask,
+        long set_mask1, long clr_mask1);
 
-      /** Waits until all bits set in #set_mask# are set in the flags and
-	  all bits mentioned in #clr_mask# are cleared in the flags. */
-   void	wait_for_flags(long set_mask, long clr_mask=0) const;
+    /** Waits until all bits set in #set_mask# are set in the flags and
+    all bits mentioned in #clr_mask# are cleared in the flags. */
+    void	wait_for_flags(long set_mask, long clr_mask = 0) const;
 
-      /** Modifies the flags by setting all bits mentioned in #set_mask#
-	  and clearing all bits mentioned in #clr_mask#. If the flags have
-	  actually been modified, a broadcast will be sent. */
-   void	modify(long set_mask, long clr_mask);
+    /** Modifies the flags by setting all bits mentioned in #set_mask#
+    and clearing all bits mentioned in #clr_mask#. If the flags have
+    actually been modified, a broadcast will be sent. */
+    void	modify(long set_mask, long clr_mask);
 };
 
 inline
-GSafeFlags::GSafeFlags(long xflags) 
-  : flags(xflags) 
+GSafeFlags::GSafeFlags(long xflags)
+    : flags(xflags)
 {
 }
 
 inline void
 GSafeFlags::wait_for_flags(long set_mask, long clr_mask) const
 {
-   ((GSafeFlags *) this)->wait_and_modify(set_mask, clr_mask, 0, 0);
+    ((GSafeFlags*)this)->wait_and_modify(set_mask, clr_mask, 0, 0);
 }
 
 inline void
 GSafeFlags::modify(long set_mask, long clr_mask)
 {
-   test_and_modify(0, 0, set_mask, clr_mask);
+    test_and_modify(0, 0, set_mask, clr_mask);
 }
 
-inline GSafeFlags &
+inline GSafeFlags&
 GSafeFlags::operator|=(long mask)
 {
-   test_and_modify(0, 0, mask, 0);
-   return *this;
+    test_and_modify(0, 0, mask, 0);
+    return *this;
 }
 
-inline GSafeFlags &
+inline GSafeFlags&
 GSafeFlags::operator&=(long mask)
 {
-   test_and_modify(0, 0, 0, ~mask);
-   return *this;
+    test_and_modify(0, 0, 0, ~mask);
+    return *this;
 }
 
 //@}
@@ -429,39 +433,53 @@ GSafeFlags::operator&=(long mask)
 
 // -- these classes are no longer documented.
 
-class GCriticalSection : protected GMonitor 
+class GCriticalSection : protected GMonitor
 {
 public:
-  void lock() 
-    { GMonitor::enter(); };
-  void unlock() 
-    { GMonitor::leave(); };
+    void lock()
+    {
+        GMonitor::enter();
+    };
+    void unlock()
+    {
+        GMonitor::leave();
+    };
 };
 
-class GEvent : protected GMonitor 
+class GEvent : protected GMonitor
 {
 private:
-  int status;
+    int status;
 public:
-  GEvent() 
-    : status(0) { };
-  void set() 
-    { if (!status) { enter(); status=1; signal(); leave(); } };
-  void wait() 
-    { enter(); if (!status) GMonitor::wait(); status=0; leave(); };
-  void wait(int timeout) 
-    { enter(); if (!status) GMonitor::wait(timeout); status=0; leave(); };
+    GEvent()
+        : status(0) { };
+    void set()
+    {
+        if (!status) { enter(); status = 1; signal(); leave(); }
+    };
+    void wait()
+    {
+        enter(); if (!status) GMonitor::wait(); status = 0; leave();
+    };
+    void wait(int timeout)
+    {
+        enter(); if (!status) GMonitor::wait(timeout); status = 0; leave();
+    };
 };
 
 class GCriticalSectionLock
 {
 private:
-  GCriticalSection *gsec;
+    GCriticalSection* gsec;
 public:
-  GCriticalSectionLock(GCriticalSection *gsec) : gsec(gsec) 
-    { if (gsec) gsec->lock(); };
-  ~GCriticalSectionLock() 
-    { if (gsec) gsec->unlock(); };
+    GCriticalSectionLock(GCriticalSection* gsec) : gsec(gsec)
+    {
+        if (gsec) gsec->lock();
+    };
+    ~GCriticalSectionLock()
+    {
+        if (gsec) gsec->unlock();
+    };
 };
 
 
@@ -474,4 +492,3 @@ using namespace DJVU;
 # endif
 #endif
 #endif //_GTHREADS_H_
-

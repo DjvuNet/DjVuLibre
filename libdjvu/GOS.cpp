@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -142,14 +142,14 @@ namespace DJVU {
 # define NEED_STRERROR
 #endif
 #ifdef NEED_STRERROR
-char *
+char*
 strerror(int errno)
 {
-  extern int sys_nerr;
-  extern char *sys_errlist[];
-  if (errno>0 && errno<sys_nerr) 
-    return sys_errlist[errno];
-  return (char*) "unknown stdio error";
+    extern int sys_nerr;
+    extern char* sys_errlist[];
+    if (errno > 0 && errno < sys_nerr)
+        return sys_errlist[errno];
+    return (char*)"unknown stdio error";
 }
 #endif
 
@@ -160,91 +160,91 @@ strerror(int errno)
 // -----------------------------------------
 
 static inline int
-finddirsep(const GUTF8String &fname)
+finddirsep(const GUTF8String& fname)
 {
 #if defined(_WIN32)
-  return fname.rcontains("\\/",0);
+    return fname.rcontains("\\/", 0);
 #elif defined(UNIX)
-  return fname.rsearch('/',0);
+    return fname.rsearch('/', 0);
 #elif defined(macintosh)
-  return fname.rcontains(":/",0);
+    return fname.rcontains(":/", 0);
 #else
 # error "Define something here for your operating system"
-#endif  
+#endif
 }
 
 
 // basename(filename[, suffix])
 // -- returns the last component of filename and removes suffix
 //    when present. works like /bin/basename.
-GUTF8String 
-GOS::basename(const GUTF8String &gfname, const char *suffix)
+GUTF8String
+GOS::basename(const GUTF8String& gfname, const char* suffix)
 {
-  if(!gfname.length())
-    return gfname;
+    if (!gfname.length())
+        return gfname;
 
-  const char *fname=gfname;
+    const char* fname = gfname;
 #if defined(_WIN32) || defined(OS2)
-  // Special cases
-  if (fname[1] == ':')
-  {
-    if(!fname[2])
+    // Special cases
+    if (fname[1] == ':')
     {
-      return gfname;
+        if (!fname[2])
+        {
+            return gfname;
+        }
+        if (!fname[3] && (fname[2] == '/' || fname[2] == '\\'))
+        {
+            char string_buffer[4];
+            string_buffer[0] = fname[0];
+            string_buffer[1] = ':';
+            string_buffer[2] = '\\';
+            string_buffer[3] = 0;
+            return string_buffer;
+        }
     }
-    if (!fname[3] && (fname[2]== '/' || fname[2]== '\\'))
-    {
-      char string_buffer[4];
-      string_buffer[0] = fname[0];
-      string_buffer[1] = ':';
-      string_buffer[2] = '\\';
-      string_buffer[3] = 0; 
-      return string_buffer;
-    }
-  }
 #endif
 
 
-  // Allocate buffer
-  GUTF8String retval(gfname,finddirsep(gfname)+1,(unsigned int)(-1));
-  fname=retval;
+    // Allocate buffer
+    GUTF8String retval(gfname, finddirsep(gfname) + 1, (unsigned int)(-1));
+    fname = retval;
 
-  // Process suffix
-  if (suffix)
-  {
-    if (suffix[0]== '.' )
-      suffix ++;
-    if (suffix[0])
+    // Process suffix
+    if (suffix)
     {
-      const GUTF8String gsuffix(suffix);
-      const int sl = gsuffix.length();
-      const char *s = fname + strlen(fname);
-      if (s > fname + sl)
-      {
-        s = s - (sl + 1);
-        if(*s == '.' && (GUTF8String(s+1).downcase() == gsuffix.downcase()))
+        if (suffix[0] == '.')
+            suffix++;
+        if (suffix[0])
         {
-          retval.setat((int)((size_t)s-(size_t)fname),0);
+            const GUTF8String gsuffix(suffix);
+            const int sl = gsuffix.length();
+            const char* s = fname + strlen(fname);
+            if (s > fname + sl)
+            {
+                s = s - (sl + 1);
+                if (*s == '.' && (GUTF8String(s + 1).downcase() == gsuffix.downcase()))
+                {
+                    retval.setat((int)((size_t)s - (size_t)fname), 0);
+                }
+            }
         }
-      }
     }
-  }
-  return retval;
+    return retval;
 }
 
 
 
 // errmsg --
-// -- A small helper function returning a 
+// -- A small helper function returning a
 //    stdio error message in a static buffer.
 
-static GNativeString 
+static GNativeString
 errmsg()
 {
-  GNativeString buffer;
-  const char *errname = strerror(errno);
-  buffer.format("%s (errno = %d)", errname, errno);
-  return buffer;
+    GNativeString buffer;
+    const char* errname = strerror(errno);
+    buffer.format("%s (errno = %d)", errname, errno);
+    return buffer;
 }
 
 
@@ -254,26 +254,26 @@ errmsg()
 // -----------------------------------------
 
 // ticks() --
-// -- returns the number of milliseconds elapsed since 
+// -- returns the number of milliseconds elapsed since
 //    a system dependent date.
-unsigned long 
+unsigned long
 GOS::ticks()
 {
 #if defined(UNIX)
-  struct timeval tv;
-  if (gettimeofday(&tv, NULL) < 0)
-    G_THROW(errmsg());
-  return (unsigned long)( ((tv.tv_sec & 0xfffff)*1000) 
-                          + (tv.tv_usec/1000) );
+    struct timeval tv;
+    if (gettimeofday(&tv, NULL) < 0)
+        G_THROW(errmsg());
+    return (unsigned long)(((tv.tv_sec & 0xfffff) * 1000)
+        + (tv.tv_usec / 1000));
 #elif defined(_WIN32)
-  DWORD clk = GetTickCount();
-  return (unsigned long)clk;
+    DWORD clk = GetTickCount();
+    return (unsigned long)clk;
 #elif defined(OS2)
-  ULONG clk = 0;
-  DosQuerySysInfo(QSV_MS_COUNT, QSV_MS_COUNT, (PVOID)&clk, sizeof(ULONG));
-  return clk;
+    ULONG clk = 0;
+    DosQuerySysInfo(QSV_MS_COUNT, QSV_MS_COUNT, (PVOID)&clk, sizeof(ULONG));
+    return clk;
 #elif defined(macintosh)
-  return (unsigned long)((double)TickCount()*16.66);
+    return (unsigned long)((double)TickCount() * 16.66);
 #else
 # error "Define something here for your operating system"
 #endif
@@ -281,26 +281,26 @@ GOS::ticks()
 
 // sleep(int milliseconds) --
 // -- sleeps during the specified time (in milliseconds)
-void 
+void
 GOS::sleep(int milliseconds)
 {
 #if defined(UNIX)
-  struct timeval tv;
-  tv.tv_sec = milliseconds / 1000;
-  tv.tv_usec = (milliseconds - (tv.tv_sec * 1000)) * 1000;
-  ::select(0, NULL, NULL, NULL, &tv);
+    struct timeval tv;
+    tv.tv_sec = milliseconds / 1000;
+    tv.tv_usec = (milliseconds - (tv.tv_sec * 1000)) * 1000;
+    ::select(0, NULL, NULL, NULL, &tv);
 #elif defined(_WIN32)
-  Sleep(milliseconds);
+    Sleep(milliseconds);
 #elif defined(OS2)
-  DosSleep(milliseconds);
+    DosSleep(milliseconds);
 #elif defined(macintosh)
-  unsigned long tick = ticks(), now;
-  while (1) {
-    now = ticks();
-    if ((tick+milliseconds) < now)
-      break;
-    GThread::yield();
-  }
+    unsigned long tick = ticks(), now;
+    while (1) {
+        now = ticks();
+        if ((tick + milliseconds) < now)
+            break;
+        GThread::yield();
+    }
 #endif
 }
 
@@ -311,47 +311,47 @@ GOS::sleep(int milliseconds)
 
 // cwd([dirname])
 // -- changes directory to dirname (when specified).
-//    returns the full path name of the current directory. 
-GUTF8String 
-GOS::cwd(const GUTF8String &dirname)
+//    returns the full path name of the current directory.
+GUTF8String
+GOS::cwd(const GUTF8String& dirname)
 {
 #if defined(UNIX) || defined(macintosh) || defined(OS2)
-  if (dirname.length() && chdir(dirname.getUTF82Native())==-1)//MBCS cvt
-    G_THROW(errmsg());
-  char *string_buffer;
-  GPBuffer<char> gstring_buffer(string_buffer,MAXPATHLEN+1);
-  char *result = getcwd(string_buffer,MAXPATHLEN);
-  if (!result)
-    G_THROW(errmsg());
-  return GNativeString(result).getNative2UTF8();//MBCS cvt
+    if (dirname.length() && chdir(dirname.getUTF82Native()) == -1)//MBCS cvt
+        G_THROW(errmsg());
+    char* string_buffer;
+    GPBuffer<char> gstring_buffer(string_buffer, MAXPATHLEN + 1);
+    char* result = getcwd(string_buffer, MAXPATHLEN);
+    if (!result)
+        G_THROW(errmsg());
+    return GNativeString(result).getNative2UTF8();//MBCS cvt
 #elif defined(_WIN32)
-  char drv[2];
-  if (dirname.length() && _chdir(dirname.getUTF82Native())==-1)//MBCS cvt
-    G_THROW(errmsg());
-  drv[0]= '.' ; drv[1]=0;
-  char *string_buffer;
-  GPBuffer<char> gstring_buffer(string_buffer,MAXPATHLEN+1);
-  char *result = getcwd(string_buffer,MAXPATHLEN);
-  GetFullPathName(drv, MAXPATHLEN, string_buffer, &result);
-  return GNativeString(string_buffer).getNative2UTF8();//MBCS cvt
+    char drv[2];
+    if (dirname.length() && _chdir(dirname.getUTF82Native()) == -1)//MBCS cvt
+        G_THROW(errmsg());
+    drv[0] = '.'; drv[1] = 0;
+    char* string_buffer;
+    GPBuffer<char> gstring_buffer(string_buffer, MAXPATHLEN + 1);
+    char* result = getcwd(string_buffer, MAXPATHLEN);
+    GetFullPathName(drv, MAXPATHLEN, string_buffer, &result);
+    return GNativeString(string_buffer).getNative2UTF8();//MBCS cvt
 #else
 # error "Define something here for your operating system"
-#endif 
+#endif
 }
 
 GUTF8String
-GOS::getenv(const GUTF8String &name)
+GOS::getenv(const GUTF8String& name)
 {
-  GUTF8String retval;
-  if(name.length())
-  {
-    const char *env=::getenv(name.getUTF82Native());
-    if(env)
+    GUTF8String retval;
+    if (name.length())
     {
-      retval=GNativeString(env);
+        const char* env = ::getenv(name.getUTF82Native());
+        if (env)
+        {
+            retval = GNativeString(env);
+        }
     }
-  }
-  return retval;
+    return retval;
 }
 
 
@@ -362,4 +362,3 @@ GOS::getenv(const GUTF8String &name)
 using namespace DJVU;
 # endif
 #endif
-

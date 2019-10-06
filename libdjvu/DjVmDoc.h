@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -109,153 +109,153 @@ class DjVmNav;
 
     This class can also be used to create and modify multipage documents at
     the low level without decoding every page or component (See
-    \Ref{insert_file}() and \Ref{delete_file}()). 
+    \Ref{insert_file}() and \Ref{delete_file}()).
 */
 
 class DJVUAPI DjVmDoc : public GPEnabled
 {
-      // Internal function.
-protected:   
-  DjVmDoc(void);
-  void init(void);
+    // Internal function.
+protected:
+    DjVmDoc(void);
+    void init(void);
 public:
-      /// Creator
-   static GP<DjVmDoc> create(void);
-      /** Inserts a file into the document.
-          @param data  ByteStream containing the file data.
-          @param file_type Describes the type of the file to be inserted.
-	  	 See \Ref{DjVmDir::File} for details.
-          @param name  Name of the file in the document (e.g. an URL).
-          @param id    Identifier of the file (as used in INCL chunks).
-          @param title Optional title of the file (shown in browsers).
-          @param pos   Position of the file in the document (default is append).
-      */
-   void	insert_file(
-     ByteStream &data, DjVmDir::File::FILE_TYPE file_type,
-     const GUTF8String &name, const GUTF8String &id,
-     const GUTF8String &title=GUTF8String(), int pos=-1 );
-      /** Inserts a file into the document.
-          @param pool  Data pool containing file data.
-          @param file_type Describes the type of the file to be inserted.
-	  	 See \Ref{DjVmDir::File} for details.
-          @param name  Name of the file in the document (e.g. an URL).
-          @param id    Identifier of the file (as used in INCL chunks).
-          @param title Optional title of the file (shown in browsers).
-          @param pos   Position of the file in the document (default is append).
-      */
-   void	insert_file(
-     const GP<DataPool> &pool, DjVmDir::File::FILE_TYPE file_type,
-     const GUTF8String &name, const GUTF8String &id,
-     const GUTF8String &title=GUTF8String(), int pos=-1 );
+    /// Creator
+    static GP<DjVmDoc> create(void);
+    /** Inserts a file into the document.
+        @param data  ByteStream containing the file data.
+        @param file_type Describes the type of the file to be inserted.
+       See \Ref{DjVmDir::File} for details.
+        @param name  Name of the file in the document (e.g. an URL).
+        @param id    Identifier of the file (as used in INCL chunks).
+        @param title Optional title of the file (shown in browsers).
+        @param pos   Position of the file in the document (default is append).
+    */
+    void	insert_file(
+        ByteStream& data, DjVmDir::File::FILE_TYPE file_type,
+        const GUTF8String& name, const GUTF8String& id,
+        const GUTF8String& title = GUTF8String(), int pos = -1);
+    /** Inserts a file into the document.
+        @param pool  Data pool containing file data.
+        @param file_type Describes the type of the file to be inserted.
+       See \Ref{DjVmDir::File} for details.
+        @param name  Name of the file in the document (e.g. an URL).
+        @param id    Identifier of the file (as used in INCL chunks).
+        @param title Optional title of the file (shown in browsers).
+        @param pos   Position of the file in the document (default is append).
+    */
+    void	insert_file(
+        const GP<DataPool>& pool, DjVmDir::File::FILE_TYPE file_type,
+        const GUTF8String& name, const GUTF8String& id,
+        const GUTF8String& title = GUTF8String(), int pos = -1);
 
-      /** Inserts a file described by \Ref{DjVmDir::File} structure with
-	  data #data# at position #pos#. If #pos# is negative, the file
-          will be appended to the document. Otherwise it will be inserted
-          at position #pos#. */
-   void	insert_file(const GP<DjVmDir::File> & f,
-                    GP<DataPool> data, int pos=-1);
+    /** Inserts a file described by \Ref{DjVmDir::File} structure with
+    data #data# at position #pos#. If #pos# is negative, the file
+        will be appended to the document. Otherwise it will be inserted
+        at position #pos#. */
+    void	insert_file(const GP<DjVmDir::File>& f,
+        GP<DataPool> data, int pos = -1);
 
-      /** Removes file with the specified #id# from the document. Every
-	  file inside a new DjVu multipage document has its unique ID
-	  (refer to \Ref{DjVmDir} for details), which is passed to this
-          function. */
-   void	delete_file(const GUTF8String &id);
+    /** Removes file with the specified #id# from the document. Every
+    file inside a new DjVu multipage document has its unique ID
+    (refer to \Ref{DjVmDir} for details), which is passed to this
+        function. */
+    void	delete_file(const GUTF8String& id);
 
-     /** Set the bookmarks */
-   void set_djvm_nav(GP<DjVmNav> n);
+    /** Set the bookmarks */
+    void set_djvm_nav(GP<DjVmNav> n);
 
-      /** Returns the directory of the DjVm document (the one which will
-	  be encoded into #DJVM# chunk of the top-level file or the bundle). */
-   GP<DjVmDir>	get_djvm_dir(void);
-   
-      /** Returns contents of file with ID #id# from the document.
-	  Please refer to \Ref{DjVmDir} for the explanation of what
-          IDs mean. */
-   GP<DataPool>	get_data(const GUTF8String &id) const;
+    /** Returns the directory of the DjVm document (the one which will
+    be encoded into #DJVM# chunk of the top-level file or the bundle). */
+    GP<DjVmDir>	get_djvm_dir(void);
 
-      /** Reading routines */
-      //@{
-      /** Reads contents of a {\em bundled} multipage DjVu document from
-	  the stream. */
-   void	read(ByteStream & str);
-      /** Reads contents of a {\em bundled} multipage DjVu document from
-	  the \Ref{DataPool}. */
-   void	read(const GP<DataPool> & data_pool);
-      /** Reads the DjVu multipage document in either {\em bundled} or
-	  {\em indirect} format.
+    /** Returns contents of file with ID #id# from the document.
+    Please refer to \Ref{DjVmDir} for the explanation of what
+        IDs mean. */
+    GP<DataPool>	get_data(const GUTF8String& id) const;
 
-	  {\bf Note:} For {\em bundled} documents the file is not
-	  read into memory. We just open it and access data directly there.
-	  Thus you should not modify the file contents.
+    /** Reading routines */
+    //@{
+    /** Reads contents of a {\em bundled} multipage DjVu document from
+    the stream. */
+    void	read(ByteStream& str);
+    /** Reads contents of a {\em bundled} multipage DjVu document from
+    the \Ref{DataPool}. */
+    void	read(const GP<DataPool>& data_pool);
+    /** Reads the DjVu multipage document in either {\em bundled} or
+    {\em indirect} format.
 
-	  @param name For {\em bundled} documents this is the name
-	         of the document. For {\em indirect} documents this is
-		 the name of the top-level file of the document (containing
-		 the \Ref{DjVmDir} with the list of all files).
-		 The rest of the files are expected to be in the
-		 same directory and will be read by this function as well. */
-   void	read(const GURL &url);
-      //@}
+    {\bf Note:} For {\em bundled} documents the file is not
+    read into memory. We just open it and access data directly there.
+    Thus you should not modify the file contents.
 
-      /** Writing routines */
-      //@{
-      /** Writes the multipage DjVu document in the {\em bundled} format into
-	  the stream. */
-   void	write(const GP<ByteStream> &str);
-      /** Writes the multipage DjVu document in the {\em bundled} format into
-	  the stream, reserving any of the specified names. */
-   void	write(const GP<ByteStream> &str,
-              const GMap<GUTF8String,void *>& reserved);
-      /** Stored index (top-level) file of the DjVu document in the {\em
-	  indirect} format into the specified stream. */
-   void	write_index(const GP<ByteStream> &str);
-      /** Writes the multipage DjVu document in the {\em indirect} format
-	  into the given directory. Every page and included file will be
-          stored as a separate file. Besides, one top-level file with
-          the document directory (named #idx_name#) will be created unless
-	  #idx_name# is empty.
+    @param name For {\em bundled} documents this is the name
+           of the document. For {\em indirect} documents this is
+       the name of the top-level file of the document (containing
+       the \Ref{DjVmDir} with the list of all files).
+       The rest of the files are expected to be in the
+       same directory and will be read by this function as well. */
+    void	read(const GURL& url);
+    //@}
 
-          @param dir_name Name of the directory where files should be
-		 created
-	  @param idx_name Name of the top-level file with the \Ref{DjVmDir}
-		 with the list of files composing the given document.
-		 If empty, the file will not be created. */
-   void	expand(const GURL &codebase, const GUTF8String &idx_name);
+    /** Writing routines */
+    //@{
+    /** Writes the multipage DjVu document in the {\em bundled} format into
+    the stream. */
+    void	write(const GP<ByteStream>& str);
+    /** Writes the multipage DjVu document in the {\em bundled} format into
+    the stream, reserving any of the specified names. */
+    void	write(const GP<ByteStream>& str,
+        const GMap<GUTF8String, void*>& reserved);
+    /** Stored index (top-level) file of the DjVu document in the {\em
+    indirect} format into the specified stream. */
+    void	write_index(const GP<ByteStream>& str);
+    /** Writes the multipage DjVu document in the {\em indirect} format
+    into the given directory. Every page and included file will be
+        stored as a separate file. Besides, one top-level file with
+        the document directory (named #idx_name#) will be created unless
+    #idx_name# is empty.
 
-      /** Writes an individual file, and all included files. 
-          INCL chunks will be remapped as appropriate. */
-   void save_page(const GURL &codebase, const DjVmDir::File &file) const;
+        @param dir_name Name of the directory where files should be
+       created
+    @param idx_name Name of the top-level file with the \Ref{DjVmDir}
+       with the list of files composing the given document.
+       If empty, the file will not be created. */
+    void	expand(const GURL& codebase, const GUTF8String& idx_name);
 
-      /** Writes an individual file if not mapped, and all included files. 
-          INCL chunks will be remapped as appropriate.  All pages saved
-          are added to the #incl# map. */
-   void save_page(const GURL &codebase, const DjVmDir::File &file,
-                  GMap<GUTF8String,GUTF8String> &incl) const;
+    /** Writes an individual file, and all included files.
+        INCL chunks will be remapped as appropriate. */
+    void save_page(const GURL& codebase, const DjVmDir::File& file) const;
 
-      /** Writes an individual file specified, remapping INCL chunks as
-          appropriate.  Included files will not be saved. */
-   void save_file(const GURL &codebase, const DjVmDir::File &file) const;
+    /** Writes an individual file if not mapped, and all included files.
+        INCL chunks will be remapped as appropriate.  All pages saved
+        are added to the #incl# map. */
+    void save_page(const GURL& codebase, const DjVmDir::File& file,
+        GMap<GUTF8String, GUTF8String>& incl) const;
 
-      /** Writes the specified file from the given #pool#. */
-   GUTF8String save_file(const GURL &codebase, const DjVmDir::File &file,
-                         GMap<GUTF8String,GUTF8String> &incl, 
-                         const GP<DataPool> &pool) const;
-  //@}
+    /** Writes an individual file specified, remapping INCL chunks as
+        appropriate.  Included files will not be saved. */
+    void save_file(const GURL& codebase, const DjVmDir::File& file) const;
+
+    /** Writes the specified file from the given #pool#. */
+    GUTF8String save_file(const GURL& codebase, const DjVmDir::File& file,
+        GMap<GUTF8String, GUTF8String>& incl,
+        const GP<DataPool>& pool) const;
+    //@}
 private:
-   void save_file(const GURL &codebase, const DjVmDir::File &file,
-                  GMap<GUTF8String,GUTF8String> *incl) const;
-   GP<DjVmDir> dir;
-   GP<DjVmNav> nav;
-   GPMap<GUTF8String, DataPool > data;
+    void save_file(const GURL& codebase, const DjVmDir::File& file,
+        GMap<GUTF8String, GUTF8String>* incl) const;
+    GP<DjVmDir> dir;
+    GP<DjVmNav> nav;
+    GPMap<GUTF8String, DataPool > data;
 private: // dummy stuff
-   static void write(ByteStream *);
-   static void write_index(ByteStream *);
+    static void write(ByteStream*);
+    static void write_index(ByteStream*);
 };
 
 inline GP<DjVmDir>
 DjVmDoc::get_djvm_dir(void)
 {
-   return dir;
+    return dir;
 }
 
 

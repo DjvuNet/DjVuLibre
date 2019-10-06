@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -77,7 +77,7 @@
 
 #ifdef _WIN32
 # include <windows.h>  // OutputDebugString
-#endif 
+#endif
 
 
 #ifdef HAVE_NAMESPACES
@@ -103,122 +103,122 @@ static int              debug_level = 0;
 static int              debug_level = DEBUGLVL;
 #endif
 static int              debug_id;
-static FILE            *debug_file;
+static FILE* debug_file;
 static int              debug_file_count;
 
-static GMap<long, DjVuDebug> &
+static GMap<long, DjVuDebug>&
 debug_map(void)
 {
-  static GMap<long, DjVuDebug> xmap;
-  return xmap;
+    static GMap<long, DjVuDebug> xmap;
+    return xmap;
 }
 
 DjVuDebug::DjVuDebug()
-  : block(0), indent(0)
+    : block(0), indent(0)
 {
-  id = debug_id++;
+    id = debug_id++;
 #ifdef UNIX
-  if (debug_file_count++ == 0 && !debug_file)
-    set_debug_file(stderr);
+    if (debug_file_count++ == 0 && !debug_file)
+        set_debug_file(stderr);
 #endif
 }
 
 DjVuDebug::~DjVuDebug()
 {
 #ifdef UNIX
-  if (--debug_file_count == 0)
+    if (--debug_file_count == 0)
     {
-      if (debug_file && (debug_file != stderr))
-        fclose(debug_file);
-      debug_file = 0;
+        if (debug_file && (debug_file != stderr))
+            fclose(debug_file);
+        debug_file = 0;
     }
 #endif
-}
-
-void   
-DjVuDebug::format(const char *fmt, ... )
-{
-  if (! block)
-    {
-      va_list ap;
-      va_start(ap, fmt);
-      GUTF8String buffer(fmt,ap);
-      va_end(ap);
-      GCriticalSectionLock glock(&debug_lock);
-      if (debug_file)
-        {
-          fprintf(debug_file,"%s", (const char*)buffer);
-          fflush(debug_file);
-        }
-#ifdef _WIN32
-      else
-        {
-          OutputDebugStringA((const char *)buffer);
-        }
-#endif
-    }
-}
-
-void   
-DjVuDebug::set_debug_level(int lvl)
-{
-  debug_level = lvl;
 }
 
 void
-DjVuDebug::set_debug_file(FILE * file)
+DjVuDebug::format(const char* fmt, ...)
 {
-  GCriticalSectionLock glock(&debug_lock);
-  if (debug_file && (debug_file != stderr))
-    fclose(debug_file);
-  debug_file = file;
+    if (!block)
+    {
+        va_list ap;
+        va_start(ap, fmt);
+        GUTF8String buffer(fmt, ap);
+        va_end(ap);
+        GCriticalSectionLock glock(&debug_lock);
+        if (debug_file)
+        {
+            fprintf(debug_file, "%s", (const char*)buffer);
+            fflush(debug_file);
+        }
+#ifdef _WIN32
+        else
+        {
+            OutputDebugStringA((const char*)buffer);
+        }
+#endif
+    }
+}
+
+void
+DjVuDebug::set_debug_level(int lvl)
+{
+    debug_level = lvl;
+}
+
+void
+DjVuDebug::set_debug_file(FILE* file)
+{
+    GCriticalSectionLock glock(&debug_lock);
+    if (debug_file && (debug_file != stderr))
+        fclose(debug_file);
+    debug_file = file;
 }
 
 void
 DjVuDebug::modify_indent(int rindent)
 {
-  indent += rindent;
+    indent += rindent;
 }
 
-DjVuDebug& 
+DjVuDebug&
 DjVuDebug::lock(int lvl, int noindent)
 {
-  int threads_num=1;
-  debug_lock.lock();
-  // Get per-thread debug object
-  long threadid = (long) GThread::current();
-  DjVuDebug &dbg = debug_map()[threadid];
-  threads_num=debug_map().size();
-  // Check level
-  dbg.block = (lvl > debug_level);
-  // Output thread id and indentation
-  if (! noindent)
+    int threads_num = 1;
+    debug_lock.lock();
+    // Get per-thread debug object
+    long threadid = (long)GThread::current();
+    DjVuDebug& dbg = debug_map()[threadid];
+    threads_num = debug_map().size();
+    // Check level
+    dbg.block = (lvl > debug_level);
+    // Output thread id and indentation
+    if (!noindent)
     {
-      if (threads_num>1)
-        dbg.format("[T%d] ", dbg.id);
-      int ind = dbg.indent;
-      char buffer[257];
-      memset(buffer,' ', sizeof(buffer)-1);
-      buffer[sizeof(buffer)-1] = 0;
-      while (ind > (int)sizeof(buffer)-1)
+        if (threads_num > 1)
+            dbg.format("[T%d] ", dbg.id);
+        int ind = dbg.indent;
+        char buffer[257];
+        memset(buffer, ' ', sizeof(buffer) - 1);
+        buffer[sizeof(buffer) - 1] = 0;
+        while (ind > (int)sizeof(buffer) - 1)
         {
-          dbg.format("%s", buffer);
-          ind -= sizeof(buffer)-1;
+            dbg.format("%s", buffer);
+            ind -= sizeof(buffer) - 1;
         }
-      if (ind > 0)
+        if (ind > 0)
         {
-          buffer[ind] = 0;
-          dbg.format("%s", buffer);
+            buffer[ind] = 0;
+            dbg.format("%s", buffer);
         }
     }
-  // Return
-  return dbg;
+    // Return
+    return dbg;
 }
 
 void
 DjVuDebug::unlock()
 {
-  debug_lock.unlock();
+    debug_lock.unlock();
 }
 
 #define OP(type, fmt) \
@@ -227,7 +227,7 @@ DjVuDebug& DjVuDebug::operator<<(type arg)\
 
 DjVuDebug& DjVuDebug::operator<<(bool arg)
 {
-   format("%s", arg ? "TRUE" : "FALSE"); return *this;
+    format("%s", arg ? "TRUE" : "FALSE"); return *this;
 }
 
 OP(char, "%c")
@@ -240,46 +240,46 @@ OP(long, "%ld")
 OP(unsigned long, "%lu")
 OP(float, "%g")
 OP(double, "%g")
-OP(const void * const, "0x%08x")
+OP(const void* const, "0x%08x")
 
-DjVuDebug& DjVuDebug::operator<<(const char * const ptr) 
+DjVuDebug& DjVuDebug::operator<<(const char* const ptr)
 {
-  GUTF8String buffer(ptr?ptr:"(null)");
-  if(buffer.length() > 255)
-  {
-    buffer=buffer.substr(0,252)+"...";
-  }
-  format("%s", (const char *)buffer);
-  return *this; 
+    GUTF8String buffer(ptr ? ptr : "(null)");
+    if (buffer.length() > 255)
+    {
+        buffer = buffer.substr(0, 252) + "...";
+    }
+    format("%s", (const char*)buffer);
+    return *this;
 }
 
-DjVuDebug& DjVuDebug::operator<<(const unsigned char * const ptr) 
-{ 
-  return operator<<( (const char *) ptr );
+DjVuDebug& DjVuDebug::operator<<(const unsigned char* const ptr)
+{
+    return operator<<((const char*)ptr);
 }
 
-DjVuDebug& DjVuDebug::operator<<(const GUTF8String &ptr)
+DjVuDebug& DjVuDebug::operator<<(const GUTF8String& ptr)
 {
-  GUTF8String buffer(ptr);
-  if(buffer.length() > 255)
-    buffer=buffer.substr(0,252)+"...";
-  format("%s", (const char *)buffer);
-  return *this; 
+    GUTF8String buffer(ptr);
+    if (buffer.length() > 255)
+        buffer = buffer.substr(0, 252) + "...";
+    format("%s", (const char*)buffer);
+    return *this;
 }
 
 DjVuDebugIndent::DjVuDebugIndent(int inc)
-  : inc(inc)
+    : inc(inc)
 {
-  DjVuDebug &dbg = DjVuDebug::lock(0,1);
-  dbg.modify_indent(inc);
-  dbg.unlock();
+    DjVuDebug& dbg = DjVuDebug::lock(0, 1);
+    dbg.modify_indent(inc);
+    dbg.unlock();
 }
 
 DjVuDebugIndent::~DjVuDebugIndent()
 {
-  DjVuDebug &dbg = DjVuDebug::lock(0,1);
-  dbg.modify_indent(-inc);
-  dbg.unlock();
+    DjVuDebug& dbg = DjVuDebug::lock(0, 1);
+    dbg.modify_indent(-inc);
+    dbg.unlock();
 }
 
 

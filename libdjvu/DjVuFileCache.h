@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -69,7 +69,7 @@
 # ifndef UNDER_CE
 #  include <sys/types.h>
 #  include <time.h>
-# endif 
+# endif
 #else
 # include <time.h>
 #endif
@@ -89,7 +89,7 @@ namespace DJVU {
     the oldest ones when necessary.
 
     See \Ref{DjVuFileCache} for details.
-    
+
     @memo Simple DjVuFile caching class.
     @author Andrei Erofeev <eaf@geocities.com>
 */
@@ -108,116 +108,116 @@ namespace DJVU {
 class DjVuFileCache : public GPEnabled
 {
 protected:
-   DjVuFileCache(const int) {}
+    DjVuFileCache(const int) {}
 public:
-   static GP<DjVuFileCache> create(const int);
-   virtual ~DjVuFileCache(void);
-   void del_file(const DjVuFile *) {}
-   void add_file(const GP<DjVuFile> &) {}
-   void clear(void) {}
-   void set_max_size(int) {}
-   int get_max_size(void) const {return 0;}
-   void enable(bool en) {}
-   bool is_enabled(void) const {return false;}
-} ;
+    static GP<DjVuFileCache> create(const int);
+    virtual ~DjVuFileCache(void);
+    void del_file(const DjVuFile*) {}
+    void add_file(const GP<DjVuFile>&) {}
+    void clear(void) {}
+    void set_max_size(int) {}
+    int get_max_size(void) const { return 0; }
+    void enable(bool en) {}
+    bool is_enabled(void) const { return false; }
+};
 #else
 class DjVuFileCache : public GPEnabled
 {
 protected:
-   DjVuFileCache(const int max_size=5*2*1024*1024);
+    DjVuFileCache(const int max_size = 5 * 2 * 1024 * 1024);
 public:
-      /** Constructs the #DjVuFileCache#
-	  @param max_size Maximum allowed size of the cache in bytes. */
-   static GP<DjVuFileCache> create(const int max_size=5*2*1024*1024);
+    /** Constructs the #DjVuFileCache#
+    @param max_size Maximum allowed size of the cache in bytes. */
+    static GP<DjVuFileCache> create(const int max_size = 5 * 2 * 1024 * 1024);
 
-   virtual ~DjVuFileCache(void);
+    virtual ~DjVuFileCache(void);
 
-      /** Removes file #file# from the cache */
-   void		del_file(const DjVuFile * file);
+    /** Removes file #file# from the cache */
+    void		del_file(const DjVuFile* file);
 
-      /** Adds the given file to the cache. It it's already there, its
-	  timestamp will be refreshed. */
-   void		add_file(const GP<DjVuFile> & file);
+    /** Adds the given file to the cache. It it's already there, its
+    timestamp will be refreshed. */
+    void		add_file(const GP<DjVuFile>& file);
 
-      /** Clears the cache. All items will be deleted. */
-   void		clear(void);
-      /** Sets new maximum size. If the total size of all items in the cache
-	  is greater than #max_size#, the cache will be deleting the oldest
-	  items until the size is OK. */
-   void		set_max_size(int max_size);
+    /** Clears the cache. All items will be deleted. */
+    void		clear(void);
+    /** Sets new maximum size. If the total size of all items in the cache
+    is greater than #max_size#, the cache will be deleting the oldest
+    items until the size is OK. */
+    void		set_max_size(int max_size);
 
-      /** Returns the maximum allowed size of the cache. */
-   int		get_max_size(void) const;
+    /** Returns the maximum allowed size of the cache. */
+    int		get_max_size(void) const;
 
-      /** Enables or disables the cache. See \Ref{is_enabled}() for details
-	  @param en - If {\em en} is TRUE, the cache will be enabled.
-	         Otherwise it will be disabled.
-	*/
-   void		enable(bool en);
+    /** Enables or disables the cache. See \Ref{is_enabled}() for details
+    @param en - If {\em en} is TRUE, the cache will be enabled.
+           Otherwise it will be disabled.
+  */
+    void		enable(bool en);
 
-      /** Returns #TRUE# if the cache is enabled, #FALSE# otherwise.
-	  When a cache is disabled, \Ref{add_file}(), and
-	  \Ref{del_file}() do nothing. But the {\em maximum size} is preserved
-	  inside the class so that next time the cache is enabled, it will
-	  be configured the same way. Clearly this "enable/disable" thing is
-	  for convenience only. One could easily simulate this behavior by
-	  setting the {\em maximum size} of the cache to #ZERO#. */
-   bool		is_enabled(void) const;
+    /** Returns #TRUE# if the cache is enabled, #FALSE# otherwise.
+    When a cache is disabled, \Ref{add_file}(), and
+    \Ref{del_file}() do nothing. But the {\em maximum size} is preserved
+    inside the class so that next time the cache is enabled, it will
+    be configured the same way. Clearly this "enable/disable" thing is
+    for convenience only. One could easily simulate this behavior by
+    setting the {\em maximum size} of the cache to #ZERO#. */
+    bool		is_enabled(void) const;
 
 public:
-   class Item;
-   
-   class Item : public GPEnabled
-	{
-	public:
-	   virtual ~Item(void);
-	   time_t	get_time(void) const;
-	   GP<DjVuFile>	get_file(void) const;
-	   unsigned int	get_size(void) const;
-	   void		refresh(void);
+    class Item;
 
-	public:
-	   GP<DjVuFile>	file;
-	   time_t	time;
-	   static int	qsort_func(const void * el1, const void * el2);
-	   Item(void);
-	   Item(const GP<DjVuFile> & xfile);
-	};
+    class Item : public GPEnabled
+    {
+    public:
+        virtual ~Item(void);
+        time_t	get_time(void) const;
+        GP<DjVuFile>	get_file(void) const;
+        unsigned int	get_size(void) const;
+        void		refresh(void);
+
+    public:
+        GP<DjVuFile>	file;
+        time_t	time;
+        static int	qsort_func(const void* el1, const void* el2);
+        Item(void);
+        Item(const GP<DjVuFile>& xfile);
+    };
 
 protected:
-   GCriticalSection	class_lock;
-   
-      /** This function is called right after the given file has been added
-	  to the cache for management. */
-   virtual void	file_added(const GP<DjVuFile> & file);
-      /** This function is called when the given file is no longer
-	  managed by the cache. */
-   virtual void	file_deleted(const GP<DjVuFile> & file);
-      /** This function is called when after the cache decides to get rid
-	  of the file. */
-   virtual void	file_cleared(const GP<DjVuFile> & file);
+    GCriticalSection	class_lock;
 
-   GPList<Item>	get_items(void);
+    /** This function is called right after the given file has been added
+    to the cache for management. */
+    virtual void	file_added(const GP<DjVuFile>& file);
+    /** This function is called when the given file is no longer
+    managed by the cache. */
+    virtual void	file_deleted(const GP<DjVuFile>& file);
+    /** This function is called when after the cache decides to get rid
+    of the file. */
+    virtual void	file_cleared(const GP<DjVuFile>& file);
+
+    GPList<Item>	get_items(void);
 private:
-   GPList<Item>	list;
-   bool		enabled;
-   int		max_size;
-   int		cur_size;
+    GPList<Item>	list;
+    bool		enabled;
+    int		max_size;
+    int		cur_size;
 
-   int		calculate_size(void);
-   void		clear_to_size(int size);
+    int		calculate_size(void);
+    void		clear_to_size(int size);
 };
 
 
 
 //@}
-   
+
 inline
 DjVuFileCache::Item::Item(void) : time(::time(0)) {};
 
 inline
-DjVuFileCache::Item::Item(const GP<DjVuFile> & xfile) :
-      file(xfile), time(::time(0)) {}
+DjVuFileCache::Item::Item(const GP<DjVuFile>& xfile) :
+    file(xfile), time(::time(0)) {}
 
 inline
 DjVuFileCache::Item::~Item(void) {}
@@ -225,47 +225,47 @@ DjVuFileCache::Item::~Item(void) {}
 inline GP<DjVuFile>
 DjVuFileCache::Item::get_file(void) const
 {
-   return file;
+    return file;
 }
 
 inline unsigned int
 DjVuFileCache::Item::get_size(void) const
 {
-   return file->get_memory_usage();
+    return file->get_memory_usage();
 }
 
 inline time_t
 DjVuFileCache::Item::get_time(void) const
 {
-   return time;
+    return time;
 }
 
 inline void
 DjVuFileCache::Item::refresh(void)
 {
-   time=::time(0);
+    time = ::time(0);
 }
 
 inline
 DjVuFileCache::DjVuFileCache(const int xmax_size) :
-      enabled(true), max_size(xmax_size), cur_size(0) {}
+    enabled(true), max_size(xmax_size), cur_size(0) {}
 
 inline void
 DjVuFileCache::clear(void)
 {
-   clear_to_size(0);
+    clear_to_size(0);
 }
 
 inline bool
 DjVuFileCache::is_enabled(void) const
 {
-   return enabled;
+    return enabled;
 }
 
 inline int
 DjVuFileCache::get_max_size(void) const
 {
-   return max_size;
+    return max_size;
 }
 
 #endif
@@ -273,7 +273,7 @@ DjVuFileCache::get_max_size(void) const
 inline GP<DjVuFileCache>
 DjVuFileCache::create(const int max_size)
 {
-  return new DjVuFileCache(max_size);
+    return new DjVuFileCache(max_size);
 }
 
 

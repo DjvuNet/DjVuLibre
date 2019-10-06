@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -85,17 +85,17 @@ namespace DJVU {
     #"IWTransform.cpp"#.
 
     \begin{description}
-    \item[MMXrr( insn, srcreg, dstreg)] 
-       Encode a register to register MMX instruction 
+    \item[MMXrr( insn, srcreg, dstreg)]
+       Encode a register to register MMX instruction
        (e.g. #paddw# or #punpcklwd#).
     \item[MMXar( insn, addr, dstreg )]
-       Encode a memory to register MMX instruction 
+       Encode a memory to register MMX instruction
        (e.g. #moveq# from memory).
     \item[MMXra( insn, srcreg, addr )]
-       Encode a register to memory MMX instruction 
+       Encode a register to memory MMX instruction
        (e.g. #moveq# to memory).
     \item[MMXir( insn, imm, dstreg )]
-       Encode a immediate to register MMX instruction 
+       Encode a immediate to register MMX instruction
        (e.g #psraw#).
     \item[MMXemms]
        Execute the #EMMS# instruction to reset the FPU state.
@@ -103,34 +103,34 @@ namespace DJVU {
 
     @memo
     Essential support for MMX.
-    @author: 
+    @author:
     L\'eon Bottou <leonb@research.att.com> -- initial implementation */
-//@{
+    //@{
 
 
-/** MMX Control. 
-    Class #MMXControl# encapsulates a few static functions for 
-    globally enabling or disabling MMX support. */
+    /** MMX Control.
+        Class #MMXControl# encapsulates a few static functions for
+        globally enabling or disabling MMX support. */
 
 class MMXControl
 {
- public:
-  // MMX DETECTION
-  /** Detects and enable MMX or similar technologies.  This function checks
-      whether the CPU supports a vectorial instruction set (such as Intel's
-      MMX) and enables them.  Returns a boolean indicating whether such an
-      instruction set is available.  Speedups factors may vary. */
-  static int enable_mmx();
-  /** Disables MMX or similar technologies.  The transforms will then be
-      performed using the baseline code. */
-  static int disable_mmx();
-  /** Contains a value greater than zero if the CPU supports vectorial
-      instructions. A negative value means that you must call \Ref{enable_mmx}
-      and test the value again. Direct access to this member should only be
-      used to transfer the instruction flow to the vectorial branch of the
-      code. Never modify the value of this variable.  Use #enable_mmx# or
-      #disable_mmx# instead. */
-  static int mmxflag;  // readonly
+public:
+    // MMX DETECTION
+    /** Detects and enable MMX or similar technologies.  This function checks
+        whether the CPU supports a vectorial instruction set (such as Intel's
+        MMX) and enables them.  Returns a boolean indicating whether such an
+        instruction set is available.  Speedups factors may vary. */
+    static int enable_mmx();
+    /** Disables MMX or similar technologies.  The transforms will then be
+        performed using the baseline code. */
+    static int disable_mmx();
+    /** Contains a value greater than zero if the CPU supports vectorial
+        instructions. A negative value means that you must call \Ref{enable_mmx}
+        and test the value again. Direct access to this member should only be
+        used to transfer the instruction flow to the vectorial branch of the
+        code. Never modify the value of this variable.  Use #enable_mmx# or
+        #disable_mmx# instead. */
+    static int mmxflag;  // readonly
 };
 
 //@}
@@ -144,17 +144,17 @@ class MMXControl
 #ifndef NO_MMX
 
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
-typedef struct{ char c[8]; } MMX_t;
+typedef struct { char c[8]; } MMX_t;
 #define MMXemms \
-  __asm__ volatile("emms" : : : "memory" ) 
+  __asm__ volatile("emms" : : : "memory" )
 #define MMXrr(op,src,dst) \
-  __asm__ volatile( #op " %%" #src ",%%" #dst : : : "memory" ) 
+  __asm__ volatile( #op " %%" #src ",%%" #dst : : : "memory" )
 #define MMXir(op,imm,dst) \
   __asm__ volatile( #op " %0,%%" #dst : : "i" (imm) : "memory" )
 #define MMXar(op,addr,dst) \
-  __asm__ volatile( #op " %0,%%" #dst : : "m" (*(MMX_t*)(addr)) : "memory" ) 
+  __asm__ volatile( #op " %0,%%" #dst : : "m" (*(MMX_t*)(addr)) : "memory" )
 #define MMXra(op,src,addr) \
-  __asm__ volatile( #op " %%" #src ",%0" : "=m" (*(MMX_t*)(addr)) : : "memory") 
+  __asm__ volatile( #op " %%" #src ",%0" : "=m" (*(MMX_t*)(addr)) : : "memory")
 #define MMX 1
 #endif
 
@@ -174,7 +174,7 @@ typedef struct{ char c[8]; } MMX_t;
 #define MMXar(op,addr,dst) \
   { register __int64 var=*(__int64*)(addr); __asm { op dst,var } }
 #define MMXra(op,src,addr) \
-  { register __int64 var; __asm { op [var],src };  *(__int64*)addr = var; } 
+  { register __int64 var; __asm { op [var],src };  *(__int64*)addr = var; }
 // Probably not as efficient as GCC macros
 #define MMX 1
 #endif

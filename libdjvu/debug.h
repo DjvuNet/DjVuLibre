@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -118,32 +118,32 @@ namespace DJVU {
     if cluttering header files with huge documentation chunks helps to
     improve code readability.
 
-    @memo 
+    @memo
     Macros for printing debug messages.
     @author
     Andrew Erofeev <eaf@geocities.com> -- initial implementation \\
     Leon Bottou <leonb@research.att.com> -- cleanups */
-//@{
+    //@{
 
 #ifndef DEBUGLVL
 # ifdef NDEBUG
 #  define DEBUGLVL 0
-# endif 
+# endif
 #endif
 #ifndef DEBUGLVL
 # ifdef NO_DEBUG
 #  define DEBUGLVL 0
-# endif 
+# endif
 #endif
 #ifndef DEBUGLVL
 # ifdef RUNTIME_DEBUG_ONLY
 #  define DEBUGLVL 1
-# endif 
+# endif
 #endif
 #ifndef DEBUGLVL
 # ifdef _DEBUG
 #  define DEBUGLVL 1
-# endif 
+# endif
 #endif
 #ifndef DEBUGLVL
 #  define DEBUGLVL 0
@@ -185,47 +185,47 @@ class GUTF8String;
 class DjVuDebug // DJVU_CLASS
 {
 private:
-  int    id;
-  int    block;
-  int    indent;
-  void   format(const char *fmt, ... );
+    int    id;
+    int    block;
+    int    indent;
+    void   format(const char* fmt, ...);
 public:
-  // construction
-  DjVuDebug();
-  ~DjVuDebug();
-  // access
-  static void   set_debug_level(int lvl);
-  static void	set_debug_file(FILE * file);
-  void          modify_indent(int rindent);
-  static DjVuDebug& lock(int lvl, int noindent);
-  void          unlock();
-  // printing
-  DjVuDebug &	operator<<(bool b);
-  DjVuDebug &	operator<<(char c);
-  DjVuDebug &	operator<<(unsigned char c);
-  DjVuDebug &	operator<<(int i);
-  DjVuDebug &	operator<<(unsigned int i);
-  DjVuDebug &	operator<<(short int i);
-  DjVuDebug &	operator<<(unsigned short int i);
-  DjVuDebug &	operator<<(long i);
-  DjVuDebug &	operator<<(unsigned long i);
-  DjVuDebug &	operator<<(const char * const ptr);
-  DjVuDebug &	operator<<(const unsigned char * const ptr);
-  DjVuDebug&    operator<<(const GUTF8String &ptr);
-  DjVuDebug &	operator<<(float f);
-  DjVuDebug &	operator<<(double d);
-  DjVuDebug &	operator<<(const void * const p);
+    // construction
+    DjVuDebug();
+    ~DjVuDebug();
+    // access
+    static void   set_debug_level(int lvl);
+    static void	set_debug_file(FILE* file);
+    void          modify_indent(int rindent);
+    static DjVuDebug& lock(int lvl, int noindent);
+    void          unlock();
+    // printing
+    DjVuDebug& operator<<(bool b);
+    DjVuDebug& operator<<(char c);
+    DjVuDebug& operator<<(unsigned char c);
+    DjVuDebug& operator<<(int i);
+    DjVuDebug& operator<<(unsigned int i);
+    DjVuDebug& operator<<(short int i);
+    DjVuDebug& operator<<(unsigned short int i);
+    DjVuDebug& operator<<(long i);
+    DjVuDebug& operator<<(unsigned long i);
+    DjVuDebug& operator<<(const char* const ptr);
+    DjVuDebug& operator<<(const unsigned char* const ptr);
+    DjVuDebug& operator<<(const GUTF8String& ptr);
+    DjVuDebug& operator<<(float f);
+    DjVuDebug& operator<<(double d);
+    DjVuDebug& operator<<(const void* const p);
 };
 
 class DjVuDebugIndent // DJVU_CLASS
 {
 private:
-  int inc;
+    int inc;
 public:
-  DjVuDebugIndent(int inc=2);
-  ~DjVuDebugIndent();
-//#define DEBUG_MAKE_INDENT_2(x, y) DjVuDebugIndent debug_indent ## y (x)
-//#define DEBUG_MAKE_INDENT_1(x, y) DEBUG_MAKE_INDENT_2(x, y)
+    DjVuDebugIndent(int inc = 2);
+    ~DjVuDebugIndent();
+    //#define DEBUG_MAKE_INDENT_2(x, y) DjVuDebugIndent debug_indent ## y (x)
+    //#define DEBUG_MAKE_INDENT_1(x, y) DEBUG_MAKE_INDENT_2(x, y)
 #define DEBUG_MAKE_INDENT_1(x, y) DjVuDebugIndent debug_indent ## y (x)
 };
 

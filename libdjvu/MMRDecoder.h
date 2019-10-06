@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -76,8 +76,8 @@ class ByteStream;
 class JB2Image;
 
 /** @name MMRDecoder.h
-    Files #"MMRDecoder.h"# and #"MMRDecoder.cpp"# implement a 
-    CCITT-G4/MMR decoder suitable for use in DjVu.  The main 
+    Files #"MMRDecoder.h"# and #"MMRDecoder.cpp"# implement a
+    CCITT-G4/MMR decoder suitable for use in DjVu.  The main
     entry point is function \Ref{MMRDecoder::decode}.
 
     The foreground mask layer of a DjVu file is usually encoded with a
@@ -132,7 +132,7 @@ class JB2Image;
     @author
     Parag Deshmukh <parag@sanskrit.lz.att.com> \\
     Leon Bottou <leonb@research.att.com> */
-//@{
+    //@{
 
 
 
@@ -148,76 +148,76 @@ class JB2Image;
 class DJVUAPI MMRDecoder : public GPEnabled
 {
 protected:
-  MMRDecoder(const int width, const int height);
-  void init(GP<ByteStream> gbs, const bool striped=false);
+    MMRDecoder(const int width, const int height);
+    void init(GP<ByteStream> gbs, const bool striped = false);
 public:
-  /** Main decoding routine that (a) decodes the header using
-      #decode_header#, (b) decodes the MMR data using an instance of
-      #MMRDecoder#, and returns a new \Ref{JB2Image} composed of tiles
-      whose maximal width and height is derived from the size of the
-      image. */
-  static GP<JB2Image> decode(GP<ByteStream> gbs);
+    /** Main decoding routine that (a) decodes the header using
+        #decode_header#, (b) decodes the MMR data using an instance of
+        #MMRDecoder#, and returns a new \Ref{JB2Image} composed of tiles
+        whose maximal width and height is derived from the size of the
+        image. */
+    static GP<JB2Image> decode(GP<ByteStream> gbs);
 
-  /// Only decode the header.
-  static bool decode_header(ByteStream &inp, 
-                            int &width, int &height, int &invert);
+    /// Only decode the header.
+    static bool decode_header(ByteStream& inp,
+        int& width, int& height, int& invert);
 
 public:
-  /// Non-virtual destructor.
-  ~MMRDecoder();
-  /** Create a MMRDecoder object for decoding an image
-      of size #width# by #height#. Flag $striped# must be set
-      if the image is composed of multiple stripes. */
-  static GP<MMRDecoder> create(GP<ByteStream> gbs, 
-                               const int width, const int height,
-                               const bool striped=false );
+    /// Non-virtual destructor.
+    ~MMRDecoder();
+    /** Create a MMRDecoder object for decoding an image
+        of size #width# by #height#. Flag $striped# must be set
+        if the image is composed of multiple stripes. */
+    static GP<MMRDecoder> create(GP<ByteStream> gbs,
+        const int width, const int height,
+        const bool striped = false);
 
-  /** Decodes a scanline and returns a pointer to an array of run lengths.
-      The returned buffer contains the length of alternative white and black
-      runs.  These run lengths sum to the image width. They are followed by
-      two zeroes.  The position of these two zeroes is stored in the pointer
-      specified by the optional argument #endptr#.  The buffer data should be
-      processed before calling this function again. */
-  const unsigned short *scanruns(const unsigned short **endptr=0);
-  /** Decodes a scanline and returns a pointer to RLE encoded data.  The
-      buffer contains the length of the runs for the current line encoded as
-      described in \Ref{PNM and RLE file formats}.)  The flag #invert# can be
-      used to indicate that the MMR data is encoded in reverse video.  The RLE
-      data is followed by two zero bytes.  The position of these two zeroes is
-      stored in the pointer specified by the optional argument #endptr#.  The
-      buffer data should be processed before calling this function again. This
-      is implemented by calling \Ref{MMRDecoder::scanruns}. */
-  const unsigned char  *scanrle(const bool invert, 
-                                const unsigned char **endptr=0);
+    /** Decodes a scanline and returns a pointer to an array of run lengths.
+        The returned buffer contains the length of alternative white and black
+        runs.  These run lengths sum to the image width. They are followed by
+        two zeroes.  The position of these two zeroes is stored in the pointer
+        specified by the optional argument #endptr#.  The buffer data should be
+        processed before calling this function again. */
+    const unsigned short* scanruns(const unsigned short** endptr = 0);
+    /** Decodes a scanline and returns a pointer to RLE encoded data.  The
+        buffer contains the length of the runs for the current line encoded as
+        described in \Ref{PNM and RLE file formats}.)  The flag #invert# can be
+        used to indicate that the MMR data is encoded in reverse video.  The RLE
+        data is followed by two zero bytes.  The position of these two zeroes is
+        stored in the pointer specified by the optional argument #endptr#.  The
+        buffer data should be processed before calling this function again. This
+        is implemented by calling \Ref{MMRDecoder::scanruns}. */
+    const unsigned char* scanrle(const bool invert,
+        const unsigned char** endptr = 0);
 #if 0
-  /** Decodes a scanline and returns a pointer to an array of #0# or #1# bytes.
-      Returns a pointer to the scanline buffer containing one byte per pixel. 
-      The buffer data should be processed before calling this function again.
-      This is implemented by calling \Ref{MMRDecoder::scanruns}. */
-  const unsigned char *scanline();
+    /** Decodes a scanline and returns a pointer to an array of #0# or #1# bytes.
+        Returns a pointer to the scanline buffer containing one byte per pixel.
+        The buffer data should be processed before calling this function again.
+        This is implemented by calling \Ref{MMRDecoder::scanruns}. */
+    const unsigned char* scanline();
 #endif
- private:
-  int width;
-  int height;
-  int lineno;
-  int striplineno;
-  int rowsperstrip;
-  unsigned char  *line;
-  GPBuffer<unsigned char> gline;
-  unsigned short *lineruns;
-  GPBuffer<unsigned short> glineruns;
-  unsigned short *prevruns;
-  GPBuffer<unsigned short> gprevruns;
-public:
-  class VLSource;
-  class VLTable;
 private:
-  GP<VLSource> src;
-  GP<VLTable> mrtable;
-  GP<VLTable> wtable;
-  GP<VLTable> btable;
-  friend class VLSource;
-  friend class VLTable;
+    int width;
+    int height;
+    int lineno;
+    int striplineno;
+    int rowsperstrip;
+    unsigned char* line;
+    GPBuffer<unsigned char> gline;
+    unsigned short* lineruns;
+    GPBuffer<unsigned short> glineruns;
+    unsigned short* prevruns;
+    GPBuffer<unsigned short> gprevruns;
+public:
+    class VLSource;
+    class VLTable;
+private:
+    GP<VLSource> src;
+    GP<VLTable> mrtable;
+    GP<VLTable> wtable;
+    GP<VLTable> btable;
+    friend class VLSource;
+    friend class VLTable;
 };
 
 

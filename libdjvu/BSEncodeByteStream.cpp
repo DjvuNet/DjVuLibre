@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -123,15 +123,15 @@ class _BSort  // DJVU_CLASS
 {
 public:
     ~_BSort();
-    _BSort(unsigned char *data, int size);
-    void run(int &markerpos);
+    _BSort(unsigned char* data, int size);
+    void run(int& markerpos);
 private:
     // Members
     int            size;
-    unsigned char *data;
-    unsigned int  *posn;
+    unsigned char* data;
+    unsigned int* posn;
     GPBuffer<unsigned int> gposn;
-    int           *rank;
+    int* rank;
     GPBuffer<int> grank;
     // Helpers
     inline int GT(int p1, int p2, int depth);
@@ -139,10 +139,10 @@ private:
     // -- final in-depth sort
     void ranksort(int lo, int hi, int d);
     // -- doubling sort
-    int  pivot3r(int *rr, int lo, int hi);
+    int  pivot3r(int* rr, int lo, int hi);
     void quicksort3r(int lo, int hi, int d);
     // -- presort to depth PRESORT_DEPTH
-    unsigned char pivot3d(unsigned char *dd, int lo, int hi);
+    unsigned char pivot3d(unsigned char* dd, int lo, int hi);
     void quicksort3d(int lo, int hi, int d);
     // -- radixsort
     void radixsort16(void);
@@ -153,7 +153,7 @@ private:
 // blocksort -- the main entry point
 
 static void
-blocksort(unsigned char *data, int size, int &markerpos)
+blocksort(unsigned char* data, int size, int& markerpos)
 {
     _BSort bsort(data, size);
     bsort.run(markerpos);
@@ -162,10 +162,10 @@ blocksort(unsigned char *data, int size, int &markerpos)
 
 // _BSort construction
 
-_BSort::_BSort(unsigned char *xdata, int xsize)
+_BSort::_BSort(unsigned char* xdata, int xsize)
     : size(xsize), data(xdata), gposn(posn, xsize), grank(rank, xsize + 1)
 {
-    ASSERT(size>0 && size<0x1000000);
+    ASSERT(size > 0 && size < 0x1000000);
     rank[size] = -1;
 }
 
@@ -187,36 +187,36 @@ _BSort::GT(int p1, int p2, int depth)
         r1 = rank[p1 + depth]; r2 = rank[p2 + depth];
         p1 += twod;  p2 += twod;
         if (r1 != r2)
-            return (r1>r2);
+            return (r1 > r2);
         r1 = rank[p1]; r2 = rank[p2];
         if (r1 != r2)
-            return (r1>r2);
+            return (r1 > r2);
         r1 = rank[p1 + depth]; r2 = rank[p2 + depth];
         p1 += twod;  p2 += twod;
         if (r1 != r2)
-            return (r1>r2);
+            return (r1 > r2);
         r1 = rank[p1]; r2 = rank[p2];
         if (r1 != r2)
-            return (r1>r2);
+            return (r1 > r2);
         r1 = rank[p1 + depth]; r2 = rank[p2 + depth];
         p1 += twod;  p2 += twod;
         if (r1 != r2)
-            return (r1>r2);
+            return (r1 > r2);
         r1 = rank[p1]; r2 = rank[p2];
         if (r1 != r2)
-            return (r1>r2);
+            return (r1 > r2);
         r1 = rank[p1 + depth]; r2 = rank[p2 + depth];
         p1 += twod;  p2 += twod;
         if (r1 != r2)
-            return (r1>r2);
+            return (r1 > r2);
         r1 = rank[p1]; r2 = rank[p2];
         if (r1 != r2)
-            return (r1>r2);
+            return (r1 > r2);
     };
 }
 
 
-// _BSort::ranksort -- 
+// _BSort::ranksort --
 // -- a simple insertion sort based on GT
 
 void
@@ -230,14 +230,14 @@ _BSort::ranksort(int lo, int hi, int depth)
             posn[j + 1] = posn[j];
         posn[j + 1] = tmp;
     }
-    for (i = lo;i <= hi;i++)
+    for (i = lo; i <= hi; i++)
         rank[posn[i]] = i;
 }
 
 // pivot -- return suitable pivot
 
 inline int
-_BSort::pivot3r(int *rr, int lo, int hi)
+_BSort::pivot3r(int* rr, int lo, int hi)
 {
     int c1, c2, c3;
     if (hi - lo > 256)
@@ -253,7 +253,7 @@ _BSort::pivot3r(int *rr, int lo, int hi)
         c3 = rr[posn[hi]];
     }
     // Extract median
-    if (c1>c3)
+    if (c1 > c3)
     {
         int tmp = c1; c1 = c3; c3 = tmp;
     }
@@ -266,9 +266,9 @@ _BSort::pivot3r(int *rr, int lo, int hi)
 }
 
 
-// _BSort::quicksort3r -- Three way quicksort algorithm 
+// _BSort::quicksort3r -- Three way quicksort algorithm
 //    Sort suffixes based on rank at pos+depth
-//    The algorithm breaks into ranksort when size is 
+//    The algorithm breaks into ranksort when size is
 //    smaller than RANKSORT_THRESH
 
 static inline int
@@ -278,7 +278,7 @@ mini(int a, int b)
 }
 
 static inline void
-vswap(int i, int j, int n, unsigned int *x)
+vswap(int i, int j, int n, unsigned int* x)
 {
     while (n-- > 0)
     {
@@ -301,22 +301,22 @@ _BSort::quicksort3r(int lo, int hi, int depth)
         lo = slo[sp];
         hi = shi[sp];
         // Test for insertion sort
-        if (hi - lo<RANKSORT_THRESH)
+        if (hi - lo < RANKSORT_THRESH)
         {
             ranksort(lo, hi, depth);
         }
         else
         {
             int tmp;
-            int *rr = rank + depth;
+            int* rr = rank + depth;
             int med = pivot3r(rr, lo, hi);
             // -- positions are organized as follows:
             //   [lo..l1[ [l1..l[ ]h..h1] ]h1..hi]
             //      =        <       >        =
             int l1 = lo;
             int h1 = hi;
-            while (rr[posn[l1]] == med && l1<h1) { l1++; }
-            while (rr[posn[h1]] == med && l1<h1) { h1--; }
+            while (rr[posn[l1]] == med && l1 < h1) { l1++; }
+            while (rr[posn[h1]] == med && l1 < h1) { h1--; }
             int l = l1;
             int h = h1;
             // -- partition set
@@ -336,12 +336,12 @@ _BSort::quicksort3r(int lo, int hi, int depth)
                     if (c == 0) { tmp = posn[h]; posn[h] = posn[h1]; posn[h1--] = tmp; }
                     h--;
                 }
-                if (l>h) break;
+                if (l > h) break;
                 tmp = posn[l]; posn[l] = posn[h]; posn[h] = tmp;
             }
             // -- reorganize as follows
             //   [lo..l1[ [l1..h1] ]h1..hi]
-            //      <        =        > 
+            //      <        =        >
             tmp = mini(l1 - lo, l - l1);
             vswap(lo, l - tmp, tmp, posn);
             l1 = lo + (l - l1);
@@ -349,14 +349,14 @@ _BSort::quicksort3r(int lo, int hi, int depth)
             vswap(hi - tmp + 1, h + 1, tmp, posn);
             h1 = hi - (h1 - h);
             // -- process segments
-            ASSERT(sp + 2<QUICKSORT_STACK);
+            ASSERT(sp + 2 < QUICKSORT_STACK);
             // ----- middle segment (=?) [l1, h1]
-            for (int i = l1;i <= h1;i++)
+            for (int i = l1; i <= h1; i++)
                 rank[posn[i]] = h1;
             // ----- lower segment (<) [lo, l1[
             if (l1 > lo)
             {
-                for (int i = lo;i<l1;i++)
+                for (int i = lo; i < l1; i++)
                     rank[posn[i]] = l1 - 1;
                 slo[sp] = lo;
                 shi[sp] = l1 - 1;
@@ -380,7 +380,7 @@ _BSort::quicksort3r(int lo, int hi, int depth)
 
 
 
-// GTD -- compare suffixes using data information 
+// GTD -- compare suffixes using data information
 //  (up to depth PRESORT_DEPTH)
 
 inline int
@@ -393,21 +393,21 @@ _BSort::GTD(int p1, int p2, int depth)
         // Perform two
         c1 = data[p1]; c2 = data[p2];
         if (c1 != c2)
-            return (c1>c2);
+            return (c1 > c2);
         c1 = data[p1 + 1]; c2 = data[p2 + 1];
         p1 += 2;  p2 += 2; depth += 2;
         if (c1 != c2)
-            return (c1>c2);
+            return (c1 > c2);
     }
-    if (p1<size && p2<size)
+    if (p1 < size && p2 < size)
         return 0;
-    return (p1<p2);
+    return (p1 < p2);
 }
 
 // pivot3d -- return suitable pivot
 
 inline unsigned char
-_BSort::pivot3d(unsigned char *rr, int lo, int hi)
+_BSort::pivot3d(unsigned char* rr, int lo, int hi)
 {
     unsigned char c1, c2, c3;
     if (hi - lo > 256)
@@ -423,7 +423,7 @@ _BSort::pivot3d(unsigned char *rr, int lo, int hi)
         c3 = rr[posn[hi]];
     }
     // Extract median
-    if (c1>c3)
+    if (c1 > c3)
     {
         int tmp = c1; c1 = c3; c3 = tmp;
     }
@@ -436,10 +436,10 @@ _BSort::pivot3d(unsigned char *rr, int lo, int hi)
 }
 
 
-// _BSort::quicksort3d -- Three way quicksort algorithm 
+// _BSort::quicksort3d -- Three way quicksort algorithm
 //    Sort suffixes based on strings until reaching
 //    depth rank at pos+depth
-//    The algorithm breaks into ranksort when size is 
+//    The algorithm breaks into ranksort when size is
 //    smaller than PRESORT_THRESH
 
 void
@@ -465,7 +465,7 @@ _BSort::quicksort3d(int lo, int hi, int depth)
             for (int i = lo; i <= hi; i++)
                 rank[posn[i]] = hi;
         }
-        else if (hi - lo<PRESORT_THRESH)
+        else if (hi - lo < PRESORT_THRESH)
         {
             int i, j;
             for (i = lo + 1; i <= hi; i++)
@@ -475,7 +475,7 @@ _BSort::quicksort3d(int lo, int hi, int depth)
                     posn[j + 1] = posn[j];
                 posn[j + 1] = tmp;
             }
-            for (i = hi;i >= lo;i = j)
+            for (i = hi; i >= lo; i = j)
             {
                 int tmp = posn[i];
                 rank[tmp] = i;
@@ -486,15 +486,15 @@ _BSort::quicksort3d(int lo, int hi, int depth)
         else
         {
             int tmp;
-            unsigned char *dd = data + depth;
+            unsigned char* dd = data + depth;
             unsigned char med = pivot3d(dd, lo, hi);
             // -- positions are organized as follows:
             //   [lo..l1[ [l1..l[ ]h..h1] ]h1..hi]
             //      =        <       >        =
             int l1 = lo;
             int h1 = hi;
-            while (dd[posn[l1]] == med && l1<h1) { l1++; }
-            while (dd[posn[h1]] == med && l1<h1) { h1--; }
+            while (dd[posn[l1]] == med && l1 < h1) { l1++; }
+            while (dd[posn[h1]] == med && l1 < h1) { h1--; }
             int l = l1;
             int h = h1;
             // -- partition set
@@ -514,12 +514,12 @@ _BSort::quicksort3d(int lo, int hi, int depth)
                     if (c == 0) { tmp = posn[h]; posn[h] = posn[h1]; posn[h1--] = tmp; }
                     h--;
                 }
-                if (l>h) break;
+                if (l > h) break;
                 tmp = posn[l]; posn[l] = posn[h]; posn[h] = tmp;
             }
             // -- reorganize as follows
             //   [lo..l1[ [l1..h1] ]h1..hi]
-            //      <        =        > 
+            //      <        =        >
             tmp = mini(l1 - lo, l - l1);
             vswap(lo, l - tmp, tmp, posn);
             l1 = lo + (l - l1);
@@ -527,7 +527,7 @@ _BSort::quicksort3d(int lo, int hi, int depth)
             vswap(hi - tmp + 1, h + 1, tmp, posn);
             h1 = hi - (h1 - h);
             // -- process segments
-            ASSERT(sp + 3<QUICKSORT_STACK);
+            ASSERT(sp + 3 < QUICKSORT_STACK);
             // ----- middle segment (=?) [l1, h1]
             l = l1; h = h1;
             if (med == 0) // special case for marker [slow]
@@ -537,7 +537,7 @@ _BSort::quicksort3d(int lo, int hi, int depth)
                         tmp = posn[i]; posn[i] = posn[l]; posn[l] = tmp;
                         rank[tmp] = l++; break;
                     }
-            if (l<h)
+            if (l < h)
             {
                 slo[sp] = l; shi[sp] = h; sd[sp++] = depth + 1;
             }
@@ -548,7 +548,7 @@ _BSort::quicksort3d(int lo, int hi, int depth)
             // ----- lower segment (<) [lo, l1[
             l = lo;
             h = l1 - 1;
-            if (l<h)
+            if (l < h)
             {
                 slo[sp] = l; shi[sp] = h; sd[sp++] = depth;
             }
@@ -559,7 +559,7 @@ _BSort::quicksort3d(int lo, int hi, int depth)
             // ----- upper segment (>) ]h1, hi]
             l = h1 + 1;
             h = hi;
-            if (l<h)
+            if (l < h)
             {
                 slo[sp] = l; shi[sp] = h; sd[sp++] = depth;
             }
@@ -582,20 +582,20 @@ _BSort::radixsort8(void)
     int i;
     // Initialize frequency array
     int lo[256], hi[256];
-    for (i = 0; i<256; i++)
+    for (i = 0; i < 256; i++)
         hi[i] = lo[i] = 0;
     // Count occurences
-    for (i = 0; i<size - 1; i++)
+    for (i = 0; i < size - 1; i++)
         hi[data[i]] ++;
     // Compute positions (lo)
     int last = 1;
-    for (i = 0; i<256; i++)
+    for (i = 0; i < 256; i++)
     {
         lo[i] = last;
         hi[i] = last + hi[i] - 1;
         last = hi[i] + 1;
     }
-    for (i = 0; i<size - 1; i++)
+    for (i = 0; i < size - 1; i++)
     {
         posn[lo[data[i]]++] = i;
         rank[i] = hi[data[i]];
@@ -615,24 +615,24 @@ _BSort::radixsort16(void)
 {
     int i;
     // Initialize frequency array
-    int *ftab;
+    int* ftab;
     GPBuffer<int> gftab(ftab, 65536);
-    for (i = 0; i<65536; i++)
+    for (i = 0; i < 65536; i++)
         ftab[i] = 0;
     // Count occurences
     unsigned char c1 = data[0];
-    for (i = 0; i<size - 1; i++)
+    for (i = 0; i < size - 1; i++)
     {
         unsigned char c2 = data[i + 1];
         ftab[(c1 << 8) | c2] ++;
         c1 = c2;
     }
     // Generate upper position
-    for (i = 1;i<65536;i++)
+    for (i = 1; i < 65536; i++)
         ftab[i] += ftab[i - 1];
     // Fill rank array with upper bound
     c1 = data[0];
-    for (i = 0; i<size - 2; i++)
+    for (i = 0; i < size - 2; i++)
     {
         unsigned char c2 = data[i + 1];
         rank[i] = ftab[(c1 << 8) | c2];
@@ -662,15 +662,15 @@ _BSort::radixsort16(void)
 // _BSort::run -- main sort loop
 
 void
-_BSort::run(int &markerpos)
+_BSort::run(int& markerpos)
 {
     int lo, hi;
-    ASSERT(size>0);
+    ASSERT(size > 0);
     ASSERT(data[size - 1] == 0);
 #ifdef BSORT_TIMER
     long start = GOS::ticks();
-#endif  
-    // Step 1: Radix sort 
+#endif
+    // Step 1: Radix sort
     int depth = 0;
     if (size > RADIX_THRESH)
     {
@@ -683,7 +683,7 @@ _BSort::run(int &markerpos)
         depth = 1;
     }
     // Step 2: Perform presort to depth PRESORT_DEPTH
-    for (lo = 0; lo<size; lo++)
+    for (lo = 0; lo < size; lo++)
     {
         hi = rank[posn[lo]];
         if (lo < hi)
@@ -693,14 +693,14 @@ _BSort::run(int &markerpos)
     depth = PRESORT_DEPTH;
 #ifdef BSORT_TIMER
     long middle = GOS::ticks();
-#endif  
+#endif
     // Step 3: Perform rank doubling
     int again = 1;
     while (again)
     {
         again = 0;
         int sorted_lo = 0;
-        for (lo = 0; lo<size; lo++)
+        for (lo = 0; lo < size; lo++)
         {
             hi = rank[posn[lo] & 0xffffff];
             if (lo == hi)
@@ -741,12 +741,12 @@ _BSort::run(int &markerpos)
     // Step 4: Permute data
     int i;
     markerpos = -1;
-    for (i = 0; i<size; i++)
+    for (i = 0; i < size; i++)
         rank[i] = data[i];
-    for (i = 0; i<size; i++)
+    for (i = 0; i < size; i++)
     {
         int j = posn[i] & 0xffffff;
-        if (j>0)
+        if (j > 0)
         {
             data[i] = rank[j - 1];
         }
@@ -756,12 +756,12 @@ _BSort::run(int &markerpos)
             markerpos = i;
         }
     }
-    ASSERT(markerpos >= 0 && markerpos<size);
+    ASSERT(markerpos >= 0 && markerpos < size);
 #ifdef BSORT_TIMER
     long end = GOS::ticks();
     DjVuPrintErrorUTF8("Sorting time: %d bytes in %ld + %ld = %ld ms\n",
         size - 1, middle - start, end - middle, end - start);
-#endif  
+#endif
 }
 
 
@@ -769,7 +769,7 @@ _BSort::run(int &markerpos)
 // -- Encoding
 
 static void
-encode_raw(ZPCodec &zp, int bits, int x)
+encode_raw(ZPCodec& zp, int bits, int x)
 {
     int n = 1;
     int count = 0;
@@ -785,7 +785,7 @@ encode_raw(ZPCodec &zp, int bits, int x)
 }
 
 static inline void
-encode_binary(ZPCodec &zp, BitContext *ctx, int bits, int x)
+encode_binary(ZPCodec& zp, BitContext* ctx, int bits, int x)
 {
     // Require 2^bits-1  contexts
     int n = 1;
@@ -809,7 +809,7 @@ public:
     ~Encode();
     void init(const int encoding);
     // Virtual functions
-    virtual size_t write(const void *buffer, size_t sz);
+    virtual size_t write(const void* buffer, size_t sz);
     virtual void flush(void);
 protected:
     unsigned int encode(void);
@@ -834,26 +834,26 @@ BSByteStream::Encode::encode()
     //////////// Encode Output Stream
 
     // Header
-    ZPCodec &zp = *gzp;
+    ZPCodec& zp = *gzp;
     encode_raw(zp, 24, size);
 
     // Determine and Encode Estimation Speed
     int fshift = 0;
     if (size < FREQS0)
     {
-        fshift = 0; 
+        fshift = 0;
         zp.encoder(0);
     }
     else if (size < FREQS1)
     {
-        fshift = 1; 
-        zp.encoder(1); 
+        fshift = 1;
+        zp.encoder(1);
         zp.encoder(0);
     }
     else
     {
-        fshift = 2; 
-        zp.encoder(1); 
+        fshift = 2;
+        zp.encoder(1);
         zp.encoder(1);
     }
 
@@ -882,7 +882,7 @@ BSByteStream::Encode::encode()
         int c = data[i];
         int ctxid = CTXIDS - 1;
 
-        if (ctxid > mtfno) 
+        if (ctxid > mtfno)
             ctxid = mtfno;
 
         mtfno = rmtf[c];
@@ -892,7 +892,7 @@ BSByteStream::Encode::encode()
 
         // Encode using ZPCoder
         int b;
-        BitContext *cx = ctx;
+        BitContext* cx = ctx;
 
         b = (mtfno == 0);
 
@@ -907,73 +907,73 @@ BSByteStream::Encode::encode()
         if (b) goto rotate;
 
         cx += CTXIDS;
-        b = (mtfno<4);
+        b = (mtfno < 4);
         zp.encoder(b, cx[0]);
 
-        if (b) 
-        { 
-            encode_binary(zp, cx + 1, 1, mtfno - 2); 
-            goto rotate; 
+        if (b)
+        {
+            encode_binary(zp, cx + 1, 1, mtfno - 2);
+            goto rotate;
         }
 
         cx += 1 + 1;
         b = (mtfno < 8);
         zp.encoder(b, cx[0]);
 
-        if (b) 
-        { 
-            encode_binary(zp, cx + 1, 2, mtfno - 4); 
-            goto rotate; 
+        if (b)
+        {
+            encode_binary(zp, cx + 1, 2, mtfno - 4);
+            goto rotate;
         }
 
         cx += 1 + 3;
         b = (mtfno < 16);
         zp.encoder(b, cx[0]);
 
-        if (b) 
-        { 
-            encode_binary(zp, cx + 1, 3, mtfno - 8); 
-            goto rotate; 
+        if (b)
+        {
+            encode_binary(zp, cx + 1, 3, mtfno - 8);
+            goto rotate;
         }
 
         cx += 1 + 7;
         b = (mtfno < 32);
         zp.encoder(b, cx[0]);
 
-        if (b) 
-        { 
-            encode_binary(zp, cx + 1, 4, mtfno - 16); 
-            goto rotate; 
+        if (b)
+        {
+            encode_binary(zp, cx + 1, 4, mtfno - 16);
+            goto rotate;
         }
 
         cx += 1 + 15;
-        b = (mtfno<64);
+        b = (mtfno < 64);
         zp.encoder(b, cx[0]);
 
-        if (b) 
-        { 
-            encode_binary(zp, cx + 1, 5, mtfno - 32); 
-            goto rotate; 
+        if (b)
+        {
+            encode_binary(zp, cx + 1, 5, mtfno - 32);
+            goto rotate;
         }
 
         cx += 1 + 31;
-        b = (mtfno<128);
+        b = (mtfno < 128);
         zp.encoder(b, cx[0]);
 
-        if (b) 
-        { 
-            encode_binary(zp, cx + 1, 6, mtfno - 64); 
-            goto rotate; 
+        if (b)
+        {
+            encode_binary(zp, cx + 1, 6, mtfno - 64);
+            goto rotate;
         }
 
         cx += 1 + 63;
-        b = (mtfno<256);
+        b = (mtfno < 256);
         zp.encoder(b, cx[0]);
 
-        if (b) 
-        { 
-            encode_binary(zp, cx + 1, 7, mtfno - 128); 
-            goto rotate; 
+        if (b)
+        {
+            encode_binary(zp, cx + 1, 7, mtfno - 128);
+            goto rotate;
         }
 
         continue;
@@ -990,7 +990,7 @@ BSByteStream::Encode::encode()
             freq[1] >>= 24;
             freq[2] >>= 24;
             freq[3] >>= 24;
-            for (int k = 4; k<FREQMAX; k++)
+            for (int k = 4; k < FREQMAX; k++)
                 freq[k] = freq[k] >> 24;
         }
         // Relocate new char according to new freq
@@ -1003,7 +1003,7 @@ BSByteStream::Encode::encode()
             mtf[k] = mtf[k - 1];
             rmtf[mtf[k]] = k;
         }
-        for (; k>0 && fc >= freq[k - 1]; k--)
+        for (; k > 0 && fc >= freq[k - 1]; k--)
         {
             mtf[k] = mtf[k - 1];
             freq[k] = freq[k - 1];
@@ -1027,7 +1027,7 @@ void
 BSByteStream::Encode::init(const int xencoding)
 {
     gzp = ZPCodec::create(gbs, true, true);
-    const int encoding = (xencoding<MINBLOCK) ? MINBLOCK : xencoding;
+    const int encoding = (xencoding < MINBLOCK) ? MINBLOCK : xencoding;
     if (encoding > MAXBLOCK)
         G_THROW(ERR_MSG("ByteStream.blocksize") "\t" + GUTF8String(MAXBLOCK));
     // Record block size
@@ -1047,7 +1047,7 @@ BSByteStream::Encode::~Encode()
 GP<ByteStream>
 BSByteStream::create(GP<ByteStream> xbs, const int blocksize)
 {
-    BSByteStream::Encode *rbs = new BSByteStream::Encode(xbs);
+    BSByteStream::Encode* rbs = new BSByteStream::Encode(xbs);
     GP<ByteStream> retval = rbs;
     rbs->init(blocksize);
     return retval;
@@ -1059,9 +1059,9 @@ BSByteStream::create(GP<ByteStream> xbs, const int blocksize)
 void
 BSByteStream::Encode::flush()
 {
-    if (bptr>0)
+    if (bptr > 0)
     {
-        ASSERT(bptr<(int)blocksize);
+        ASSERT(bptr < (int)blocksize);
         memset(data + bptr, 0, OVERFLOW);
         size = bptr + 1;
         encode();
@@ -1070,7 +1070,7 @@ BSByteStream::Encode::flush()
 }
 
 size_t
-BSByteStream::Encode::write(const void *buffer, size_t sz)
+BSByteStream::Encode::write(const void* buffer, size_t sz)
 {
     // Trivial checks
     if (sz == 0)

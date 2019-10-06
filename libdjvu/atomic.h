@@ -32,20 +32,20 @@
 #endif
 
 /* This file defines macros or functions performing
-// the following atomic operations with a full memory barrier. 
+// the following atomic operations with a full memory barrier.
 //
-//   int atomicIncrement(int volatile *var) 
-//   { *var += 1; return *var; } 
-//   
+//   int atomicIncrement(int volatile *var)
+//   { *var += 1; return *var; }
+//
 //   int atomicDecrement(int volatile *var);
-//   { *var -= 1; return *var; } 
-//   
+//   { *var -= 1; return *var; }
+//
 //   int atomicCompareAndSwap(int volatile *var, int oldval, int newval);
 //   { int val = *var; if (val == oldval) { *var = newval };  returl val; }
-//   
+//
 //   int atomicExchange(int volatile *var, int val);
 //   { int tmp = *var; *var = val; return tmp; }
-//   
+//
 //   void* atomicExchangePointer(void* volatile *var, int val);
 //   { void* tmp = *var; *var = val; return tmp; }
 */
@@ -98,66 +98,68 @@ extern "C" {
 #  define atomicExchangePointer(var,nv) \
    (__sync_lock_test_and_set((void* volatile*)(var),(void*)(nv)))
 # else
-  static inline int atomicExchange(int volatile *var, int nv) {
-    int ov; do { ov = *var;  /* overkill */
-    } while (! __sync_bool_compare_and_swap(var, ov, nv));
-    return ov;
-  }
-  static inline void* atomicExchangePointer(void* volatile *var, void* nv) {
-    void *ov; do { ov = *var;  /* overkill */
-    } while (! __sync_bool_compare_and_swap(var, ov, nv));
-    return ov;
-  }
+    static inline int atomicExchange(int volatile* var, int nv) {
+        int ov; do {
+            ov = *var;  /* overkill */
+        } while (!__sync_bool_compare_and_swap(var, ov, nv));
+        return ov;
+    }
+    static inline void* atomicExchangePointer(void* volatile* var, void* nv) {
+        void* ov; do {
+            ov = *var;  /* overkill */
+        } while (!__sync_bool_compare_and_swap(var, ov, nv));
+        return ov;
+    }
 # endif
 #endif
 
 #if !defined(ATOMIC_MACROS) && defined(__GNUC__)
 # if defined(__i386__) || defined(__amd64__) || defined(__x86_64__)
 #  define ATOMIC_MACROS "GNU86"
-  static inline int atomicIncrement(int volatile *var) {
-    int ov; __asm__ __volatile__ ("lock; xaddl %0, %1" 
-          : "=r" (ov), "=m" (*var) : "0" (1), "m" (*var) : "cc" );
-    return ov + 1;
-  }
-  static inline int atomicDecrement(int volatile *var) {
-    int ov; __asm__ __volatile__ ("lock; xaddl %0, %1" 
-         : "=r" (ov), "=m" (*var) : "0" (-1), "m" (*var) : "cc" );
-    return ov - 1;
-  }
-  static inline int atomicExchange(int volatile *var, int nv) {
-    int ov; __asm__ __volatile__ ("xchgl %0, %1"
-        : "=r" (ov), "=m" (*var) : "0" (nv), "m" (*var)); 
-    return ov; 
-  }
-  static inline int atomicCompareAndSwap(int volatile *var, int ov, int nv) {
-    int rv; __asm __volatile ("lock; cmpxchgl %2, %1"
-        : "=a" (rv), "=m" (*var) : "r" (nv), "0" (ov), "m" (*var) : "cc");
-    return rv;
-  }
-  static inline void *atomicExchangePointer(void * volatile *var, void *nv) {
-    void *ov;  __asm__ __volatile__ (
+    static inline int atomicIncrement(int volatile* var) {
+        int ov; __asm__ __volatile__("lock; xaddl %0, %1"
+            : "=r" (ov), "=m" (*var) : "0" (1), "m" (*var) : "cc");
+        return ov + 1;
+    }
+    static inline int atomicDecrement(int volatile* var) {
+        int ov; __asm__ __volatile__("lock; xaddl %0, %1"
+            : "=r" (ov), "=m" (*var) : "0" (-1), "m" (*var) : "cc");
+        return ov - 1;
+    }
+    static inline int atomicExchange(int volatile* var, int nv) {
+        int ov; __asm__ __volatile__("xchgl %0, %1"
+            : "=r" (ov), "=m" (*var) : "0" (nv), "m" (*var));
+        return ov;
+    }
+    static inline int atomicCompareAndSwap(int volatile* var, int ov, int nv) {
+        int rv; __asm __volatile("lock; cmpxchgl %2, %1"
+            : "=a" (rv), "=m" (*var) : "r" (nv), "0" (ov), "m" (*var) : "cc");
+        return rv;
+    }
+    static inline void* atomicExchangePointer(void* volatile* var, void* nv) {
+        void* ov;  __asm__ __volatile__(
 #  if defined(__x86_64__) || defined(__amd64__)
-         "xchgq %0, %1"
+            "xchgq %0, %1"
 #  else
-         "xchgl %0, %1"
+            "xchgl %0, %1"
 #  endif
-         : "=r" (ov), "=m" (*var) : "0" (nv), "m" (*var)); 
-    return ov; 
-  }
+            : "=r" (ov), "=m" (*var) : "0" (nv), "m" (*var));
+        return ov;
+    }
 # endif
 #endif
 
 
 #ifndef ATOMIC_MACROS
-  /* emulation */
-  extern int atomicIncrement(int volatile *var);
-  extern int atomicDecrement(int volatile *var);
-  extern int atomicCompareAndSwap(int volatile *var, int ov, int nv);
-  extern int atomicExchange(int volatile *var, int nv);
-  extern void* atomicExchangePointer(void* volatile *var, void* nv);
+    /* emulation */
+    extern int atomicIncrement(int volatile* var);
+    extern int atomicDecrement(int volatile* var);
+    extern int atomicCompareAndSwap(int volatile* var, int ov, int nv);
+    extern int atomicExchange(int volatile* var, int nv);
+    extern void* atomicExchangePointer(void* volatile* var, void* nv);
 #endif
 
-  
+
 # ifdef __cplusplus
 }
 # endif

@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -82,46 +82,46 @@
 #endif
 
 
-/** @name DjVuGlobal.h 
+/** @name DjVuGlobal.h
 
     This file is included by all include files in the DjVu reference library.
-    
-	If compilation symbols #NEED_DJVU_MEMORY#, #NEED_DJVU_PROGRESS# 
-	or #NEED_DJVU_NAMES# are defined, this file enables 
-	features which are useful for certain applications of the
+
+    If compilation symbols #NEED_DJVU_MEMORY#, #NEED_DJVU_PROGRESS#
+    or #NEED_DJVU_NAMES# are defined, this file enables
+    features which are useful for certain applications of the
     DjVu Reference Library.  These features are still experimental and
     therefore poorly documented.
-    
+
     @memo
     Global definitions.
     @author
     L\'eon Bottou <leonb@research.att.com> -- empty file.\\
     Bill Riemers <docbill@sourceforge.net> -- real work.  */
-//@{
+    //@{
 
 
-/** @name DjVu Memory 
+    /** @name DjVu Memory
 
-    This section is enabled when compilation symbol #NEED_DJVU_MEMORY# is
-    defined.  Function #_djvu_memory_callback# can be used to redefine the C++
-    memory allocation operators.  Some operating systems (e.g. Macintoshes)
-    require very peculiar memory allocation in shared objects.  We redefine
-    the operators #new# and #delete# as #STATIC_INLINE# because we do not
-    want to export these redefined versions to other libraries.  */
-//@{
-//@}
+        This section is enabled when compilation symbol #NEED_DJVU_MEMORY# is
+        defined.  Function #_djvu_memory_callback# can be used to redefine the C++
+        memory allocation operators.  Some operating systems (e.g. Macintoshes)
+        require very peculiar memory allocation in shared objects.  We redefine
+        the operators #new# and #delete# as #STATIC_INLINE# because we do not
+        want to export these redefined versions to other libraries.  */
+        //@{
+        //@}
 
 #ifdef NEED_DJVU_MEMORY
 
 # include "DjVu.h"
 
 // These define the two callbacks needed for C++
-typedef void djvu_delete_callback(void *);
-typedef void *djvu_new_callback(size_t);
+typedef void djvu_delete_callback(void*);
+typedef void* djvu_new_callback(size_t);
 
 // These functions allow users to set the callbacks.
-int djvu_memoryObject_callback ( djvu_delete_callback*, djvu_new_callback*);
-int djvu_memoryArray_callback ( djvu_delete_callback*, djvu_new_callback*);
+int djvu_memoryObject_callback(djvu_delete_callback*, djvu_new_callback*);
+int djvu_memoryArray_callback(djvu_delete_callback*, djvu_new_callback*);
 
 // We need to use this inline function in all modules, but we never want it to
 // appear in the symbol table.  It seems different compilers need different
@@ -153,45 +153,53 @@ int djvu_memoryArray_callback ( djvu_delete_callback*, djvu_new_callback*);
 # endif  /* delete_throw_spec */
 
 # ifdef UNIX
-extern djvu_new_callback *_djvu_new_ptr;
-extern djvu_new_callback *_djvu_newArray_ptr;
-extern djvu_delete_callback *_djvu_delete_ptr;
-extern djvu_delete_callback *_djvu_deleteArray_ptr;
+extern djvu_new_callback* _djvu_new_ptr;
+extern djvu_new_callback* _djvu_newArray_ptr;
+extern djvu_delete_callback* _djvu_delete_ptr;
+extern djvu_delete_callback* _djvu_deleteArray_ptr;
 
 #  ifndef NEED_DJVU_MEMORY_IMPLEMENTATION
-void *operator new (size_t) new_throw_spec;
-void *operator new[] (size_t) new_throw_spec;
-void operator delete (void *) delete_throw_spec;
-void operator delete[] (void *) delete_throw_spec;
+void* operator new (size_t) new_throw_spec;
+void* operator new[](size_t) new_throw_spec;
+void operator delete (void*)delete_throw_spec;
+void operator delete[](void*) delete_throw_spec;
 
-STATIC_INLINE void *
+STATIC_INLINE void*
 operator new(size_t sz) new_throw_spec
-{ return (*_djvu_new_ptr)(sz); }
+{
+    return (*_djvu_new_ptr)(sz);
+}
 STATIC_INLINE void
-operator delete(void *addr) delete_throw_spec
-{ return (*_djvu_delete_ptr)(addr); }
-STATIC_INLINE void *
-operator new [] (size_t sz) new_throw_spec
+operator delete(void* addr) delete_throw_spec
+{
+    return (*_djvu_delete_ptr)(addr);
+}
+STATIC_INLINE void*
+operator new[](size_t sz) new_throw_spec
 { return (*_djvu_newArray_ptr)(sz); }
 STATIC_INLINE void
-operator delete [] (void *addr) delete_throw_spec
+operator delete[](void* addr) delete_throw_spec
 { return (*_djvu_deleteArray_ptr)(addr); }
 #  endif /* NEED_DJVU_MEMORY_IMPLEMENTATION */
 
 # else /* UNIX */
 
 #  ifndef NEED_DJVU_MEMORY_IMPLEMENTATION
-STATIC_INLINE void *
+STATIC_INLINE void*
 operator new(size_t sz) new_throw_spec
+{
+    return _djvu_new(sz);
+}
+inline_as_macro void
+operator delete(void* addr) delete_throw_spec
+{
+    return _djvu_delete(addr);
+}
+inline_as_macro void*
+operator new[](size_t sz) new_throw_spec
 { return _djvu_new(sz); }
 inline_as_macro void
-operator delete(void *addr) delete_throw_spec
-{ return _djvu_delete(addr); }
-inline_as_macro void *
-operator new [] (size_t sz) new_throw_spec
-{ return _djvu_new(sz); }
-inline_as_macro void
-operator delete [] (void *addr) delete_throw_spec
+operator delete[](void* addr) delete_throw_spec
 { _djvu_deleteArray(addr); }
 #  endif /* !NEED_DJVU_MEMORY_IMPLEMENTATION */
 
@@ -206,29 +214,29 @@ operator delete [] (void *addr) delete_throw_spec
 
 #endif /* NEED_DJVU_MEMORY */
 
-/** @name DjVu Progress  
+/** @name DjVu Progress
 
     This section is enabled when compilation symbol #NEED_DJVU_PROGRESS# is
     defined.  This macro setups callback function that may be used to
     implement a progress indicator for the encoding routines.  The decoding
     routines do not need such a facility because it is sufficient to monitor
     the calls to function \Ref{ByteStream::read} in class \Ref{ByteStream}.
-    
+
     {\bf Code tracing macros} ---
     Monitoring the progress of such complex algorithms requires significant
     code support.  This is achieved by inserting {\em code tracing macros}
-    in strategic regions of the code.  
+    in strategic regions of the code.
     \begin{description}
     \item[DJVU_PROGRESS_TASK(name,task,nsteps)]  indicates that the current
          scope performs a task roughly divided in #nsteps# equal steps, with
-	       the specified #task# string used in the callback.
+           the specified #task# string used in the callback.
     \item[DJVU_PROGRESS_RUN(name,tostep)] indicates that we are starting
          an operation which will take us to step #tostep#.  The operation
          will be considered finished when #DJVU_PROGRESS_RUN# will be called
          again with an argument greater than #tostep#.  The execution of
          this operation of course can be described by one subtask and so on.
     \end{description}
- 
+
     {\bf Progress callback} --- Before defining the outermost task, you can
     store a callback function pointer into the static member variable
     #DjVuProgressTask::callback#.  This callback function is called
@@ -238,7 +246,7 @@ operator delete [] (void *addr) delete_throw_spec
 
     {\bf Important Note} --- This monitoring mechanism should not be used by
     multithreaded programs.  */
-//@{
+    //@{
 
 #ifndef HAS_DJVU_PROGRESS_CALLBACKS
 # define HAS_DJVU_PROGRESS_CALLBACKS
@@ -246,7 +254,7 @@ operator delete [] (void *addr) delete_throw_spec
 # ifdef NEED_DJVU_PROGRESS
 #  include "DjVu.h"
 
-extern djvu_progress_callback *_djvu_progress_ptr;
+extern djvu_progress_callback* _djvu_progress_ptr;
 
 #  define DJVU_PROGRESS_TASK(name,task,nsteps)  DjVuProgressTask task_##name(task,nsteps)
 #  define DJVU_PROGRESS_RUN(name,tostep)   { task_##name.run(tostep); }
@@ -254,22 +262,22 @@ extern djvu_progress_callback *_djvu_progress_ptr;
 class DjVuProgressTask
 {
 public:
-  class Data;
-  ~DjVuProgressTask();
-  DjVuProgressTask(const char *task,int nsteps);
-  void run(int tostep);
-  const char *task;
-  static djvu_progress_callback *set_callback(djvu_progress_callback *ptr=0);
+    class Data;
+    ~DjVuProgressTask();
+    DjVuProgressTask(const char* task, int nsteps);
+    void run(int tostep);
+    const char* task;
+    static djvu_progress_callback* set_callback(djvu_progress_callback* ptr = 0);
 private:
-  DjVuProgressTask *parent;
-  int nsteps;
-  int runtostep;
-  unsigned long startdate;
-  // Statics
-  void *gdata;
-  Data *data;
-  // Helpers
-  void signal(unsigned long curdate, unsigned long estdate);
+    DjVuProgressTask* parent;
+    int nsteps;
+    int runtostep;
+    unsigned long startdate;
+    // Statics
+    void* gdata;
+    Data* data;
+    // Helpers
+    void signal(unsigned long curdate, unsigned long estdate);
 };
 
 # else  // ! NEED_DJVU_PROGRESS
@@ -294,31 +302,31 @@ private:
 # define DJVUEXTERNCAPI(x) extern DJVUAPI x
 #endif
 
-/** This replaces fprintf(stderr,...), but with UTF8 encoded strings. */
-DJVUEXTERNCAPI(void DjVuPrintErrorUTF8(const char *fmt, ...));
+ /** This replaces fprintf(stderr,...), but with UTF8 encoded strings. */
+DJVUEXTERNCAPI(void DjVuPrintErrorUTF8(const char* fmt, ...));
 
 /** This replaces fprintf(stderr,...), but with UTF8 encoded strings. */
-DJVUEXTERNCAPI(void DjVuPrintErrorNative(const char *fmt, ...));
+DJVUEXTERNCAPI(void DjVuPrintErrorNative(const char* fmt, ...));
 
 /** This replaces printf(...), but requires UTF8 encoded strings. */
-DJVUEXTERNCAPI(void DjVuPrintMessageUTF8(const char *fmt, ...));
+DJVUEXTERNCAPI(void DjVuPrintMessageUTF8(const char* fmt, ...));
 
 /** This replaces printf(...), but requires UTF8 encoded strings. */
-DJVUEXTERNCAPI(void DjVuPrintMessageNative(const char *fmt, ...));
+DJVUEXTERNCAPI(void DjVuPrintMessageNative(const char* fmt, ...));
 
 /** The format (fmt) and arguments define a MessageList to be looked
     up in the external messages and printed to stderr. */
-DJVUEXTERNCAPI(void DjVuFormatErrorUTF8(const char *fmt, ...));
+DJVUEXTERNCAPI(void DjVuFormatErrorUTF8(const char* fmt, ...));
 
 /** The format (fmt) and arguments define a MessageList to be looked
     up in the external messages and printed to stderr. */
-DJVUEXTERNCAPI(void DjVuFormatErrorNative(const char *fmt, ...));
+DJVUEXTERNCAPI(void DjVuFormatErrorNative(const char* fmt, ...));
 
 /** Prints the translation of message to stderr. */
-DJVUEXTERNCAPI(void DjVuWriteError( const char *message ));
+DJVUEXTERNCAPI(void DjVuWriteError(const char* message));
 
 /** Prints the translation of message to stdout. */
-DJVUEXTERNCAPI(void DjVuWriteMessage( const char *message ));
+DJVUEXTERNCAPI(void DjVuWriteMessage(const char* message));
 
 /** A C function to perform a message lookup. Arguments are a buffer to
   received the translated message, a buffer size (bytes), and a
@@ -327,27 +335,27 @@ DJVUEXTERNCAPI(void DjVuWriteMessage( const char *message ));
   (i.e., msg_buffer[0] == '\0').
 */
 DJVUEXTERNCAPI(void DjVuMessageLookUpUTF8(
-  char *msg_buffer, const unsigned int buffer_size, 
-  const char *message ));
+    char* msg_buffer, const unsigned int buffer_size,
+    const char* message));
 DJVUEXTERNCAPI(void DjVuMessageLookUpNative(
-  char *msg_buffer, const unsigned int buffer_size, 
-  const char *message ));
+    char* msg_buffer, const unsigned int buffer_size,
+    const char* message));
 
-/** This function sets the program name used when 
+/** This function sets the program name used when
     searching for language files.
 */
-DJVUEXTERNCAPI(const char *djvu_programname(const char *programname));
+DJVUEXTERNCAPI(const char* djvu_programname(const char* programname));
 
 
-/** @name DjVu Names  
+/** @name DjVu Names
 
     This section is enabled when compilation symbol #NEED_DJVU_NAMES# is
     defined.  This section redefines class names in order to unclutter the
     name space of shared objects.  This is useful on systems which
     automatically export all global symbols when building a shared object.
     @args */
-//@{
-//@}
+    //@{
+    //@}
 
 #ifdef NEED_DJVU_NAMES
 /* The contents of this section may be generated by this shell command :
@@ -357,7 +365,7 @@ DJVUEXTERNCAPI(const char *djvu_programname(const char *programname));
  */
 #endif // NEED_DJVU_NAMES
 
-//@}
+ //@}
 
 #if defined(macintosh)
 # define EMPTY_LOOP continue
@@ -378,7 +386,7 @@ DJVUEXTERNCAPI(const char *djvu_programname(const char *programname));
 // This hack allows for the coexistence of internationalized
 // and non-internationalized code.  All internationalized error
 // message names are prefixed with a ctrl-c.  Only these will
-// be looked for in the message files.  Messages that do no 
+// be looked for in the message files.  Messages that do no
 // start with a ctrl-c will remain untranslated.
 #  define ERR_MSG(x) "\003" x
 # else
@@ -387,5 +395,3 @@ DJVUEXTERNCAPI(const char *djvu_programname(const char *programname));
 #endif
 
 #endif /* _DJVUGLOBAL_H_ */
-
-

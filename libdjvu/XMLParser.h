@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -88,26 +88,26 @@ class GBitmap;
 class DJVUAPI lt_XMLParser : public GPEnabled
 {
 public:
-  class Impl;
-  typedef GP<ByteStream> mapOCRcallback(
-    void *,const GUTF8String &value,const GP<DjVuImage> &);
+    class Impl;
+    typedef GP<ByteStream> mapOCRcallback(
+        void*, const GUTF8String& value, const GP<DjVuImage>&);
 protected:
-  lt_XMLParser(void);
-  virtual ~lt_XMLParser();
+    lt_XMLParser(void);
+    virtual ~lt_XMLParser();
 public:
-  static GP<lt_XMLParser> create(void);
-  /// Parse the specified bytestream.
-  virtual void parse(const GP<ByteStream> &bs, GURL *pdjvufile=0) = 0;
-  /// Parse the specified tags - this one does all the work
-  virtual void parse(const lt_XMLTags &tags, GURL *pdjvufile=0) = 0;
-  /// write to disk.
-  virtual void save(void) = 0;
-  /// erase.
-  virtual void empty(void) = 0;
+    static GP<lt_XMLParser> create(void);
+    /// Parse the specified bytestream.
+    virtual void parse(const GP<ByteStream>& bs, GURL* pdjvufile = 0) = 0;
+    /// Parse the specified tags - this one does all the work
+    virtual void parse(const lt_XMLTags& tags, GURL* pdjvufile = 0) = 0;
+    /// write to disk.
+    virtual void save(void) = 0;
+    /// erase.
+    virtual void empty(void) = 0;
 
-  // helper function for args
-  static void setOCRcallback(
-    void * const arg,mapOCRcallback * const );
+    // helper function for args
+    static void setOCRcallback(
+        void* const arg, mapOCRcallback* const);
 };
 
 
@@ -118,5 +118,3 @@ using namespace DJVU;
 # endif
 #endif
 #endif /* _LT_XMLPARSER__ */
-
-

@@ -42,10 +42,12 @@
 # if defined(_WIN32) || defined(_WIN64)
 
 namespace {
-  struct CS { 
-    CRITICAL_SECTION cs; 
-    CS() { InitializeCriticalSection(&cs); }
-    ~CS() { DeleteCriticalSecton(&cs); } }; }
+    struct CS {
+        CRITICAL_SECTION cs;
+        CS() { InitializeCriticalSection(&cs); }
+        ~CS() { DeleteCriticalSecton(&cs); }
+    };
+}
 static CS globalCS;
 # define MUTEX_LEAVE LeaveCriticalSection(&globalCS.cs)
 # define MUTEX_ENTER EnterCriticalSection(&globalCS.cs);
@@ -74,59 +76,57 @@ static QMutex qtm;
 /* atomic primitive emulation */
 
 int
-atomicIncrement(int volatile *var)
+atomicIncrement(int volatile* var)
 {
-  int res;
-  MUTEX_ENTER;
-  res = ++(*var);
-  MUTEX_LEAVE;
-  return res;
+    int res;
+    MUTEX_ENTER;
+    res = ++(*var);
+    MUTEX_LEAVE;
+    return res;
 }
 
-int 
-atomicDecrement(int volatile *var)
+int
+atomicDecrement(int volatile* var)
 {
-  int res;
-  MUTEX_ENTER;
-  res = --(*var);
-  MUTEX_LEAVE;
-  return res;
+    int res;
+    MUTEX_ENTER;
+    res = --(*var);
+    MUTEX_LEAVE;
+    return res;
 }
 
-int 
-atomicCompareAndSwap(int volatile *var, int oldval, int newval)
+int
+atomicCompareAndSwap(int volatile* var, int oldval, int newval)
 {
-  int ret;
-  MUTEX_ENTER;
-  ret = *var;
-  if (ret == oldval)
+    int ret;
+    MUTEX_ENTER;
+    ret = *var;
+    if (ret == oldval)
+        *var = newval;
+    MUTEX_LEAVE;
+    return ret;
+}
+
+int
+atomicExchange(int volatile* var, int newval)
+{
+    int ret;
+    MUTEX_ENTER;
+    ret = *var;
     *var = newval;
-  MUTEX_LEAVE;
-  return ret;
+    MUTEX_LEAVE;
+    return ret;
 }
 
-int 
-atomicExchange(int volatile *var, int newval)
+void*
+atomicExchangePointer(void* volatile* var, void* newval)
 {
-  int ret;
-  MUTEX_ENTER;
-  ret = *var;
-  *var = newval;
-  MUTEX_LEAVE;
-  return ret;
+    void* ret;
+    MUTEX_ENTER;
+    ret = *var;
+    *var = newval;
+    MUTEX_LEAVE;
+    return ret;
 }
 
-void* 
-atomicExchangePointer(void* volatile *var, void* newval)
-{
-  void *ret;
-  MUTEX_ENTER;
-  ret = *var;
-  *var = newval;
-  MUTEX_LEAVE;
-  return ret;
-}
-
-#endif 
-
-
+#endif

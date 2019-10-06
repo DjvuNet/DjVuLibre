@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -55,7 +55,7 @@
 
 //T// This is a template for the header files in the
 //T// DjVu reference library. It describes the general
-//T// conventions as well as the documentation. 
+//T// conventions as well as the documentation.
 //T// Comments prefixed with '//T//' explain the template
 //T// features and should be removed.
 
@@ -85,12 +85,12 @@ namespace DJVU {
 #endif
 
 /** @name Template.h
-    
+
     Files #"Template.h"# and #"Template.cpp"# are not used for anything but
     the current programming and documentation standards in the DjVu reference
     library. This doc++ comment briefly describes the abstractions defined in
     this files.  It must mention all the files involved in implementing this
-    features, as well as references to the main classes \Ref{classname}.  
+    features, as well as references to the main classes \Ref{classname}.
 
     This comment may contain additional sections as follows:
 
@@ -105,7 +105,7 @@ namespace DJVU {
     fully implement yet. It should explain how we plan to modify the current
     code could be modified to implement these things. People who change this
     code thus should avoid jeopardizing these plans.
-    
+
     {\bf Example} --- It would be cool to demonstrate how these functions
     can be used by providing a small segment of C/C++ code.
     \begin{verbatim}
@@ -121,87 +121,87 @@ namespace DJVU {
           (the #\\# termination breaks the line.)
     \end{itemize}
 
-    @memo 
+    @memo
     Template header file
-    @author: 
+    @author:
     L\'eon Bottou <leonb@research.att.com> -- initial implementation \\
     Andrew Erofeev <eaf@geocities.com> -- implemented EXTERNAL_TEMPLATES */
-//@{
-//T// The magic doc++ comment above opens a doc++ context.
+    //@{
+    //T// The magic doc++ comment above opens a doc++ context.
 
 
 
-//T// Now comes the 'interface part' of the file.
-//T// The c++ classes and public functions are defined there.
-//T// Doc++ comments must be inserted for all functions
-//T// intended to be used by other people. 
-//T//
-//T// Quite often c++ sucks and it is necessary to have public or external symbols
-//T// that actually are only there for implementation purposes. 
-//T// It is good to give a comment but this should not be a doc++ comment
-//T// (see class GPool in GContainer.h).  All other 'public' and 'protected' 
-//T// members should have a doc++ comment. There is no need to comment 'private'
-//T// members, although a regular comment can be useful (not a doc++ comment). 
+    //T// Now comes the 'interface part' of the file.
+    //T// The c++ classes and public functions are defined there.
+    //T// Doc++ comments must be inserted for all functions
+    //T// intended to be used by other people.
+    //T//
+    //T// Quite often c++ sucks and it is necessary to have public or external symbols
+    //T// that actually are only there for implementation purposes.
+    //T// It is good to give a comment but this should not be a doc++ comment
+    //T// (see class GPool in GContainer.h).  All other 'public' and 'protected'
+    //T// members should have a doc++ comment. There is no need to comment 'private'
+    //T// members, although a regular comment can be useful (not a doc++ comment).
 
 
 
-/** One-line class description.
-    Long description. There is no need to repeat the class name in the
-    one-line description. The long description should describe the abstraction
-    and point the user to the main member functions.  An example could be
-    inserted when this is informative and not redundant with the file
-    description.  Templates should document which member functions are
-    required for their type argument. The availability of non availabilty of a
-    copy constructor/copy operator can be specified when appropriate. 
-    See the doc++ documentation for available LaTeX constructs. 
-*/
+    /** One-line class description.
+        Long description. There is no need to repeat the class name in the
+        one-line description. The long description should describe the abstraction
+        and point the user to the main member functions.  An example could be
+        inserted when this is informative and not redundant with the file
+        description.  Templates should document which member functions are
+        required for their type argument. The availability of non availabilty of a
+        copy constructor/copy operator can be specified when appropriate.
+        See the doc++ documentation for available LaTeX constructs.
+    */
 
 class ExampleClass
 {
 public:
-  /** Virtual Destructor. */
-  ~ExampleClass();
-  /** Null Constructor. */
-  ExampleClass();
-  /** Copy Constructor. */
-  ExampleClass(ExampleClass &ref);
-  /** Copy operator. */
-  ExampleClass& operator=(ExampleClass &ref);
-  /** Example of member function. The first sentence of the member
-      function description must be a short single line description.
-      The rest can be more verbose. Excerpts of C or C++ text should 
-      be surrounded by dieze characters (as in #win#).  The doc++ #@param#
-      construct should be used when there is a need for additional details
-      about the arguments. In that case all the arguments must be documented
-      with a #@param# directive.
-      @param win drawing window.
-      This window must be created with #CreateWindow# and must be visible when
-      function #draw# is called.
-   */
-  void draw(Window win);
+    /** Virtual Destructor. */
+    ~ExampleClass();
+    /** Null Constructor. */
+    ExampleClass();
+    /** Copy Constructor. */
+    ExampleClass(ExampleClass& ref);
+    /** Copy operator. */
+    ExampleClass& operator=(ExampleClass& ref);
+    /** Example of member function. The first sentence of the member
+        function description must be a short single line description.
+        The rest can be more verbose. Excerpts of C or C++ text should
+        be surrounded by dieze characters (as in #win#).  The doc++ #@param#
+        construct should be used when there is a need for additional details
+        about the arguments. In that case all the arguments must be documented
+        with a #@param# directive.
+        @param win drawing window.
+        This window must be created with #CreateWindow# and must be visible when
+        function #draw# is called.
+     */
+    void draw(Window win);
 protected:
-  /** Minimal x-coordinate. */
-  int xmin;
-  /** Maximal x-coordinate. */
-  int xmax;
+    /** Minimal x-coordinate. */
+    int xmin;
+    /** Maximal x-coordinate. */
+    int xmax;
 private:
-  int whatever;
-  float encode;
+    int whatever;
+    float encode;
 };
 
 
 /** One-line function description.
     Long description. Public external functions should be documented
-    as classes. Note that a family of public external function can be 
+    as classes. Note that a family of public external function can be
     introduced by a generic entry (see below) */
 
-ExampleClass combine_example_classes(const ExampleClass&, 
-                                     const ExampleClass &b);
+ExampleClass combine_example_classes(const ExampleClass&,
+    const ExampleClass& b);
 
 
 /** @name Generic entry.
     Long description. there is sometimes a need to add documentation
-    entries for grouping things which are not connected by the C++ 
+    entries for grouping things which are not connected by the C++
     syntax (a family of functions, a family of defines, etc...).
     The description starts with a very short name (introduced with #@name#)
     followed by a long description.  Because of doc++ limitations,
@@ -229,10 +229,10 @@ ExampleClass combine_example_classes(const ExampleClass&,
 //T// This is where all the inline/template functions should be written
 //T// This part of the file is segmented with comments.
 
-inline void 
+inline void
 ClassExample::width()
 {
-  return xmax-xmin;
+    return xmax - xmin;
 }
 
 
@@ -248,8 +248,3 @@ using namespace DJVU;
 #endif
 #endif
 //T// Terminates the multiple inclusion #ifndef
-      
-      
-             
-
-    

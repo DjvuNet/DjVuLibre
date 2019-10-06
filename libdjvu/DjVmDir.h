@@ -14,7 +14,7 @@
 //C- but WITHOUT ANY WARRANTY; without even the implied warranty of
 //C- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //C- GNU General Public License for more details.
-//C- 
+//C-
 //C- DjVuLibre-3.5 is derived from the DjVu(r) Reference Library from
 //C- Lizardtech Software.  Lizardtech Software has authorized us to
 //C- replace the original DjVu(r) Reference Library notice by the following
@@ -35,16 +35,16 @@
 //C- | The computer code originally released by LizardTech under this
 //C- | license and unmodified by other parties is deemed "the LIZARDTECH
 //C- | ORIGINAL CODE."  Subject to any third party intellectual property
-//C- | claims, LizardTech grants recipient a worldwide, royalty-free, 
-//C- | non-exclusive license to make, use, sell, or otherwise dispose of 
-//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the 
-//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU 
-//C- | General Public License.   This grant only confers the right to 
-//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to 
-//C- | the extent such infringement is reasonably necessary to enable 
-//C- | recipient to make, have made, practice, sell, or otherwise dispose 
-//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to 
-//C- | any greater extent that may be necessary to utilize further 
+//C- | claims, LizardTech grants recipient a worldwide, royalty-free,
+//C- | non-exclusive license to make, use, sell, or otherwise dispose of
+//C- | the LIZARDTECH ORIGINAL CODE or of programs derived from the
+//C- | LIZARDTECH ORIGINAL CODE in compliance with the terms of the GNU
+//C- | General Public License.   This grant only confers the right to
+//C- | infringe patent claims underlying the LIZARDTECH ORIGINAL CODE to
+//C- | the extent such infringement is reasonably necessary to enable
+//C- | recipient to make, have made, practice, sell, or otherwise dispose
+//C- | of the LIZARDTECH ORIGINAL CODE (or portions thereof) and not to
+//C- | any greater extent that may be necessary to utilize further
 //C- | modifications or combinations.
 //C- |
 //C- | The LIZARDTECH ORIGINAL CODE is provided "AS IS" WITHOUT WARRANTY
@@ -80,14 +80,14 @@
     document directory}.  This directory lists all component files composing
     the given document, helps to access every component file and identify the
     pages of the document.
-    \begin{itemize} 
-    \item In a {\em bundled} multipage file, the component files 
+    \begin{itemize}
+    \item In a {\em bundled} multipage file, the component files
          are stored immediately after the #"DIRM"# chunk,
-         within the #"FORM:DJVU"# composite chunk.  
-    \item In an {\em indirect} multipage file, the component files are 
-          stored in different files whose URLs are composed using information 
+         within the #"FORM:DJVU"# composite chunk.
+    \item In an {\em indirect} multipage file, the component files are
+          stored in different files whose URLs are composed using information
           stored in the #"DIRM"# chunk.
-    \end{itemize} 
+    \end{itemize}
     Most of the component files represent pages of a document.  Some files
     however represent data shared by several pages.  The pages refer to these
     supporting files by means of an inclusion chunk (#"INCL"# chunks)
@@ -150,203 +150,211 @@ class ByteStream;
 class DJVUAPI DjVmDir : public GPEnabled
 {
 protected:
-      /** Class \Ref{DjVmDir::File} represents the directory records
-          managed by class \Ref{DjVmDir}. */
-   DjVmDir(void) { } ;
+    /** Class \Ref{DjVmDir::File} represents the directory records
+        managed by class \Ref{DjVmDir}. */
+    DjVmDir(void) { };
 public:
-   class File;
+    class File;
 
-   static const int version;
+    static const int version;
 
-      /** Class \Ref{DjVmDir::File} represents the directory records
-          managed by class \Ref{DjVmDir}. */
-   static GP<DjVmDir> create(void) {return new DjVmDir; } ;
+    /** Class \Ref{DjVmDir::File} represents the directory records
+        managed by class \Ref{DjVmDir}. */
+    static GP<DjVmDir> create(void) { return new DjVmDir; };
 
-      /** Decodes the directory from the specified stream. */
-   void decode(const GP<ByteStream> &stream);
-      /** Encodes the directory into the specified stream. */
-   void encode(const GP<ByteStream> &stream, const bool do_rename=false) const;
-      /** Encodes the directory into the specified stream, 
-          explicitely as bundled or indirect. */
-  void encode(const GP<ByteStream> &stream, 
-              const bool bundled, const bool do_rename) const;
-      /** Tests if directory defines an {\em indirect} document. */
-   inline bool is_indirect(void) const;
-      /** Tests if the directory defines a {\em bundled} document. */
-   inline bool is_bundled(void) const;
-      /** Translates page numbers to file records. */
-   GP<File> page_to_file(int page_num) const;
-      /** Translates file names to file records. */
-   GP<File> name_to_file(const GUTF8String & name) const;
-      /** Translates file IDs to file records. */
-   GP<File> id_to_file(const GUTF8String &id) const;
-      /** Translates file shortcuts to file records. */
-   GP<File> title_to_file(const GUTF8String &title, GPosition spos) const;
-   GP<File> title_to_file(const GUTF8String &title) const; 
-      /** Access file record by position. */
-   GP<File> pos_to_file(int fileno, int *ppageno=0) const;
-      /** Returns position of the file in the directory. */
-   int get_file_pos(const File * f) const;
-      /** Returns position of the given page in the directory. */
-   int get_page_pos(int page_num) const;
-      /** Check for duplicate names, and resolve them. */
-   GPList<File> resolve_duplicates(const bool save_as_bundled);
-      /** Returns a copy of the list of file records. */
-   GPList<File> get_files_list(void) const;
-      /** Returns the number of file records. */
-   int get_files_num(void) const;
-      /** Returns the number of file records representing pages. */
-   int get_pages_num(void) const;
-      /** Returns back pointer to the file with #SHARED_ANNO# flag.
-        Note that there may be only one file with shared annotations
-        in any multipage DjVu document. */
-   GP<File> get_shared_anno_file(void) const;
-      /** Changes the title of the file with ID #id#. */
-   void set_file_title(const GUTF8String &id, const GUTF8String &title);
-      /** Changes the name of the file with ID #id#. */
-   void set_file_name(const GUTF8String &id, const GUTF8String &name);
-      /** Inserts the specified file record at the specified position.
-        Specifying #pos# equal to #-1# means to append.  The actual position
-        inserted is returned. */
-   int insert_file(const GP<File> & file, int pos=-1);
-      /** Removes a file record with ID #id#. */
-   void delete_file(const GUTF8String &id);
+    /** Decodes the directory from the specified stream. */
+    void decode(const GP<ByteStream>& stream);
+    /** Encodes the directory into the specified stream. */
+    void encode(const GP<ByteStream>& stream, const bool do_rename = false) const;
+    /** Encodes the directory into the specified stream,
+        explicitely as bundled or indirect. */
+    void encode(const GP<ByteStream>& stream,
+        const bool bundled, const bool do_rename) const;
+    /** Tests if directory defines an {\em indirect} document. */
+    inline bool is_indirect(void) const;
+    /** Tests if the directory defines a {\em bundled} document. */
+    inline bool is_bundled(void) const;
+    /** Translates page numbers to file records. */
+    GP<File> page_to_file(int page_num) const;
+    /** Translates file names to file records. */
+    GP<File> name_to_file(const GUTF8String& name) const;
+    /** Translates file IDs to file records. */
+    GP<File> id_to_file(const GUTF8String& id) const;
+    /** Translates file shortcuts to file records. */
+    GP<File> title_to_file(const GUTF8String& title, GPosition spos) const;
+    GP<File> title_to_file(const GUTF8String& title) const;
+    /** Access file record by position. */
+    GP<File> pos_to_file(int fileno, int* ppageno = 0) const;
+    /** Returns position of the file in the directory. */
+    int get_file_pos(const File* f) const;
+    /** Returns position of the given page in the directory. */
+    int get_page_pos(int page_num) const;
+    /** Check for duplicate names, and resolve them. */
+    GPList<File> resolve_duplicates(const bool save_as_bundled);
+    /** Returns a copy of the list of file records. */
+    GPList<File> get_files_list(void) const;
+    /** Returns the number of file records. */
+    int get_files_num(void) const;
+    /** Returns the number of file records representing pages. */
+    int get_pages_num(void) const;
+    /** Returns back pointer to the file with #SHARED_ANNO# flag.
+      Note that there may be only one file with shared annotations
+      in any multipage DjVu document. */
+    GP<File> get_shared_anno_file(void) const;
+    /** Changes the title of the file with ID #id#. */
+    void set_file_title(const GUTF8String& id, const GUTF8String& title);
+    /** Changes the name of the file with ID #id#. */
+    void set_file_name(const GUTF8String& id, const GUTF8String& name);
+    /** Inserts the specified file record at the specified position.
+      Specifying #pos# equal to #-1# means to append.  The actual position
+      inserted is returned. */
+    int insert_file(const GP<File>& file, int pos = -1);
+    /** Removes a file record with ID #id#. */
+    void delete_file(const GUTF8String& id);
 private:
-   GCriticalSection class_lock;
-   GPList<File>	files_list;
-   GPArray<File> page2file;
-   GPMap<GUTF8String, File> name2file;
-   GPMap<GUTF8String, File> id2file;
+    GCriticalSection class_lock;
+    GPList<File>	files_list;
+    GPArray<File> page2file;
+    GPMap<GUTF8String, File> name2file;
+    GPMap<GUTF8String, File> id2file;
 private: //dummy stuff
-   static void decode(ByteStream *);
-   static void encode(ByteStream *);
+    static void decode(ByteStream*);
+    static void encode(ByteStream*);
 };
 
 class DJVUAPI DjVmDir::File : public GPEnabled
 {
 public:
-  // Out of the record: INCLUDE below must be zero and PAGE must be one.
-  // This is to avoid problems with the File constructor, which now takes
-  // 'int file_type' as the last argument instead of 'bool is_page'
-  
-  /** File type. Possible file types are:
-     \begin{description}
-       \item[PAGE] This is a top level page file. It may include other
-         #INCLUDE#d files, which may in turn be shared between
-         different pages.
-       \item[INCLUDE] This file is included into some other file inside
-         this document.
-       \item[THUMBNAILS] This file contains thumbnails for the document
-         pages.
-       \item[SHARED_ANNO] This file contains annotations shared by
-         all the pages. It's supposed to be included into every page
-         for the annotations to take effect. There may be only one
-         file with shared annotations in a document.
-     \end{description} */
-  enum FILE_TYPE { INCLUDE=0, PAGE=1, THUMBNAILS=2, SHARED_ANNO=3 };
+    // Out of the record: INCLUDE below must be zero and PAGE must be one.
+    // This is to avoid problems with the File constructor, which now takes
+    // 'int file_type' as the last argument instead of 'bool is_page'
+
+    /** File type. Possible file types are:
+       \begin{description}
+         \item[PAGE] This is a top level page file. It may include other
+           #INCLUDE#d files, which may in turn be shared between
+           different pages.
+         \item[INCLUDE] This file is included into some other file inside
+           this document.
+         \item[THUMBNAILS] This file contains thumbnails for the document
+           pages.
+         \item[SHARED_ANNO] This file contains annotations shared by
+           all the pages. It's supposed to be included into every page
+           for the annotations to take effect. There may be only one
+           file with shared annotations in a document.
+       \end{description} */
+    enum FILE_TYPE { INCLUDE = 0, PAGE = 1, THUMBNAILS = 2, SHARED_ANNO = 3 };
 protected:
-  /** Default constructor. */
-  File(void);
+    /** Default constructor. */
+    File(void);
 
 public:
-  static GP<File> create(void) { return new File(); }
-  static GP<File> create(const GUTF8String &load_name,
-     const GUTF8String &save_name, const GUTF8String &title,
-     const FILE_TYPE file_type);
+    static GP<File> create(void) { return new File(); }
+    static GP<File> create(const GUTF8String& load_name,
+        const GUTF8String& save_name, const GUTF8String& title,
+        const FILE_TYPE file_type);
 
-  /** Check for filenames that are not valid for the native encoding,
-      and change them. */
-  const GUTF8String &check_save_name(const bool as_bundled);
+    /** Check for filenames that are not valid for the native encoding,
+        and change them. */
+    const GUTF8String& check_save_name(const bool as_bundled);
 
-  /** File name.  The optional file name must be unique and is the name
-      that will be used when the document is saved to an indirect file.
-      If not assigned, the value of #id# will be used for this purpose.
-      By keeping the name in {\em bundled} document we guarantee, that it
-      can be expanded later into {\em indirect} document and files will
-      still have the same names, if the name is legal on a given filesystem.
-    */
-  const GUTF8String &get_save_name(void) const;
+    /** File name.  The optional file name must be unique and is the name
+        that will be used when the document is saved to an indirect file.
+        If not assigned, the value of #id# will be used for this purpose.
+        By keeping the name in {\em bundled} document we guarantee, that it
+        can be expanded later into {\em indirect} document and files will
+        still have the same names, if the name is legal on a given filesystem.
+      */
+    const GUTF8String& get_save_name(void) const;
 
-  /** File identifier.  The encoder assigns a unique identifier to each file
-      in a multipage document. This is the name used when loading files.
-      Indirection chunks in other files (#"INCL"# chunks) may refer to another
-      file using its identifier. */
-  const GUTF8String &get_load_name(void) const;
-  void set_load_name(const GUTF8String &id);
+    /** File identifier.  The encoder assigns a unique identifier to each file
+        in a multipage document. This is the name used when loading files.
+        Indirection chunks in other files (#"INCL"# chunks) may refer to another
+        file using its identifier. */
+    const GUTF8String& get_load_name(void) const;
+    void set_load_name(const GUTF8String& id);
 
-  /** File title.  The file title is assigned by the user and may be used as
-      a shortcut for viewing a particular page.  Names like #"chapter1"# or
-      #"appendix"# are appropriate. */
-  const GUTF8String &get_title() const;
-  void set_title(const GUTF8String &id);
+    /** File title.  The file title is assigned by the user and may be used as
+        a shortcut for viewing a particular page.  Names like #"chapter1"# or
+        #"appendix"# are appropriate. */
+    const GUTF8String& get_title() const;
+    void set_title(const GUTF8String& id);
 
-  /** Reports an ascii string indicating file type. */
-  GUTF8String get_str_type(void) const;
+    /** Reports an ascii string indicating file type. */
+    GUTF8String get_str_type(void) const;
 
-  /** Offset of the file data in a bundled DJVM file.  This number is
-      relevant in the {\em bundled} case only when everything is packed into
-      one single file. */
-  int offset;
+    /** Offset of the file data in a bundled DJVM file.  This number is
+        relevant in the {\em bundled} case only when everything is packed into
+        one single file. */
+    int offset;
 
-  /** Size of the file data in a bundled DJVM file.  This number is
-      relevant in the {\em bundled} case only when everything is
-      packed into one single file. */
-  int size;
+    /** Size of the file data in a bundled DJVM file.  This number is
+        relevant in the {\em bundled} case only when everything is
+        packed into one single file. */
+    int size;
 
-  /** Have we checked the saved file name, to see if it is valid on the
-      local disk? */
-  bool valid_name;
+    /** Have we checked the saved file name, to see if it is valid on the
+        local disk? */
+    bool valid_name;
 
-  /** Tests if this file represents a page of the document. */
-  bool is_page(void) const 
-  {
-    return (flags & TYPE_MASK)==PAGE;
-  }
+    /** Tests if this file represents a page of the document. */
+    bool is_page(void) const
+    {
+        return (flags & TYPE_MASK) == PAGE;
+    }
 
-  /** Returns #TRUE# if this file is included into some other files of
-      this document. */
-  bool is_include(void) const
-  {
-    return (flags & TYPE_MASK)==INCLUDE;
-  }
+    /** Returns #TRUE# if this file is included into some other files of
+        this document. */
+    bool is_include(void) const
+    {
+        return (flags & TYPE_MASK) == INCLUDE;
+    }
 
-  /** Returns #TRUE# if this file contains thumbnails for the document pages. */
-  bool is_thumbnails(void) const
-  {
-    return (flags & TYPE_MASK)==THUMBNAILS;
-  }
+    /** Returns #TRUE# if this file contains thumbnails for the document pages. */
+    bool is_thumbnails(void) const
+    {
+        return (flags & TYPE_MASK) == THUMBNAILS;
+    }
 
-  /** Returns the page number of this file. This function returns
-      #-1# if this file does not represent a page of the document. */
-  bool is_shared_anno(void) const
-  { return (flags & TYPE_MASK)==SHARED_ANNO; }
+    /** Returns the page number of this file. This function returns
+        #-1# if this file does not represent a page of the document. */
+    bool is_shared_anno(void) const
+    {
+        return (flags & TYPE_MASK) == SHARED_ANNO;
+    }
 
-  int get_page_num(void) const 
-  { return page_num; } 
+    int get_page_num(void) const
+    {
+        return page_num;
+    }
 protected:
-  GUTF8String name;
-  GUTF8String oldname;
-  GUTF8String id;
-  GUTF8String title; 
-  void set_save_name(const GUTF8String &name);
+    GUTF8String name;
+    GUTF8String oldname;
+    GUTF8String id;
+    GUTF8String title;
+    void set_save_name(const GUTF8String& name);
 private:
-      friend class DjVmDir;
-      enum FLAGS_0 { IS_PAGE_0=1, HAS_NAME_0=2, HAS_TITLE_0=4 };
-      enum FLAGS_1 { HAS_NAME=0x80, HAS_TITLE=0x40, TYPE_MASK=0x3f };
-      unsigned char flags;
-      int page_num;
+    friend class DjVmDir;
+    enum FLAGS_0 { IS_PAGE_0 = 1, HAS_NAME_0 = 2, HAS_TITLE_0 = 4 };
+    enum FLAGS_1 { HAS_NAME = 0x80, HAS_TITLE = 0x40, TYPE_MASK = 0x3f };
+    unsigned char flags;
+    int page_num;
 };
 
-inline const GUTF8String &
+inline const GUTF8String&
 DjVmDir::File::get_load_name(void) const
-{ return id; }
+{
+    return id;
+}
 
-inline const GUTF8String &
+inline const GUTF8String&
 DjVmDir::File::get_title() const
-{ return *(title.length()?&title:&id); }
+{
+    return *(title.length() ? &title : &id);
+}
 
 inline void
-DjVmDir::File::set_title(const GUTF8String &xtitle) { title=xtitle; }
+DjVmDir::File::set_title(const GUTF8String& xtitle) { title = xtitle; }
 
 /** @name Format of the DIRM chunk.
 
@@ -405,46 +413,46 @@ DjVmDir::File::set_title(const GUTF8String &xtitle) { title=xtitle; }
     of the component file.  The second string contains the name of the
     component file.  It is only present when the flag #hasname# is set. The third
     one contains the title of the component file. It is only present when the
-    flag #hastitle# is set. The \Ref{bzz} encoding system makes sure that 
+    flag #hastitle# is set. The \Ref{bzz} encoding system makes sure that
     all these strings will be encoded efficiently despite their possible
     redundancies.
     \begin{verbatim}
           ZSTR:     ID of the first component file.
           ZSTR:     Name of the first component file (only if #hasname# is set.)
           ZSTR:     Title of the first component file (only if #hastitle# is set.)
-          ... 
+          ...
           ZSTR:     ID of the last component file.
           ZSTR:     Name of the last component file (only if #hasname# is set.)
           ZSTR:     Title of the last component file (only if #hastitle# is set.)
     \end{verbatim}
 
     @memo Description of the format of the DIRM chunk.  */
-//@}
+    //@}
 
 
 
-// -------------- IMPLEMENTATION
+    // -------------- IMPLEMENTATION
 
 
 inline bool
 DjVmDir::is_bundled(void) const
 {
-  return ! is_indirect();
+    return !is_indirect();
 }
 
 inline bool
 DjVmDir::is_indirect(void) const
 {
-  GCriticalSectionLock lock((GCriticalSection *) &class_lock);
-  return ( files_list.size() && files_list[files_list] != 0 &&
-           files_list[files_list]->offset==0 );
+    GCriticalSectionLock lock((GCriticalSection*)&class_lock);
+    return (files_list.size() && files_list[files_list] != 0 &&
+        files_list[files_list]->offset == 0);
 }
 
-inline GP<DjVmDir::File> 
-DjVmDir::title_to_file(const GUTF8String &title) const
+inline GP<DjVmDir::File>
+DjVmDir::title_to_file(const GUTF8String& title) const
 {
-  GPosition pos;
-  return title_to_file(title, pos);
+    GPosition pos;
+    return title_to_file(title, pos);
 }
 
 
