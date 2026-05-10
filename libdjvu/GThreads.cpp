@@ -184,7 +184,7 @@ GThread::yield()
 void *
 GThread::current()
 {
-  return (void*) GetCurrentThreadId();
+  return (void*)(DWORD_PTR) GetCurrentThreadId();
 }
 
 struct thr_waiting {

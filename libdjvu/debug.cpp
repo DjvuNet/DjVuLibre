@@ -186,7 +186,7 @@ DjVuDebug::lock(int lvl, int noindent)
   int threads_num=1;
   debug_lock.lock();
   // Get per-thread debug object
-  long threadid = (long) GThread::current();
+  long threadid = (long)(size_t) GThread::current();
   DjVuDebug &dbg = debug_map()[threadid];
   threads_num=debug_map().size();
   // Check level
