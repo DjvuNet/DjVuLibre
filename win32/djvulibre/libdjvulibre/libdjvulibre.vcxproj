@@ -194,12 +194,18 @@
   </PropertyGroup>
   <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   <PropertyGroup>
-    <OutDir>$(SolutionDir)build\$(PlatformShortName)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)build\obj\$(PlatformShortName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(OutDir)' == ''">$(SolutionDir)build\$(PlatformShortName)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(IntDir)' == ''">$(SolutionDir)build\obj\$(PlatformShortName)\$(Configuration)\</IntDir>
   </PropertyGroup>
-  <Import Project="..\dirs.props" />
-  <Import Project="..\libdjvulibre.props" />
   <Import Project="..\warnings.props" />
+  <ItemDefinitionGroup Condition="'$(SolutionFileName)' == 'djvulibre.sln'">
+    <ClCompile>
+      <PreprocessorDefinitions>HAVE_NAMESPACES;NEED_JPEG_DECODER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>jpeg.lib;Advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
