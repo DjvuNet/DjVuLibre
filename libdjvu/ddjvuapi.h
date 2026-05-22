@@ -1710,7 +1710,7 @@ union ddjvu_message_s {
 
 
 /* -------------------------------------------------- */
-/* BACKDOORS                                          */
+/* INTERNAL STATE ACCESSORS                           */
 /* -------------------------------------------------- */
 
 #ifdef __cplusplus
