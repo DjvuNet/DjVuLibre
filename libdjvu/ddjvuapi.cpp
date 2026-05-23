@@ -100,6 +100,7 @@ using namespace DJVU;
 #include "DjVuPort.h"
 #include "DataPool.h"
 #include "DjVuInfo.h"
+#define IW44IMAGE_IMPLIMENTATION
 #include "IW44Image.h"
 #include "DjVuImage.h"
 #include "DjVuFileCache.h"
@@ -4484,6 +4485,75 @@ ddjvu_document_get_dirm_component_flags(ddjvu_document_t *document, int index, i
                 }
             }
         }
+    } G_CATCH_ALL { }
+    G_ENDCATCH;
+    return FALSE;
+}
+
+extern "C" DDJVUAPI int
+ddjvu_iw44_ycbcr_to_rgb(char *pixels, int w, int h, int rowsize);
+
+int
+ddjvu_iw44_ycbcr_to_rgb(char *pixels, int w, int h, int rowsize)
+{
+    if (!pixels) return FALSE;
+    G_TRY {
+        IW44Image::Transform::Decode::YCbCr_to_RGB((GPixel*)pixels, w, h, rowsize);
+        return TRUE;
+    } G_CATCH_ALL { }
+    G_ENDCATCH;
+    return FALSE;
+}
+
+namespace DJVU {
+    class IW44Image::Transform::Encode {
+    public:
+        static void RGB_to_Y(const GPixel *p, int w, int h, int rowsize, signed char *out, int outrowsize);
+        static void RGB_to_Cb(const GPixel *p, int w, int h, int rowsize, signed char *out, int outrowsize);
+        static void RGB_to_Cr(const GPixel *p, int w, int h, int rowsize, signed char *out, int outrowsize);
+    };
+}
+
+extern "C" DDJVUAPI int
+ddjvu_iw44_rgb_to_y(const char *pixels, int w, int h, int rowsize, char *out, int outrowsize);
+
+int
+ddjvu_iw44_rgb_to_y(const char *pixels, int w, int h, int rowsize, char *out, int outrowsize)
+{
+    if (!pixels || !out) return FALSE;
+    G_TRY {
+        DJVU::IW44Image::Transform::Encode::RGB_to_Y((const GPixel*)pixels, w, h, rowsize, (signed char*)out, outrowsize);
+        return TRUE;
+    } G_CATCH_ALL { }
+    G_ENDCATCH;
+    return FALSE;
+}
+
+extern "C" DDJVUAPI int
+ddjvu_iw44_rgb_to_cb(const char *pixels, int w, int h, int rowsize, char *out, int outrowsize);
+
+int
+ddjvu_iw44_rgb_to_cb(const char *pixels, int w, int h, int rowsize, char *out, int outrowsize)
+{
+    if (!pixels || !out) return FALSE;
+    G_TRY {
+        DJVU::IW44Image::Transform::Encode::RGB_to_Cb((const GPixel*)pixels, w, h, rowsize, (signed char*)out, outrowsize);
+        return TRUE;
+    } G_CATCH_ALL { }
+    G_ENDCATCH;
+    return FALSE;
+}
+
+extern "C" DDJVUAPI int
+ddjvu_iw44_rgb_to_cr(const char *pixels, int w, int h, int rowsize, char *out, int outrowsize);
+
+int
+ddjvu_iw44_rgb_to_cr(const char *pixels, int w, int h, int rowsize, char *out, int outrowsize)
+{
+    if (!pixels || !out) return FALSE;
+    G_TRY {
+        DJVU::IW44Image::Transform::Encode::RGB_to_Cr((const GPixel*)pixels, w, h, rowsize, (signed char*)out, outrowsize);
+        return TRUE;
     } G_CATCH_ALL { }
     G_ENDCATCH;
     return FALSE;
