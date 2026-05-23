@@ -4378,4 +4378,115 @@ ddjvu_document_get_dirm_component_id(ddjvu_document_t *document, int index)
     return result;
 }
 
+extern "C" DDJVUAPI const char *
+ddjvu_document_get_dirm_component_name(ddjvu_document_t *document, int index);
+
+const char *
+ddjvu_document_get_dirm_component_name(ddjvu_document_t *document, int index)
+{
+    const char * result = 0;
+    G_TRY {
+        DjVuDocument *doc = document->doc;
+        if (doc) {
+            GP<DjVmDir> dir = doc->get_djvm_dir();
+            if (dir) {
+                GP<DjVmDir::File> fdesc = dir->pos_to_file(index);
+                if (fdesc) {
+                    GUTF8String name = fdesc->get_save_name();
+                    size_t len = name.length();
+                    char* buf = (char*)ddjvu_alloc(len + 1);
+                    if (buf) {
+                        strncpy(buf, (const char *)name, len);
+                        buf[len] = '\0';
+                        result = buf;
+                    }
+                }
+            }
+        }
+    } G_CATCH_ALL { }
+    G_ENDCATCH;
+    return result;
+}
+
+extern "C" DDJVUAPI const char *
+ddjvu_document_get_dirm_component_title(ddjvu_document_t *document, int index);
+
+const char *
+ddjvu_document_get_dirm_component_title(ddjvu_document_t *document, int index)
+{
+    const char * result = 0;
+    G_TRY {
+        DjVuDocument *doc = document->doc;
+        if (doc) {
+            GP<DjVmDir> dir = doc->get_djvm_dir();
+            if (dir) {
+                GP<DjVmDir::File> fdesc = dir->pos_to_file(index);
+                if (fdesc) {
+                    GUTF8String name = fdesc->get_title();
+                    size_t len = name.length();
+                    char* buf = (char*)ddjvu_alloc(len + 1);
+                    if (buf) {
+                        strncpy(buf, (const char *)name, len);
+                        buf[len] = '\0';
+                        result = buf;
+                    }
+                }
+            }
+        }
+    } G_CATCH_ALL { }
+    G_ENDCATCH;
+    return result;
+}
+
+extern "C" DDJVUAPI int
+ddjvu_document_get_dirm_component_size(ddjvu_document_t *document, int index, int *size);
+
+int
+ddjvu_document_get_dirm_component_size(ddjvu_document_t *document, int index, int *size)
+{
+    if (!document || !size) return FALSE;
+    G_TRY {
+        DjVuDocument *doc = document->doc;
+        if (doc) {
+            GP<DjVmDir> dir = doc->get_djvm_dir();
+            if (dir) {
+                GP<DjVmDir::File> fdesc = dir->pos_to_file(index);
+                if (fdesc) {
+                    *size = fdesc->size;
+                    return TRUE;
+                }
+            }
+        }
+    } G_CATCH_ALL { }
+    G_ENDCATCH;
+    return FALSE;
+}
+
+extern "C" DDJVUAPI int
+ddjvu_document_get_dirm_component_flags(ddjvu_document_t *document, int index, int *is_page, int *is_include, int *is_thumbnails, int *is_shared_anno);
+
+int
+ddjvu_document_get_dirm_component_flags(ddjvu_document_t *document, int index, int *is_page, int *is_include, int *is_thumbnails, int *is_shared_anno)
+{
+    if (!document || !is_page || !is_include || !is_thumbnails || !is_shared_anno) return FALSE;
+    G_TRY {
+        DjVuDocument *doc = document->doc;
+        if (doc) {
+            GP<DjVmDir> dir = doc->get_djvm_dir();
+            if (dir) {
+                GP<DjVmDir::File> fdesc = dir->pos_to_file(index);
+                if (fdesc) {
+                    *is_page = fdesc->is_page() ? 1 : 0;
+                    *is_include = fdesc->is_include() ? 1 : 0;
+                    *is_thumbnails = fdesc->is_thumbnails() ? 1 : 0;
+                    *is_shared_anno = fdesc->is_shared_anno() ? 1 : 0;
+                    return TRUE;
+                }
+            }
+        }
+    } G_CATCH_ALL { }
+    G_ENDCATCH;
+    return FALSE;
+}
+
 
