@@ -4559,4 +4559,27 @@ ddjvu_iw44_rgb_to_cr(const char *pixels, int w, int h, int rowsize, char *out, i
     return FALSE;
 }
 
+extern "C" DDJVUAPI int
+ddjvu_iw44_rgb_to_ycbcr(const char *pixels, int w, int h, int rowsize, char *outY, char *outCb, char *outCr, int outrowsize);
+
+int
+ddjvu_iw44_rgb_to_ycbcr(const char *pixels, int w, int h, int rowsize, char *outY, char *outCb, char *outCr, int outrowsize)
+{
+    if (!pixels || !outY || !outCb || !outCr) return FALSE;
+    if (w <= 0 || h <= 0 || rowsize < w || outrowsize < w) return FALSE;
+    
+    // The incoming rowsize from the C API is in bytes.
+    // The internal C++ functions expect rowsize in units of GPixel.
+    int gpRowSize = rowsize / sizeof(GPixel);
+
+    G_TRY {
+        DJVU::IW44Image::Transform::Encode::RGB_to_Y((const GPixel*)pixels, w, h, gpRowSize, (signed char*)outY, outrowsize);
+        DJVU::IW44Image::Transform::Encode::RGB_to_Cb((const GPixel*)pixels, w, h, gpRowSize, (signed char*)outCb, outrowsize);
+        DJVU::IW44Image::Transform::Encode::RGB_to_Cr((const GPixel*)pixels, w, h, gpRowSize, (signed char*)outCr, outrowsize);
+        return TRUE;
+    } G_CATCH_ALL { }
+    G_ENDCATCH;
+    return FALSE;
+}
+
 
