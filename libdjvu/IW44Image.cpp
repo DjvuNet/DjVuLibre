@@ -243,7 +243,7 @@ mmx_bv_2(short* &q, short* e, int s, int s3)
 }
 #endif /* MMX */
 
-static void
+void
 filter_bv(short *p, int w, int h, int rowsize, int scale)
 {
     int y = 0;
@@ -351,7 +351,7 @@ filter_bv(short *p, int w, int h, int rowsize, int scale)
     }
 }
 
-static void
+void
 filter_bh(short *p, int w, int h, int rowsize, int scale)
 {
     int y = 0;

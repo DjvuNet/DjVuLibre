@@ -55,6 +55,9 @@
 
 #ifndef _MMX_H_
 #define _MMX_H_
+
+#define NO_MMX 1
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif

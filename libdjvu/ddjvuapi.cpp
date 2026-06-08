@@ -4246,10 +4246,10 @@ int
 ddjvu_page_get_jb2_blits(ddjvu_page_t *page, ddjvu_jb2_blit_t *blits_array, int buffer_count)
 {
   if (!page || !page->mydoc || !blits_array || buffer_count <= 0) return FALSE;
-  
+
   GP<DjVuImage> dimg = page->img;
   if (!dimg) return FALSE;
-  
+
   GP<JB2Image> jb2 = dimg->get_fgjb();
   if (!jb2) return FALSE;
 
@@ -4511,6 +4511,7 @@ namespace DJVU {
         static void RGB_to_Y(const GPixel *p, int w, int h, int rowsize, signed char *out, int outrowsize);
         static void RGB_to_Cb(const GPixel *p, int w, int h, int rowsize, signed char *out, int outrowsize);
         static void RGB_to_Cr(const GPixel *p, int w, int h, int rowsize, signed char *out, int outrowsize);
+        static void forward(short *p, int w, int h, int rowsize, int begin, int end);
     };
 }
 
@@ -4567,7 +4568,7 @@ ddjvu_iw44_rgb_to_ycbcr(const char *pixels, int w, int h, int rowsize, char *out
 {
     if (!pixels || !outY || !outCb || !outCr) return FALSE;
     if (w <= 0 || h <= 0 || rowsize < w || outrowsize < w) return FALSE;
-    
+
     // The incoming rowsize from the C API is in bytes.
     // The internal C++ functions expect rowsize in units of GPixel.
     int gpRowSize = rowsize / sizeof(GPixel);
@@ -4579,6 +4580,461 @@ ddjvu_iw44_rgb_to_ycbcr(const char *pixels, int w, int h, int rowsize, char *out
         return TRUE;
     } G_CATCH_ALL { }
     G_ENDCATCH;
+    return FALSE;
+}
+
+// --------------------------------------------------------------------------
+// COMPATIBILITY TESTING HOOKS (Headerless Forward Declarations)
+// --------------------------------------------------------------------------
+
+// Thread-local buffer to safely capture exceptions across concurrent test runs
+static thread_local char ddjvu_last_error_message[1024] = {0};
+
+/**
+ * Retrieves the last native exception message captured by the testing hooks on the current thread.
+ * @return A pointer to the null-terminated UTF-8 error string.
+ */
+extern "C" DDJVUAPI const char* ddjvu_get_last_error();
+
+const char* ddjvu_get_last_error()
+{
+    return ddjvu_last_error_message;
+}
+
+// Helper to set the error
+static void ddjvu_set_last_error(const char* msg)
+{
+    if (msg != nullptr)
+    {
+        strncpy(ddjvu_last_error_message, msg, 1023);
+        ddjvu_last_error_message[1023] = '\0';
+    }
+    else
+    {
+        ddjvu_last_error_message[0] = '\0';
+    }
+}
+
+namespace DJVU
+{
+    // Forward declare the internal C++ lifting filters.
+    // They now have external linkage because 'static' was removed in IW44Image.cpp.
+    void filter_bh(short* p, int w, int h, int rowsize, int scale);
+    void filter_bv(short* p, int w, int h, int rowsize, int scale);
+    void filter_fh(short* p, int w, int h, int rowsize, int scale);
+    void filter_fv(short* p, int w, int h, int rowsize, int scale);
+}
+
+/**
+ * Executes the backward horizontal spatial lifting filter.
+ *
+ * LAYOUT: Destructive, in-place mutation of the continuous buffer.
+ * BEFORE: Coefficients represent horizontal frequency data.
+ * AFTER: Coefficients are partially lifted into the spatial domain along the X axis.
+ */
+extern "C" DDJVUAPI int ddjvu_iw44_filter_bh(short* p, int w, int h, int rowsize, int scale);
+
+int ddjvu_iw44_filter_bh(short* p, int w, int h, int rowsize, int scale)
+{
+    if (p == nullptr || w <= 0 || h <= 0 || rowsize < w || scale <= 0)
+    {
+        return FALSE;
+    }
+
+    G_TRY
+    {
+        DJVU::filter_bh(p, w, h, rowsize, scale);
+        return TRUE;
+    }
+    G_CATCH_ALL
+    {
+        // Suppress native exceptions across the P/Invoke boundary
+    }
+    G_ENDCATCH;
+
+    return FALSE;
+}
+
+/**
+ * Executes the backward vertical spatial lifting filter.
+ *
+ * LAYOUT: Destructive, in-place mutation of the continuous buffer using 'rowsize' stride.
+ * BEFORE: Coefficients represent vertical frequency data.
+ * AFTER: Coefficients are partially lifted into the spatial domain along the Y axis.
+ */
+extern "C" DDJVUAPI int ddjvu_iw44_filter_bv(short* p, int w, int h, int rowsize, int scale);
+
+int ddjvu_iw44_filter_bv(short* p, int w, int h, int rowsize, int scale)
+{
+    if (p == nullptr || w <= 0 || h <= 0 || rowsize < w || scale <= 0)
+    {
+        return FALSE;
+    }
+
+    G_TRY
+    {
+        DJVU::filter_bv(p, w, h, rowsize, scale);
+        return TRUE;
+    }
+    G_CATCH(ex)
+    {
+        ddjvu_set_last_error(ex.get_cause());
+    }
+    G_ENDCATCH;
+
+    return FALSE;
+}
+
+/**
+ * Executes the forward horizontal spatial lifting filter.
+ *
+ * LAYOUT: Destructive, in-place mutation of the continuous buffer.
+ * BEFORE: Buffer contains spatial data along the X axis.
+ * AFTER: Buffer is separated into horizontal high and low frequency components.
+ */
+extern "C" DDJVUAPI int ddjvu_iw44_filter_fh(short* p, int w, int h, int rowsize, int scale);
+
+int ddjvu_iw44_filter_fh(short* p, int w, int h, int rowsize, int scale)
+{
+    if (p == nullptr || w <= 0 || h <= 0 || rowsize < w || scale <= 0)
+    {
+        return FALSE;
+    }
+
+    G_TRY
+    {
+        DJVU::filter_fh(p, w, h, rowsize, scale);
+        return TRUE;
+    }
+    G_CATCH(ex)
+    {
+        ddjvu_set_last_error(ex.get_cause());
+    }
+    G_ENDCATCH;
+
+    return FALSE;
+}
+
+/**
+ * Executes the forward vertical spatial lifting filter.
+ *
+ * LAYOUT: Destructive, in-place mutation of the continuous buffer using 'rowsize' stride.
+ * BEFORE: Buffer contains spatial data along the Y axis.
+ * AFTER: Buffer is separated into vertical high and low frequency components.
+ */
+extern "C" DDJVUAPI int ddjvu_iw44_filter_fv(short* p, int w, int h, int rowsize, int scale);
+
+int ddjvu_iw44_filter_fv(short* p, int w, int h, int rowsize, int scale)
+{
+    if (p == nullptr || w <= 0 || h <= 0 || rowsize < w || scale <= 0)
+    {
+        return FALSE;
+    }
+
+    G_TRY
+    {
+        DJVU::filter_fv(p, w, h, rowsize, scale);
+        return TRUE;
+    }
+    G_CATCH(ex)
+    {
+        ddjvu_set_last_error(ex.get_cause());
+    }
+    G_ENDCATCH;
+
+    return FALSE;
+}
+
+// --------------------------------------------------------------------------
+// Data Storage & Entropy Decoder Hooks
+// --------------------------------------------------------------------------
+
+/// <summary>
+/// A testing proxy class designed to bypass C++ access modifiers.
+/// It relies on casting to force the compiler to treat the base pointer
+/// as our derived type, exposing protected members.
+/// </summary>
+class IW44ImageAccessProxy : public DJVU::IW44Image
+{
+public:
+    static DJVU::IW44Image::Map* GetMap(DJVU::IW44Image* img, int mapIndex)
+    {
+        auto* proxy = static_cast<IW44ImageAccessProxy*>(img);
+
+        switch (mapIndex)
+        {
+            case 0: return proxy->ymap;
+            case 1: return proxy->cbmap;
+            case 2: return proxy->crmap;
+            default: return nullptr;
+        }
+    }
+};
+
+/**
+ * Extracts 1024 raw background wavelet coefficients directly from a loaded DjVu page.
+ *
+ * STATE CONTEXT: The coefficients returned represent the pristine, entropy-decoded
+ * (ZP) state of the block immediately after decompression, but BEFORE any spatial
+ * lifting filters or inverse wavelet transformations are applied.
+ *
+ * @param page Opaque pointer to the ddjvu_page_t.
+ * @param mapIndex Color map index (0=Y, 1=Cb, 2=Cr).
+ * @param blockIndex Linear index of the macroblock within the map.
+ * @param outCoeff Pointer to a pre-allocated buffer of at least 1024 shorts.
+ * @param coeffLength The length of the outCoeff buffer (must be >= 1024 to prevent overflow).
+ * @return TRUE if successful, FALSE if parameters are invalid or buffer is too small.
+ */
+extern "C" DDJVUAPI int ddjvu_page_get_iw44_block_data(ddjvu_page_t* page, int mapIndex, int blockIndex, short* outCoeff, int coeffLength);
+
+int ddjvu_page_get_iw44_block_data(ddjvu_page_t* page, int mapIndex, int blockIndex, short* outCoeff, int coeffLength)
+{
+    if (page == nullptr || page->img == nullptr || outCoeff == nullptr || coeffLength < 1024)
+    {
+        return FALSE;
+    }
+
+    G_TRY
+    {
+        GP<DJVU::IW44Image> bg44 = page->img->get_bg44();
+        if (!bg44)
+        {
+            return FALSE;
+        }
+
+        DJVU::IW44Image::Map* map = IW44ImageAccessProxy::GetMap(bg44, mapIndex);
+
+        if (map != nullptr && blockIndex >= 0 && blockIndex < map->nb)
+        {
+            DJVU::IW44Image::Block* block = &map->blocks[blockIndex];
+
+            // Extract the 1024 wavelet coefficients (buckets 0-9)
+            block->write_liftblock(outCoeff, 0, 64);
+            return TRUE;
+        }
+    }
+    G_CATCH(ex)
+    {
+        ddjvu_set_last_error(ex.get_cause());
+    }
+    G_ENDCATCH;
+
+    return FALSE;
+}
+
+// --------------------------------------------------------------------------
+// Strategy A: Isolated Chunk Decoding Hooks
+// --------------------------------------------------------------------------
+
+// Opaque handle for C-API boundary
+typedef void* ddjvu_iw44_t;
+
+extern "C" DDJVUAPI ddjvu_iw44_t ddjvu_iw44_create_from_chunk(const char* chunkData, int chunkSize, int isColor);
+
+ddjvu_iw44_t ddjvu_iw44_create_from_chunk(const char* chunkData, int chunkSize, int isColor)
+{
+    if (chunkData == nullptr || chunkSize <= 0)
+    {
+        return nullptr;
+    }
+
+    G_TRY
+    {
+        DJVU::IW44Image::ImageType type = isColor ? DJVU::IW44Image::COLOR : DJVU::IW44Image::GRAY;
+        GP<DJVU::IW44Image> img = DJVU::IW44Image::create_decode(type);
+
+        GP<DJVU::ByteStream> bs = DJVU::ByteStream::create_static((const void*)chunkData, chunkSize);
+        img->decode_chunk(bs);
+
+        // Add a manual reference to keep the object alive across the C-API boundary
+        DJVU::IW44Image* ptr = img;
+        ref(ptr);
+        return static_cast<ddjvu_iw44_t>(ptr);
+    }
+    G_CATCH(ex)
+    {
+        ddjvu_set_last_error(ex.get_cause());
+    }
+    G_ENDCATCH;
+
+    return nullptr;
+}
+
+extern "C" DDJVUAPI int ddjvu_iw44_decode_chunk(ddjvu_iw44_t iw44Handle, const char* chunkData, int chunkSize);
+
+int ddjvu_iw44_decode_chunk(ddjvu_iw44_t iw44Handle, const char* chunkData, int chunkSize)
+{
+    if (iw44Handle == nullptr || chunkData == nullptr || chunkSize <= 0)
+    {
+        return FALSE;
+    }
+
+    G_TRY
+    {
+        auto* img = static_cast<DJVU::IW44Image*>(iw44Handle);
+        GP<DJVU::ByteStream> bs = DJVU::ByteStream::create_static((const void*)chunkData, chunkSize);
+        img->decode_chunk(bs);
+        return TRUE;
+    }
+    G_CATCH(ex)
+    {
+        ddjvu_set_last_error(ex.get_cause());
+    }
+    G_ENDCATCH;
+
+    return FALSE;
+}
+
+extern "C" DDJVUAPI void ddjvu_iw44_free(ddjvu_iw44_t iw44Handle);
+
+void ddjvu_iw44_free(ddjvu_iw44_t iw44Handle)
+{
+    if (iw44Handle != nullptr)
+    {
+        auto* img = static_cast<DJVU::IW44Image*>(iw44Handle);
+        // Release the manual reference added in create_from_chunk
+        unref(img);
+    }
+}
+
+extern "C" DDJVUAPI int ddjvu_iw44_get_map_info(ddjvu_iw44_t iw44Handle, int mapIndex, int* bw, int* bh, int* nb);
+
+int ddjvu_iw44_get_map_info(ddjvu_iw44_t iw44Handle, int mapIndex, int* bw, int* bh, int* nb)
+{
+    if (iw44Handle == nullptr || bw == nullptr || bh == nullptr || nb == nullptr)
+    {
+        return FALSE;
+    }
+
+    G_TRY
+    {
+        auto* img = static_cast<DJVU::IW44Image*>(iw44Handle);
+        DJVU::IW44Image::Map* map = IW44ImageAccessProxy::GetMap(img, mapIndex);
+
+        if (map != nullptr)
+        {
+            *bw = map->bw;
+            *bh = map->bh;
+            *nb = map->nb;
+            return TRUE;
+        }
+    }
+    G_CATCH(ex)
+    {
+        ddjvu_set_last_error(ex.get_cause());
+    }
+    G_ENDCATCH;
+
+    return FALSE;
+}
+
+/**
+ * Extracts 1024 raw wavelet coefficients for a specific 32x32 macroblock.
+ *
+ * STATE CONTEXT: The coefficients returned represent the pristine, entropy-decoded
+ * (ZP) state of the block immediately after decompression, but BEFORE any spatial
+ * lifting filters or inverse wavelet transformations are applied.
+ *
+ * @param iw44Handle Opaque pointer to the IW44Image.
+ * @param mapIndex Color map index (0=Y, 1=Cb, 2=Cr).
+ * @param blockIndex Linear index of the macroblock within the map.
+ * @param outCoeff Pointer to a pre-allocated buffer of at least 1024 shorts.
+ * @param coeffLength The length of the outCoeff buffer (must be >= 1024 to prevent overflow).
+ * @return TRUE if successful, FALSE if parameters are invalid or buffer is too small.
+ */
+extern "C" DDJVUAPI int ddjvu_iw44_get_block_data(ddjvu_iw44_t iw44Handle, int mapIndex, int blockIndex, short* outCoeff, int coeffLength);
+
+int ddjvu_iw44_get_block_data(ddjvu_iw44_t iw44Handle, int mapIndex, int blockIndex, short* outCoeff, int coeffLength)
+{
+    if (iw44Handle == nullptr || outCoeff == nullptr || coeffLength < 1024)
+    {
+        return FALSE;
+    }
+
+    G_TRY
+    {
+        auto* img = static_cast<DJVU::IW44Image*>(iw44Handle);
+        DJVU::IW44Image::Map* map = IW44ImageAccessProxy::GetMap(img, mapIndex);
+
+        if (map != nullptr && blockIndex >= 0 && blockIndex < map->nb)
+        {
+            DJVU::IW44Image::Block* block = &map->blocks[blockIndex];
+            block->write_liftblock(outCoeff, 0, 64);
+            return TRUE;
+        }
+    }
+    G_CATCH(ex)
+    {
+        ddjvu_set_last_error(ex.get_cause());
+    }
+    G_ENDCATCH;
+
+    return FALSE;
+}
+
+/**
+ * Executes the high-level forward IW44 wavelet transformation (encoding path).
+ *
+ * STATE & LAYOUT: Destructive, in-place transformation. The input buffer must be
+ * a continuous 1D array representing a 2D matrix. Pointer 'p' points to the top-left
+ * element. Navigation to the next row is defined by the 'rowsize' stride.
+ *
+ * BEFORE: Buffer contains physical spatial pixel data (e.g. YCbCr).
+ * AFTER: Buffer is mutated in-place into frequency-domain wavelet coefficients.
+ */
+extern "C" DDJVUAPI int ddjvu_iw44_transform_forward(short* p, int w, int h, int rowsize, int begin, int end);
+
+int ddjvu_iw44_transform_forward(short* p, int w, int h, int rowsize, int begin, int end)
+{
+    if (p == nullptr || w <= 0 || h <= 0 || rowsize < w || begin < 0 )
+    {
+        return FALSE;
+    }
+
+    G_TRY
+    {
+        DJVU::IW44Image::Transform::Encode::forward(p, w, h, rowsize, begin, end);
+        return TRUE;
+    }
+    G_CATCH(ex)
+    {
+        ddjvu_set_last_error(ex.get_cause());
+    }
+    G_ENDCATCH;
+
+    return FALSE;
+}
+
+/**
+ * Executes the high-level backward IW44 wavelet transformation (decoding path).
+ *
+ * STATE & LAYOUT: Destructive, in-place transformation. The input buffer must be
+ * a continuous 1D array representing a 2D matrix. Pointer 'p' points to the top-left
+ * element. Navigation to the next row is defined by the 'rowsize' stride.
+ *
+ * BEFORE: Buffer contains frequency-domain wavelet coefficients (entropy-decoded ZP state).
+ * AFTER: Buffer is mutated in-place into physical spatial pixel data (e.g. YCbCr).
+ */
+extern "C" DDJVUAPI int ddjvu_iw44_transform_backward(short* p, int w, int h, int rowsize, int begin, int end);
+
+int ddjvu_iw44_transform_backward(short* p, int w, int h, int rowsize, int begin, int end)
+{
+    if (p == nullptr || w <= 0 || h <= 0 || rowsize < w || begin < 0 )
+    {
+        return FALSE;
+    }
+
+    G_TRY
+    {
+        DJVU::IW44Image::Transform::Decode::backward(p, w, h, rowsize, begin, end);
+        return TRUE;
+    }
+    G_CATCH(ex)
+    {
+        ddjvu_set_last_error(ex.get_cause());
+    }
+    G_ENDCATCH;
+
     return FALSE;
 }
 

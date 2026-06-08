@@ -400,7 +400,7 @@ mmx_fv_2(short* &q, short* e, int s, int s3)
 // NEW FILTERS
 //////////////////////////////////////////////////////
 
-static void
+void
 filter_fv(short *p, int w, int h, int rowsize, int scale)
 {
     int y = 0;
@@ -510,7 +510,7 @@ filter_fv(short *p, int w, int h, int rowsize, int scale)
     }
 }
 
-static void
+void
 filter_fh(short *p, int w, int h, int rowsize, int scale)
 {
     int y = 0;
