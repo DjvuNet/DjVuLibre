@@ -5039,3 +5039,223 @@ int ddjvu_iw44_transform_backward(short* p, int w, int h, int rowsize, int begin
 }
 
 
+ // --------------------------------------------------------------------------
+ // COMPATIBILITY TESTING HOOKS: GRect
+ // --------------------------------------------------------------------------
+
+ struct ddjvu_grect {
+     int xmin;
+     int ymin;
+     int xmax;
+     int ymax;
+ };
+
+ // C++ Mapping Helpers (Not exported, internal C++ linkage only)
+ static DJVU::GRect to_grect(const struct ddjvu_grect* r) {
+     DJVU::GRect grect;
+     grect.xmin = r->xmin;
+     grect.ymin = r->ymin;
+     grect.xmax = r->xmax;
+     grect.ymax = r->ymax;
+     return grect;
+ }
+
+ static void from_grect(struct ddjvu_grect* r, const DJVU::GRect* grect) {
+     r->xmin = grect->xmin;
+     r->ymin = grect->ymin;
+     r->xmax = grect->xmax;
+     r->ymax = grect->ymax;
+ }
+
+ /**
+ * Checks if two rectangles are geometrically equal.
+ *
+ * IMPORTANT: This function relies on the native DjVuLibre GRect::operator==
+ * implementation. Its behavior is highly unintuitive regarding "Empty" rectangles.
+ * If BOTH rectangles are determined to be mathematically empty (e.g. xmin >= xmax),
+ * they are evaluated as EQUAL (returns 1) regardless of their actual coordinate values.
+ *
+ * If a null pointer is passed, it is safely evaluated as an Empty rectangle.
+ *
+ * Original DjVuLibre Implementation Reference (GRect.cpp):
+ * \code
+ * int operator==(const GRect & r1, const GRect & r2) {
+ *   bool isempty1 = r1.isempty();
+ *   bool isempty2 = r2.isempty();
+ *   if (isempty1 || isempty2)
+ *     if (isempty1 && isempty2)
+ *       return 1;
+ *   if ( r1.xmin==r2.xmin && r1.xmax==r2.xmax
+ *        && r1.ymin==r2.ymin && r1.ymax==r2.ymax )
+ *     return 1;
+ *   return 0;
+ * }
+ * \endcode
+ *
+ * @param r1 Pointer to the first rectangle structure.
+ * @param r2 Pointer to the second rectangle structure.
+ * @return 1 if they are geometrically equal (or both empty), 0 otherwise.
+ */
+ extern "C" DDJVUAPI int ddjvu_grect_equals(const struct ddjvu_grect* r1, const struct ddjvu_grect* r2);
+
+int ddjvu_grect_equals(const struct ddjvu_grect* r1, const struct ddjvu_grect* r2)
+{
+    // A null pointer is safely interpreted as a default Empty rectangle.
+    DJVU::GRect rect1 = r1 ? to_grect(r1) : DJVU::GRect();
+    DJVU::GRect rect2 = r2 ? to_grect(r2) : DJVU::GRect();
+
+    // GRect::operator== inherently returns an int (1 for true, 0 for false).
+    return rect1 == rect2;
+}
+
+ /**
+  * Checks if the given geometric rectangle is empty.
+  * @param rect Pointer to the rectangle structure.
+  * @return 1 if the rectangle is empty, 0 otherwise.
+  */
+ extern "C" DDJVUAPI int ddjvu_grect_isempty(const struct ddjvu_grect* rect);
+
+ int ddjvu_grect_isempty(const struct ddjvu_grect* rect)
+ {
+     if (!rect) return 1;
+     DJVU::GRect r = to_grect(rect);
+     return r.isempty() ? 1 : 0;
+ }
+
+ /**
+  * Checks if the rectangle mathematically contains a specific point in 2D space.
+  * @param rect Pointer to the bounding rectangle.
+  * @param x The X coordinate to test.
+  * @param y The Y coordinate to test.
+  * @return 1 if the point is within the rectangle, 0 otherwise.
+  */
+ extern "C" DDJVUAPI int ddjvu_grect_contains_point(const struct ddjvu_grect* rect, int x, int y);
+
+ int ddjvu_grect_contains_point(const struct ddjvu_grect* rect, int x, int y)
+ {
+     if (!rect) return 0;
+     DJVU::GRect r = to_grect(rect);
+     return r.contains(x, y) ? 1 : 0;
+ }
+
+ /**
+  * Checks if the rectangle completely encapsulates another rectangle.
+  * @param rect Pointer to the outer bounding rectangle.
+  * @param other Pointer to the inner rectangle to test.
+  * @return 1 if the outer rectangle contains the inner one, 0 otherwise.
+  */
+ extern "C" DDJVUAPI int ddjvu_grect_contains_rect(const struct ddjvu_grect* rect, const struct ddjvu_grect* other);
+
+ int ddjvu_grect_contains_rect(const struct ddjvu_grect* rect, const struct ddjvu_grect* other)
+ {
+     if (!rect || !other) return 0;
+     DJVU::GRect r = to_grect(rect);
+     DJVU::GRect o = to_grect(other);
+     return r.contains(o) ? 1 : 0;
+ }
+
+ /**
+  * Computes the geometric intersection of two rectangles.
+  * @param out_rect Pointer to a pre-allocated structure to receive the intersection.
+  * @param r1 Pointer to the first rectangle.
+  * @param r2 Pointer to the second rectangle.
+  * @return 1 if the resulting intersection is not empty, 0 otherwise.
+  */
+ extern "C" DDJVUAPI int ddjvu_grect_intersect(struct ddjvu_grect* out_rect, const struct ddjvu_grect* r1, const struct ddjvu_grect* r2);
+
+ int ddjvu_grect_intersect(struct ddjvu_grect* out_rect, const struct ddjvu_grect* r1, const struct ddjvu_grect* r2)
+ {
+     if (!out_rect || !r1 || !r2) return 0;
+     DJVU::GRect rect1 = to_grect(r1);
+     DJVU::GRect rect2 = to_grect(r2);
+     DJVU::GRect res;
+     int has_intersect = res.intersect(rect1, rect2);
+     from_grect(out_rect, &res);
+     return has_intersect ? 1 : 0;
+ }
+
+ /**
+  * Computes the smallest bounding rectangle (hull) that encapsulates both rectangles.
+  * @param out_rect Pointer to a pre-allocated structure to receive the bounding box.
+  * @param r1 Pointer to the first rectangle.
+  * @param r2 Pointer to the second rectangle.
+  * @return 1 if the resulting hull is not empty, 0 otherwise.
+  */
+ extern "C" DDJVUAPI int ddjvu_grect_recthull(struct ddjvu_grect* out_rect, const struct ddjvu_grect* rect1, const struct ddjvu_grect* rect2);
+
+ int ddjvu_grect_recthull(struct ddjvu_grect* out_rect, const struct ddjvu_grect* rect1, const struct ddjvu_grect* rect2)
+ {
+     if (!out_rect || !rect1 || !rect2) return 0;
+     DJVU::GRect grect1 = to_grect(rect1);
+     DJVU::GRect grect2 = to_grect(rect2);
+     DJVU::GRect result;
+     int is_not_empty = result.recthull(grect1, grect2);
+     from_grect(out_rect, &result);
+     return is_not_empty ? 1 : 0;
+ }
+
+ /**
+  * Mutates the rectangle by pushing its vertical sides apart by dx and horizontal sides apart by dy.
+  * Negative values shrink the dimensions.
+  * @param rect Pointer to the rectangle to inflate.
+  * @param dx The horizontal expansion delta.
+  * @param dy The vertical expansion delta.
+  */
+ extern "C" DDJVUAPI void ddjvu_grect_inflate(struct ddjvu_grect* rect, int dx, int dy);
+
+ void ddjvu_grect_inflate(struct ddjvu_grect* rect, int dx, int dy)
+ {
+     if (!rect) return;
+     DJVU::GRect grect = to_grect(rect);
+     grect.inflate(dx, dy);
+     from_grect(rect, &grect);
+ }
+
+ /**
+  * Mutates the rectangle by shifting all its points by the specified deltas.
+  * @param rect Pointer to the rectangle to translate.
+  * @param dx The horizontal translation delta.
+  * @param dy The vertical translation delta.
+  */
+ extern "C" DDJVUAPI void ddjvu_grect_translate(struct ddjvu_grect* rect, int dx, int dy);
+
+ void ddjvu_grect_translate(struct ddjvu_grect* rect, int dx, int dy)
+ {
+     if (!rect) return;
+     DJVU::GRect r = to_grect(rect);
+     r.translate(dx, dy);
+     from_grect(rect, &r);
+ }
+
+ /**
+  * Scales the rectangle by a uniform factor.
+  * @param rect Pointer to the rectangle to scale.
+  * @param factor The scale factor.
+  */
+ extern "C" DDJVUAPI int ddjvu_grect_scale(struct ddjvu_grect* rect, float factor);
+
+ int ddjvu_grect_scale(struct ddjvu_grect* rect, float factor)
+ {
+     if (!rect) return 0;
+     DJVU::GRect grect = to_grect(rect);
+     grect.scale(factor);
+     from_grect(rect, &grect);
+     return 1;
+ }
+
+ /**
+  * Scales the rectangle by independent X and Y factors.
+  * @param rect Pointer to the rectangle to scale.
+  * @param xfactor The horizontal scale factor.
+  * @param yfactor The vertical scale factor.
+  */
+ extern "C" DDJVUAPI int ddjvu_grect_scale_xy(struct ddjvu_grect* rect, float xfactor, float yfactor);
+
+ int ddjvu_grect_scale_xy(struct ddjvu_grect* rect, float xfactor, float yfactor)
+ {
+     if (!rect) return 0;
+     DJVU::GRect grect = to_grect(rect);
+     grect.scale(xfactor, yfactor);
+     from_grect(rect, &grect);
+     return 1;
+ }
