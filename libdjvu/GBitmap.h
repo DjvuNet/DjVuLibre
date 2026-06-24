@@ -207,6 +207,8 @@ public:
   unsigned int rows() const;
   /** Returns the number of columns (the image width). */
   unsigned int columns() const;
+  /** Returns size of border **/
+  int get_border() const;
   /** Returns a constant pointer to the first byte of row #row#.
       This pointer can be used as an array to read the row elements. */
   const unsigned char *operator[] (int row) const;
@@ -553,6 +555,12 @@ inline unsigned int
 GBitmap::rowsize() const
 {
   return bytes_per_row;
+}
+
+inline int
+GBitmap::get_border() const
+{
+    return border;
 }
 
 inline int

@@ -4178,6 +4178,74 @@ ddjvu_anno_get_xmp(miniexp_t p)
 // Internal state accessors
 
 extern "C" DDJVUAPI int
+ddjvu_page_get_jb2_shape_count(ddjvu_page_t *page, int *count);
+
+int
+ddjvu_page_get_jb2_shape_count(ddjvu_page_t *page, int *count)
+{
+  if (!page || !page->mydoc || !count)
+    return FALSE;
+
+  GP<DjVuImage> dimg = page->img;
+  if (!dimg)
+    return FALSE;
+
+  GP<JB2Image> jb2 = dimg->get_fgjb();
+  if (!jb2)
+    return FALSE;
+
+  *count = (int)jb2->get_shape_count();
+
+  return TRUE;
+}
+
+extern "C" DDJVUAPI int
+ddjvu_page_get_jb2_shape(ddjvu_page_t *page, int shapeno, int *width, int *height, int *rowsize, unsigned char *pixels);
+
+int
+ddjvu_page_get_jb2_shape(
+  ddjvu_page_t *page,
+  int shapeno,
+  int *width,
+  int *height,
+  int *rowsize,
+  unsigned char *pixels)
+{
+  if (!page || !page->mydoc)
+    return FALSE;
+
+  GP<DjVuImage> dimg = page->img;
+  if (!dimg)
+    return FALSE;
+
+  GP<JB2Image> jb2 = dimg->get_fgjb();
+  if (!jb2)
+    return FALSE;
+
+  if (shapeno < 0 || shapeno >= jb2->get_shape_count())
+    return FALSE;
+
+  JB2Shape &shape = jb2->get_shape(shapeno);
+  GP<GBitmap> gbmp = shape.bits;
+  if (!gbmp)
+    return FALSE; // Shape has no bitmap data
+
+  if (width)   *width   = gbmp->columns();
+  if (height)  *height  = gbmp->rows();
+  if (rowsize) *rowsize = gbmp->rowsize();
+
+  if (pixels) {
+    int rsz = gbmp->rowsize();
+    int rows = gbmp->rows();
+    for (int r = 0; r < rows; r++) {
+      memcpy(pixels + (r * rsz), (*gbmp)[r], rsz);
+    }
+  }
+
+  return TRUE;
+}
+
+extern "C" DDJVUAPI int
 ddjvu_page_get_jb2_blit_count(ddjvu_page_t *page, int *count);
 
 int
@@ -5258,4 +5326,157 @@ int ddjvu_grect_equals(const struct ddjvu_grect* r1, const struct ddjvu_grect* r
      grect.scale(xfactor, yfactor);
      from_grect(rect, &grect);
      return 1;
+ }
+
+ // --------------------------------------------------------------------------
+ // JB2 Isolated Chunk Decoding & Bitmap Extraction Hooks
+ // --------------------------------------------------------------------------
+
+ extern "C" DDJVUAPI int ddjvu_jb2dict_create_from_chunk(const char* chunkData, int chunkSize, int* shapeCount, void** outHandle);
+
+ int ddjvu_jb2dict_create_from_chunk(const char* chunkData, int chunkSize, int* shapeCount, void** outHandle)
+ {
+     if (chunkData == nullptr || chunkSize <= 0 || outHandle == nullptr) return FALSE;
+
+     G_TRY
+     {
+         GP<DJVU::JB2Dict> dict = DJVU::JB2Dict::create();
+         GP<DJVU::ByteStream> bs = DJVU::ByteStream::create((const void*)chunkData, chunkSize);
+         dict->decode(bs);
+
+         DJVU::JB2Dict* ptr = dict;
+         ref(ptr);
+         *outHandle = static_cast<void*>(ptr);
+         *shapeCount = dict->get_shape_count();
+         return TRUE;
+     }
+     G_CATCH(ex)
+     {
+         ddjvu_set_last_error(ex.get_cause());
+     }
+     G_ENDCATCH;
+
+     return FALSE;
+ }
+
+ GP<JB2Dict> get_dict(void* arg)
+ {
+     if (arg)
+     {
+         return static_cast<DJVU::JB2Dict*>(arg);
+     }
+     return nullptr;
+ }
+
+ extern "C" DDJVUAPI int ddjvu_jb2image_create_from_chunk(const char* sjbzData, int sjbzSize, const char* djbzData, int djbzSize, void** outHandle);
+
+ int ddjvu_jb2image_create_from_chunk(const char* sjbzData, int sjbzSize, const char* djbzData, int djbzSize, void** outHandle)
+ {
+     if (sjbzData == nullptr || sjbzSize <= 0 || outHandle == nullptr) return FALSE;
+
+     G_TRY
+     {
+         GP<DJVU::JB2Dict> dict = nullptr;
+         if (djbzData != nullptr && djbzSize > 0)
+         {
+             dict = DJVU::JB2Dict::create();
+             GP<DJVU::ByteStream> bs = DJVU::ByteStream::create((const void*)djbzData, djbzSize);
+             dict->decode(bs);
+         }
+
+         GP<DJVU::JB2Image> img = DJVU::JB2Image::create();
+         GP<DJVU::ByteStream> bs = DJVU::ByteStream::create((const void*)sjbzData, sjbzSize);
+
+         if (dict != nullptr)
+         {
+             img->decode(bs, get_dict, (void*)(DJVU::JB2Dict*)dict);
+         }
+         else
+         {
+             img->decode(bs);
+         }
+
+         DJVU::JB2Image* ptr = img;
+         ref(ptr);
+         *outHandle = static_cast<void*>(ptr);
+         return TRUE;
+     }
+     G_CATCH(ex)
+     {
+         ddjvu_set_last_error(ex.get_cause());
+     }
+     G_ENDCATCH;
+
+     return FALSE;
+ }
+
+ extern "C" DDJVUAPI int ddjvu_jb2dict_free(void* handle);
+
+ int ddjvu_jb2dict_free(void* handle)
+ {
+     if (handle != nullptr)
+     {
+         auto* dict = static_cast<DJVU::JB2Dict*>(handle);
+         unref(dict);
+         return TRUE;
+     }
+     return FALSE;
+ }
+
+ extern "C" DDJVUAPI int ddjvu_jb2image_free(void* handle);
+
+ int ddjvu_jb2image_free(void* handle)
+ {
+     if (handle != nullptr)
+     {
+         auto* img = static_cast<DJVU::JB2Image*>(handle);
+         unref(img);
+         return TRUE;
+     }
+     return FALSE;
+ }
+
+ extern "C" DDJVUAPI int ddjvu_jb2image_get_bitmap(
+     void* handle, int align,
+     int* width, int* height, int* rowsize, int* border,
+     unsigned char* buffer, int buffer_size);
+
+ int ddjvu_jb2image_get_bitmap(void* handle, int align, int* width, int* height, int* rowsize, int* border, unsigned char* buffer, int buffer_size)
+ {
+     if (handle == nullptr || width == nullptr || height == nullptr || rowsize == nullptr) return FALSE;
+
+     G_TRY
+     {
+         auto* jb2 = static_cast<DJVU::JB2Image*>(handle);
+
+         GP<DJVU::GBitmap> bmp = jb2->get_bitmap(1, align);
+         if (!bmp) return FALSE;
+
+         *width = bmp->columns();
+         *height = bmp->rows();
+         *rowsize = bmp->rowsize();
+         *border = bmp->get_border();
+
+         if (buffer != nullptr && buffer_size > 0)
+         {
+             int required_size = (*height) * (*rowsize);
+             if (buffer_size < required_size) return FALSE;
+
+             for (int y = 0; y < *height; y++)
+             {
+                 unsigned char* src = (*bmp)[y];
+                 unsigned char* dst = buffer + (y * (*rowsize));
+                 memcpy(dst, src, *rowsize);
+             }
+         }
+
+         return TRUE;
+     }
+     G_CATCH(ex)
+     {
+         ddjvu_set_last_error(ex.get_cause());
+     }
+     G_ENDCATCH;
+
+     return FALSE;
  }
