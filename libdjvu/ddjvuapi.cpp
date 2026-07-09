@@ -5410,6 +5410,98 @@ int ddjvu_grect_equals(const struct ddjvu_grect* r1, const struct ddjvu_grect* r
      return FALSE;
  }
 
+ /**
+  * \brief Encodes a JB2Image AST into a raw bitstream payload.
+  *
+  * This function takes a handle to a native JB2Image AST and encodes it
+  * into a raw byte buffer (Sjbz payload without IFF wrapper headers).
+  * The memory allocated for `outData` must be freed by the caller.
+  *
+  * \param imageHandle Pointer to the JB2Image instance to encode.
+  * \param outData Pointer to a byte array pointer that will receive the encoded data.
+  * \param outSize Pointer to an integer that will receive the size of the encoded data.
+  * \return TRUE if encoding was successful, FALSE otherwise.
+  */
+ extern "C" DDJVUAPI int ddjvu_jb2image_encode_to_chunk(void* imageHandle, unsigned char** outData, int* outSize);
+
+ int ddjvu_jb2image_encode_to_chunk(void* imageHandle, unsigned char** outData, int* outSize)
+ {
+     if (!imageHandle || !outData || !outSize) return FALSE;
+
+     unsigned char* localData = nullptr;
+     G_TRY
+     {
+         GP<DJVU::ByteStream> bs = DJVU::ByteStream::create();
+         static_cast<DJVU::JB2Image*>(imageHandle)->encode(bs);
+
+         bs->seek(0);
+         int size = bs->size();
+         localData = (unsigned char*)ddjvu_alloc(size);
+         if (!localData) return FALSE;
+         bs->readall(localData, size);
+         
+         *outData = localData;
+         *outSize = size;
+         return TRUE;
+     }
+     G_CATCH(ex)
+     {
+         if (localData) {
+             ddjvu_free(localData);
+         }
+         ddjvu_set_last_error(ex.get_cause());
+     }
+     G_ENDCATCH;
+
+     return FALSE;
+ }
+
+ /**
+  * \brief Encodes a JB2Dict AST into a raw bitstream payload.
+  *
+  * This function takes a handle to a native JB2Dict AST and encodes it
+  * into a raw byte buffer (Djbz payload without IFF wrapper headers).
+  * The memory allocated for `outData` must be freed by the caller.
+  *
+  * \param dictHandle Pointer to the JB2Dict instance to encode.
+  * \param outData Pointer to a byte array pointer that will receive the encoded data.
+  * \param outSize Pointer to an integer that will receive the size of the encoded data.
+  * \return TRUE if encoding was successful, FALSE otherwise.
+  */
+ extern "C" DDJVUAPI int ddjvu_jb2dict_encode_to_chunk(void* dictHandle, unsigned char** outData, int* outSize);
+
+ int ddjvu_jb2dict_encode_to_chunk(void* dictHandle, unsigned char** outData, int* outSize)
+ {
+     if (!dictHandle || !outData || !outSize) return FALSE;
+
+     unsigned char* localData = nullptr;
+     G_TRY
+     {
+         GP<DJVU::ByteStream> bs = DJVU::ByteStream::create();
+         static_cast<DJVU::JB2Dict*>(dictHandle)->encode(bs);
+
+         bs->seek(0);
+         int size = bs->size();
+         localData = (unsigned char*)ddjvu_alloc(size);
+         if (!localData) return FALSE;
+         bs->readall(localData, size);
+
+         *outData = localData;
+         *outSize = size;
+         return TRUE;
+     }
+     G_CATCH(ex)
+     {
+         if (localData) {
+             ddjvu_free(localData);
+         }
+         ddjvu_set_last_error(ex.get_cause());
+     }
+     G_ENDCATCH;
+
+     return FALSE;
+ }
+
  extern "C" DDJVUAPI int ddjvu_jb2dict_free(void* handle);
 
  int ddjvu_jb2dict_free(void* handle)
@@ -5479,4 +5571,123 @@ int ddjvu_grect_equals(const struct ddjvu_grect* r1, const struct ddjvu_grect* r
      G_ENDCATCH;
 
      return FALSE;
+ }
+
+ /**
+  * \brief Set the encoding options for the JB2 dictionary.
+  *
+  * This function allows runtime configuration of the dictionary encoding strategies
+  * that were originally controlled by compile-time macros (e.g., LIBRARY_CONTAINS_ALL).
+  * This is primarily intended for generating edge-case token streams during testing.
+  *
+  * \param contains_all Non-zero to enable LIBRARY_CONTAINS_ALL (default: 1).
+  * \param contains_shared Non-zero to enable LIBRARY_CONTAINS_SHARED (default: 0).
+  * \param contains_marks Non-zero to enable LIBRARY_CONTAINS_MARKS (default: 0).
+  * \return TRUE (1) if successful, FALSE (0) otherwise.
+  */
+ extern "C" DDJVUAPI int ddjvu_set_jb2_encoding_options(int contains_all, int contains_shared, int contains_marks);
+
+ /**
+  * \brief Get the current encoding options for the JB2 dictionary.
+  *
+  * Retrieves the current values of the JB2 dictionary encoding strategies.
+  *
+  * \param contains_all Pointer to an integer to receive the LIBRARY_CONTAINS_ALL state.
+  * \param contains_shared Pointer to an integer to receive the LIBRARY_CONTAINS_SHARED state.
+  * \param contains_marks Pointer to an integer to receive the LIBRARY_CONTAINS_MARKS state.
+  * \return TRUE (1) if successful, FALSE (0) if any pointer is NULL.
+  */
+ extern "C" DDJVUAPI int ddjvu_get_jb2_encoding_options(int* contains_all, int* contains_shared, int* contains_marks);
+
+/**
+ * \brief Mutates the parent index of a specific shape in a JB2Image.
+ *
+ * Used for testing specific encoder bitstreams like NON_MARK_DATA.
+ * \param imageHandle Pointer to the JB2Image instance.
+ * \param shapeIndex The index of the shape to modify.
+ * \param newParent The new parent index (e.g. < -1).
+ * \return TRUE (1) if successful, FALSE (0) if parameters are invalid.
+ */
+extern "C" DDJVUAPI int ddjvu_jb2image_set_shape_parent(void* imageHandle, int shapeIndex, int newParent);
+
+/**
+ * \brief Gets the parent index of a specific shape in a JB2Image.
+ * \param imageHandle Pointer to the JB2Image instance.
+ * \param shapeIndex The index of the shape.
+ * \param shapesNo Pointer to receive the total number of shapes in the image.
+ * \param inheritedShapesNo Pointer to receive the number of shapes inherited from shared dictionaries.
+ * \param outParent Pointer to receive the parent index.
+ * \return TRUE (1) if successful, FALSE (0) if parameters are invalid.
+ */
+extern "C" DDJVUAPI int ddjvu_jb2image_get_shape_parent(void* imageHandle, int shapeIndex, int* shapesNo, int* inheritedShapesNo, int* outParent);
+
+ extern "C" {
+     // Global state for JB2 encoding dictionary inclusion strategies
+     int djvunet_jb2_library_contains_all = 1;
+     int djvunet_jb2_library_contains_shared = 0;
+     int djvunet_jb2_library_contains_marks = 0;
+
+     int ddjvu_set_jb2_encoding_options(int contains_all, int contains_shared, int contains_marks)
+     {
+         djvunet_jb2_library_contains_all = contains_all;
+         djvunet_jb2_library_contains_shared = contains_shared;
+         djvunet_jb2_library_contains_marks = contains_marks;
+         return TRUE;
+     }
+
+     int ddjvu_get_jb2_encoding_options(int* contains_all, int* contains_shared, int* contains_marks)
+     {
+         if (contains_all == nullptr || contains_shared == nullptr || contains_marks == nullptr)
+         {
+             return FALSE;
+         }
+         *contains_all = djvunet_jb2_library_contains_all;
+         *contains_shared = djvunet_jb2_library_contains_shared;
+         *contains_marks = djvunet_jb2_library_contains_marks;
+         return TRUE;
+     }
+
+    int ddjvu_jb2image_set_shape_parent(void* imageHandle, int shapeIndex, int newParent)
+    {
+        if (!imageHandle) return FALSE;
+
+        G_TRY
+        {
+            DJVU::JB2Image* image = static_cast<DJVU::JB2Image*>(imageHandle);
+            if (shapeIndex < image->get_inherited_shape_count() || shapeIndex >= image->get_shape_count()) return FALSE;
+
+            DJVU::JB2Shape& shape = image->get_shape(shapeIndex);
+            shape.parent = newParent;
+            return TRUE;
+        }
+        G_CATCH(ex)
+        {
+            ddjvu_set_last_error(ex.get_cause());
+            return FALSE;
+        }
+        G_ENDCATCH;
+    }
+
+    int ddjvu_jb2image_get_shape_parent(void* imageHandle, int shapeIndex, int* shapesNo, int* inheritedShapesNo, int* outParent)
+    {
+        if (!imageHandle || !shapesNo || !inheritedShapesNo || !outParent) return FALSE;
+
+        G_TRY
+        {
+            DJVU::JB2Image* image = static_cast<DJVU::JB2Image*>(imageHandle);
+            *shapesNo = image->get_shape_count();
+            *inheritedShapesNo = image->get_inherited_shape_count();
+            if (shapeIndex < *inheritedShapesNo || shapeIndex >= *shapesNo) return FALSE;
+
+            const DJVU::JB2Shape& shape = image->get_shape(shapeIndex);
+            *outParent = shape.parent;
+            return TRUE;
+        }
+        G_CATCH(ex)
+        {
+            ddjvu_set_last_error(ex.get_cause());
+            return FALSE;
+        }
+        G_ENDCATCH;
+    }
  }

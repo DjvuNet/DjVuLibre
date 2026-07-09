@@ -90,6 +90,13 @@ namespace DJVU {
 // This class implements the JB2 coder.
 // Contains all contextual information for encoding a JB2Image.
 
+extern "C" {
+    // Expose global DjvuNet JB2 encoding options configured via ddjvuapi.cpp
+    extern int djvunet_jb2_library_contains_all;
+    extern int djvunet_jb2_library_contains_shared;
+    extern int djvunet_jb2_library_contains_marks;
+}
+
 class JB2Dict::JB2Codec::Encode : public JB2Dict::JB2Codec
 {
 public:
@@ -125,6 +132,10 @@ protected:
 
 private:
   GP<ZPCodec> gzp;
+  // DjvuNet testing extensions: Runtime state for dictionary inclusion macros
+  int m_library_contains_all;
+  int m_library_contains_shared;
+  int m_library_contains_marks;
 };
 
 
@@ -178,7 +189,13 @@ static const int CELLCHUNK = 20000;
 // CONSTRUCTOR
 
 JB2Dict::JB2Codec::Encode::Encode(void)
-: JB2Dict::JB2Codec(1) {}
+: JB2Dict::JB2Codec(1) 
+{
+  // Initialize instance state from global configuration
+  m_library_contains_all = djvunet_jb2_library_contains_all;
+  m_library_contains_shared = djvunet_jb2_library_contains_shared;
+  m_library_contains_marks = djvunet_jb2_library_contains_marks;
+}
 
 void
 JB2Dict::JB2Codec::Encode::init(const GP<ByteStream> &gbs)
@@ -469,19 +486,22 @@ JB2Dict::JB2Codec::Encode::code(const GP<JB2Image> &gjim)
               if (jshp.parent>=0 && shape2lib[jshp.parent]<0)
                 encode_libonly_shape(gjim, jshp.parent);
               // Allocate library entry when needed
-#define LIBRARY_CONTAINS_ALL
               int libraryp = 0;
-#ifdef LIBRARY_CONTAINS_MARKS // baseline
-              if (jshp.parent >= -1)
-                libraryp = 1;
-#endif
-#ifdef LIBRARY_CONTAINS_SHARED // worse             
-              if (shape2lib[shapeno] <= -3)
-                libraryp = 1;
-#endif
-#ifdef LIBRARY_CONTAINS_ALL // better
-              libraryp = 1;
-#endif
+              // DjvuNet testing extensions: Runtime evaluation replacing compile-time macros
+              if (m_library_contains_marks) 
+                {
+                  if (jshp.parent >= -1)
+                    libraryp = 1;
+                }
+              if (m_library_contains_shared) 
+                {
+                  if (shape2lib[shapeno] <= -3)
+                    libraryp = 1;
+                }
+              if (m_library_contains_all) 
+                {
+                  libraryp = 1;
+                }
               // Test all blit cases
               if (jshp.parent<-1 && !libraryp)
                 {
