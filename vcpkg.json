@@ -3,11 +3,11 @@
   "version": "3.5.28",
   "description": "DjVuLibre is a C++ library and set of utilities for working with DjVu documents.",
   "homepage": "https://github.com/DjvuNet/djvulibre",
-  "builtin-baseline": "99a97de2cb371449d4fb9dc970f2ac562d689ec2",
+  "builtin-baseline": "eaca4a577b6b678c6e10252754b6988a61746c19",
   "dependencies": [
     {
       "name": "libjpeg-turbo",
-      "version>=": "3.1.4.1"
+      "version>=": "3.2.0"
     }
   ]
 }
