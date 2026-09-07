@@ -5529,11 +5529,11 @@ int ddjvu_grect_equals(const struct ddjvu_grect* r1, const struct ddjvu_grect* r
  }
 
  extern "C" DDJVUAPI int ddjvu_jb2image_get_bitmap(
-     void* handle, int align,
+     void* handle, int subsample, int align,
      int* width, int* height, int* rowsize, int* border,
      unsigned char* buffer, int buffer_size);
 
- int ddjvu_jb2image_get_bitmap(void* handle, int align, int* width, int* height, int* rowsize, int* border, unsigned char* buffer, int buffer_size)
+ int ddjvu_jb2image_get_bitmap(void* handle, int subsample, int align, int* width, int* height, int* rowsize, int* border, unsigned char* buffer, int buffer_size)
  {
      if (handle == nullptr || width == nullptr || height == nullptr || rowsize == nullptr) return FALSE;
 
@@ -5541,7 +5541,7 @@ int ddjvu_grect_equals(const struct ddjvu_grect* r1, const struct ddjvu_grect* r
      {
          auto* jb2 = static_cast<DJVU::JB2Image*>(handle);
 
-         GP<DJVU::GBitmap> bmp = jb2->get_bitmap(1, align);
+         GP<DJVU::GBitmap> bmp = jb2->get_bitmap(subsample, align);
          if (!bmp) return FALSE;
 
          *width = bmp->columns();
