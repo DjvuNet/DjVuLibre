@@ -5106,6 +5106,194 @@ int ddjvu_iw44_transform_backward(short* p, int w, int h, int rowsize, int begin
     return FALSE;
 }
 
+/**
+ * \brief Extracts the RAW, unmasked, unscaled BGR background image directly from the IW44 structure.
+ *
+ * \param iw44Handle The native handle to the decoded IW44Image (must be a color IWPixmap).
+ * \param subsample The subsampling ratio (must be a power of two between 1 and 32).
+ * \param rect The region of the image to render (pointer to ddjvu_rect_t). If NULL, the full image is used.
+ * \param outBgrBuffer Pointer to receive the interleaved BGR data. If NULL, the function just computes dimensions.
+ * \param bufferSize The size of the outBgrBuffer in bytes.
+ * \param outWidth Pointer to receive the resolved width in pixels.
+ * \param outHeight Pointer to receive the resolved height in pixels.
+ * \return TRUE (1) if successful, FALSE (0) otherwise.
+ */
+extern "C" DDJVUAPI int ddjvu_iw44_get_raw_pixmap(
+    ddjvu_iw44_t iw44Handle, 
+    int subsample, 
+    const ddjvu_rect_t* rect, 
+    unsigned char* outBgrBuffer, 
+    int bufferSize,
+    int* outWidth, 
+    int* outHeight);
+
+int ddjvu_iw44_get_raw_pixmap(
+    ddjvu_iw44_t iw44Handle, 
+    int subsample, 
+    const ddjvu_rect_t* rect, 
+    unsigned char* outBgrBuffer, 
+    int bufferSize,
+    int* outWidth, 
+    int* outHeight)
+{
+    if (iw44Handle == nullptr)
+    {
+        return FALSE;
+    }
+
+    G_TRY 
+    {
+        auto* img = static_cast<DJVU::IWPixmap*>(iw44Handle);
+        DJVU::GRect grect;
+        
+        if (rect != nullptr) 
+        {
+            grect = DJVU::GRect(rect->x, rect->y, rect->w, rect->h);
+        } 
+        else 
+        {
+            DJVU::IW44Image::Map* map = IW44ImageAccessProxy::GetMap(img, 0);
+            
+            if (map == nullptr)
+            {
+                return FALSE;
+            }
+
+            int w = (map->iw + subsample - 1) / subsample;
+            int h = (map->ih + subsample - 1) / subsample;
+            grect = DJVU::GRect(0, 0, w, h);
+        }
+        
+        if (outWidth != nullptr)
+        {
+            *outWidth = grect.width();
+        }
+
+        if (outHeight != nullptr)
+        {
+            *outHeight = grect.height();
+        }
+
+        if (outBgrBuffer == nullptr)
+        {
+            return TRUE;
+        }
+        
+        GP<DJVU::GPixmap> pixmap = img->get_pixmap(subsample, grect);
+        
+        if (pixmap) 
+        {
+            int required_size = grect.width() * grect.height() * 3;
+            
+            if (bufferSize >= required_size) 
+            {
+                for (int y = 0; y < grect.height(); y++) 
+                {
+                    unsigned char* dest = outBgrBuffer + (y * grect.width() * 3);
+                    unsigned char* src = (unsigned char*)(*pixmap)[y];
+                    memcpy(dest, src, grect.width() * 3);
+                }
+                
+                return TRUE;
+            }
+        }
+    } 
+    G_CATCH(ex) 
+    { 
+        ddjvu_set_last_error(ex.get_cause()); 
+    } 
+    G_ENDCATCH;
+    
+    return FALSE;
+}
+
+/**
+ * \brief Extracts the RAW, unmasked, unscaled BGR image directly from the IW44 structure
+ *        using a full, linear decoding path that bypasses multiresolution boundary padding.
+ * 
+ *        Unlike ddjvu_iw44_get_raw_pixmap() which invokes the region-based multiresolution 
+ *        decoder (get_pixmap(subsample, rect)) and can produce slight rounding variations at block boundaries, 
+ *        this function invokes the parameterless get_pixmap(void) to match legacy full-decode API behavior.
+ *        This works identically for both Background (BG44) and Foreground (FG44) decoded IWPixmap structures.
+ *
+ * \param iw44Handle The native handle to the decoded IW44Image (must be a color IWPixmap).
+ * \param outBgrBuffer Pointer to receive the interleaved BGR data. If NULL, the function just computes dimensions.
+ * \param bufferSize The size of the outBgrBuffer in bytes.
+ * \param outWidth Pointer to receive the resolved width in pixels.
+ * \param outHeight Pointer to receive the resolved height in pixels.
+ * \return TRUE (1) if successful, FALSE (0) otherwise.
+ */
+extern "C" DDJVUAPI int ddjvu_iw44_get_raw_pixmap_linear(
+    ddjvu_iw44_t iw44Handle, 
+    unsigned char* outBgrBuffer, 
+    int bufferSize,
+    int* outWidth, 
+    int* outHeight);
+
+int ddjvu_iw44_get_raw_pixmap_linear(
+    ddjvu_iw44_t iw44Handle, 
+    unsigned char* outBgrBuffer, 
+    int bufferSize,
+    int* outWidth, 
+    int* outHeight)
+{
+    if (iw44Handle == nullptr)
+    {
+        return FALSE;
+    }
+
+    G_TRY 
+    {
+        auto* img = static_cast<DJVU::IWPixmap*>(iw44Handle);
+        DJVU::IW44Image::Map* map = IW44ImageAccessProxy::GetMap(img, 0);
+        
+        if (map == nullptr)
+        {
+            return FALSE;
+        }
+        
+        if (outWidth != nullptr)
+        {
+            *outWidth = map->iw;
+        }
+
+        if (outHeight != nullptr)
+        {
+            *outHeight = map->ih;
+        }
+
+        if (outBgrBuffer == nullptr)
+        {
+            return TRUE;
+        }
+
+        GP<DJVU::GPixmap> pixmap = img->get_pixmap();
+        
+        if (pixmap) 
+        {
+            int required_size = map->iw * map->ih * 3;
+            
+            if (bufferSize >= required_size) 
+            {
+                for (int y = 0; y < map->ih; y++) 
+                {
+                    unsigned char* dest = outBgrBuffer + (y * map->iw * 3);
+                    unsigned char* src = (unsigned char*)(*pixmap)[y];
+                    memcpy(dest, src, map->iw * 3);
+                }
+                
+                return TRUE;
+            }
+        }
+    } 
+    G_CATCH_ALL 
+    { 
+        return FALSE; 
+    } 
+    G_ENDCATCH;
+    
+    return FALSE;
+}
 
  // --------------------------------------------------------------------------
  // COMPATIBILITY TESTING HOOKS: GRect
@@ -5562,6 +5750,446 @@ int ddjvu_grect_equals(const struct ddjvu_grect* r1, const struct ddjvu_grect* r
              }
          }
 
+         return TRUE;
+     }
+     G_CATCH(ex)
+     {
+         ddjvu_set_last_error(ex.get_cause());
+     }
+     G_ENDCATCH;
+
+     return FALSE;
+ }
+
+ /**
+  * \brief Gets the JB2 mask serialized in GBitmap RLE compressed format.
+  *
+  * This function executes in two passes. If \p buffer is NULL, the required
+  * buffer size is computed and stored in \p output_size. The caller must then
+  * allocate the buffer and call this function again.
+  * 
+  * \param handle Pointer to the JB2Image instance.
+  * \param subsample The subsampling factor (typically 1).
+  * \param align The row alignment in bytes (typically 1).
+  * \param buffer Pointer to the destination buffer. Can be NULL to query size.
+  * \param buffer_size The size of the destination buffer in bytes.
+  * \param output_size Pointer to an integer to receive the required buffer size.
+  * \return TRUE (1) if successful, FALSE (0) if parameters are invalid or extraction fails.
+  */
+ extern "C" DDJVUAPI int ddjvu_jb2image_get_rle_mask(
+     void* handle, int subsample, int align,
+     unsigned char* buffer, int buffer_size, int* output_size);
+
+ int ddjvu_jb2image_get_rle_mask(
+     void* handle, int subsample, int align,
+     unsigned char* buffer, int buffer_size, int* output_size)
+ {
+     if (handle == nullptr || output_size == nullptr) return FALSE;
+
+     G_TRY
+     {
+         auto* jb2 = static_cast<DJVU::JB2Image*>(handle);
+         GP<DJVU::GBitmap> bmp = jb2->get_bitmap(subsample, align);
+         if (!bmp) return FALSE;
+
+         GP<DJVU::ByteStream> bs = DJVU::ByteStream::create();
+         bmp->save_rle(*bs);
+         DJVU::TArray<char> data = bs->get_data();
+         
+         *output_size = data.size();
+         
+         if (buffer != nullptr)
+         {
+             if (buffer_size < *output_size) return FALSE;
+             memcpy(buffer, (const char*)data, *output_size);
+         }
+         return TRUE;
+     }
+     G_CATCH(ex)
+     {
+         ddjvu_set_last_error(ex.get_cause());
+     }
+     G_ENDCATCH;
+
+     return FALSE;
+ }
+
+ /**
+  * \brief Gets the background component scaled to full resolution in PPM format.
+  *
+  * This function executes in two passes. If \p buffer is NULL, the required
+  * buffer size is computed and stored in \p output_size. The caller must then
+  * allocate the buffer and call this function again.
+  * 
+  * \param page Pointer to the ddjvu_page_t instance.
+  * \param render_rect The region of the background to render. If NULL, the full page is rendered.
+  * \param page_rect The physical boundaries of the page. If NULL, the full page size is used.
+  * \param buffer Pointer to the destination buffer. Can be NULL to query size.
+  * \param buffer_size The size of the destination buffer in bytes.
+  * \param output_size Pointer to an integer to receive the required buffer size.
+  * \return TRUE (1) if successful, FALSE (0) if parameters are invalid or extraction fails.
+  */
+ extern "C" DDJVUAPI int ddjvu_page_get_bg_ppm(
+     ddjvu_page_t* page,
+     const ddjvu_rect_t* render_rect, const ddjvu_rect_t* page_rect,
+     unsigned char* buffer, int buffer_size, int* output_size);
+
+ int ddjvu_page_get_bg_ppm(
+     ddjvu_page_t* page,
+     const ddjvu_rect_t* render_rect, const ddjvu_rect_t* page_rect,
+     unsigned char* buffer, int buffer_size, int* output_size)
+ {
+     if (page == nullptr || page->img == nullptr || output_size == nullptr) return FALSE;
+
+     G_TRY
+     {
+         DJVU::GRect p_rect = page_rect 
+             ? DJVU::GRect(page_rect->x, page_rect->y, page_rect->w, page_rect->h) 
+             : DJVU::GRect(0, 0, page->img->get_width(), page->img->get_height());
+             
+         DJVU::GRect r_rect = render_rect 
+             ? DJVU::GRect(render_rect->x, render_rect->y, render_rect->w, render_rect->h) 
+             : p_rect;
+
+         GP<DJVU::GPixmap> pix = page->img->get_bg_pixmap(r_rect, p_rect);
+         if (!pix) return FALSE;
+
+         GP<DJVU::ByteStream> bs = DJVU::ByteStream::create();
+         pix->save_ppm(*bs);
+         DJVU::TArray<char> data = bs->get_data();
+         
+         *output_size = data.size();
+         
+         if (buffer != nullptr)
+         {
+             if (buffer_size < *output_size) return FALSE;
+             memcpy(buffer, (const char*)data, *output_size);
+         }
+         return TRUE;
+     }
+     G_CATCH(ex)
+     {
+         ddjvu_set_last_error(ex.get_cause());
+     }
+     G_ENDCATCH;
+
+     return FALSE;
+ }
+
+ /**
+  * \brief Gets the foreground component scaled to full resolution in PPM format.
+  *
+  * This function executes in two passes. If \p buffer is NULL, the required
+  * buffer size is computed and stored in \p output_size. The caller must then
+  * allocate the buffer and call this function again.
+  * 
+  * \param page Pointer to the ddjvu_page_t instance.
+  * \param render_rect The region of the foreground to render. If NULL, the full page is rendered.
+  * \param page_rect The physical boundaries of the page. If NULL, the full page size is used.
+  * \param buffer Pointer to the destination buffer. Can be NULL to query size.
+  * \param buffer_size The size of the destination buffer in bytes.
+  * \param output_size Pointer to an integer to receive the required buffer size.
+  * \return TRUE (1) if successful, FALSE (0) if parameters are invalid or extraction fails.
+  */
+ extern "C" DDJVUAPI int ddjvu_page_get_fg_ppm(
+     ddjvu_page_t* page,
+     const ddjvu_rect_t* render_rect, const ddjvu_rect_t* page_rect,
+     unsigned char* buffer, int buffer_size, int* output_size);
+
+ int ddjvu_page_get_fg_ppm(
+     ddjvu_page_t* page,
+     const ddjvu_rect_t* render_rect, const ddjvu_rect_t* page_rect,
+     unsigned char* buffer, int buffer_size, int* output_size)
+ {
+     if (page == nullptr || page->img == nullptr || output_size == nullptr) return FALSE;
+
+     G_TRY
+     {
+         DJVU::GRect p_rect = page_rect 
+             ? DJVU::GRect(page_rect->x, page_rect->y, page_rect->w, page_rect->h) 
+             : DJVU::GRect(0, 0, page->img->get_width(), page->img->get_height());
+             
+         DJVU::GRect r_rect = render_rect 
+             ? DJVU::GRect(render_rect->x, render_rect->y, render_rect->w, render_rect->h) 
+             : p_rect;
+
+         GP<DJVU::GPixmap> pix = page->img->get_fg_pixmap(r_rect, p_rect);
+         if (!pix) return FALSE;
+
+         GP<DJVU::ByteStream> bs = DJVU::ByteStream::create();
+         pix->save_ppm(*bs);
+         DJVU::TArray<char> data = bs->get_data();
+         
+         *output_size = data.size();
+         
+         if (buffer != nullptr)
+         {
+             if (buffer_size < *output_size) return FALSE;
+             memcpy(buffer, (const char*)data, *output_size);
+         }
+         return TRUE;
+     }
+     G_CATCH(ex)
+     {
+         ddjvu_set_last_error(ex.get_cause());
+     }
+     G_ENDCATCH;
+
+     return FALSE;
+ }
+
+ /**
+  * \brief Gets the complete, composited page image in PPM format.
+  *
+  * This function executes in two passes. If \p buffer is NULL, the required
+  * buffer size is computed and stored in \p output_size. The caller must then
+  * allocate the buffer and call this function again.
+  * 
+  * \param page Pointer to the ddjvu_page_t instance.
+  * \param render_rect The region of the image to render. If NULL, the full page is rendered.
+  * \param page_rect The physical boundaries of the page. If NULL, the full page size is used.
+  * \param buffer Pointer to the destination buffer. Can be NULL to query size.
+  * \param buffer_size The size of the destination buffer in bytes.
+  * \param output_size Pointer to an integer to receive the required buffer size.
+  * \return TRUE (1) if successful, FALSE (0) if parameters are invalid or extraction fails.
+  */
+ extern "C" DDJVUAPI int ddjvu_page_get_composite_ppm(
+     ddjvu_page_t* page,
+     const ddjvu_rect_t* render_rect, const ddjvu_rect_t* page_rect,
+     unsigned char* buffer, int buffer_size, int* output_size);
+
+ int ddjvu_page_get_composite_ppm(
+     ddjvu_page_t* page,
+     const ddjvu_rect_t* render_rect, const ddjvu_rect_t* page_rect,
+     unsigned char* buffer, int buffer_size, int* output_size)
+ {
+     if (page == nullptr || page->img == nullptr || output_size == nullptr) return FALSE;
+
+     G_TRY
+     {
+         DJVU::GRect p_rect = page_rect 
+             ? DJVU::GRect(page_rect->x, page_rect->y, page_rect->w, page_rect->h) 
+             : DJVU::GRect(0, 0, page->img->get_width(), page->img->get_height());
+             
+         DJVU::GRect r_rect = render_rect 
+             ? DJVU::GRect(render_rect->x, render_rect->y, render_rect->w, render_rect->h) 
+             : p_rect;
+
+         GP<DJVU::GPixmap> pix = page->img->get_pixmap(r_rect, p_rect);
+         if (!pix) return FALSE;
+
+         GP<DJVU::ByteStream> bs = DJVU::ByteStream::create();
+         pix->save_ppm(*bs);
+         DJVU::TArray<char> data = bs->get_data();
+         
+         *output_size = data.size();
+         
+         if (buffer != nullptr)
+         {
+             if (buffer_size < *output_size) return FALSE;
+             memcpy(buffer, (const char*)data, *output_size);
+         }
+         return TRUE;
+     }
+     G_CATCH(ex)
+     {
+         ddjvu_set_last_error(ex.get_cause());
+     }
+     G_ENDCATCH;
+
+     return FALSE;
+ }
+
+ /**
+  * \brief Gets the raw background component scaled to full resolution in BGR format.
+  *
+  * This function extracts raw GPixel data (BGR, 3 bytes per pixel) directly into a caller-provided buffer.
+  * If \p buffer is NULL, the function populates \p width, \p height, and \p output_size so the caller can allocate memory.
+  * 
+  * \param page Pointer to the ddjvu_page_t instance.
+  * \param render_rect The region of the background to render. If NULL, the full page is rendered.
+  * \param page_rect The physical boundaries of the page. If NULL, the full page size is used.
+  * \param width Pointer to an integer to receive the actual width of the rendered region in pixels.
+  * \param height Pointer to an integer to receive the actual height of the rendered region in pixels.
+  * \param output_size Pointer to an integer to receive the total required buffer size in bytes.
+  * \param buffer Pointer to the destination buffer. Can be NULL to query dimensions.
+  * \param buffer_size The size of the destination buffer in bytes.
+  * \return TRUE (1) if successful, FALSE (0) if parameters are invalid, extraction fails, or the buffer is too small.
+  */
+ extern "C" DDJVUAPI int ddjvu_page_get_bg_raw(
+     ddjvu_page_t* page,
+     const ddjvu_rect_t* render_rect, const ddjvu_rect_t* page_rect,
+     int* width, int* height, int* output_size,
+     unsigned char* buffer, int buffer_size);
+
+ int ddjvu_page_get_bg_raw(
+     ddjvu_page_t* page,
+     const ddjvu_rect_t* render_rect, const ddjvu_rect_t* page_rect,
+     int* width, int* height, int* output_size,
+     unsigned char* buffer, int buffer_size)
+ {
+     if (page == nullptr || page->img == nullptr || width == nullptr || height == nullptr || output_size == nullptr) return FALSE;
+
+     G_TRY
+     {
+         DJVU::GRect p_rect = page_rect 
+             ? DJVU::GRect(page_rect->x, page_rect->y, page_rect->w, page_rect->h) 
+             : DJVU::GRect(0, 0, page->img->get_width(), page->img->get_height());
+             
+         DJVU::GRect r_rect = render_rect 
+             ? DJVU::GRect(render_rect->x, render_rect->y, render_rect->w, render_rect->h) 
+             : p_rect;
+
+         GP<DJVU::GPixmap> pix = page->img->get_bg_pixmap(r_rect, p_rect);
+         if (!pix) return FALSE;
+
+         *width = pix->columns();
+         *height = pix->rows();
+         *output_size = (*width) * (*height) * sizeof(DJVU::GPixel);
+
+         if (buffer != nullptr && buffer_size >= *output_size)
+         {
+             DJVU::GPixel* src = (*pix)[0];
+             memcpy(buffer, src, *output_size);
+         }
+         else if (buffer != nullptr)
+         {
+             return FALSE;
+         }
+         return TRUE;
+     }
+     G_CATCH(ex)
+     {
+         ddjvu_set_last_error(ex.get_cause());
+     }
+     G_ENDCATCH;
+
+     return FALSE;
+ }
+
+ /**
+  * \brief Gets the raw foreground component scaled to full resolution in BGR format.
+  *
+  * This function extracts raw GPixel data (BGR, 3 bytes per pixel) directly into a caller-provided buffer.
+  * If \p buffer is NULL, the function populates \p width, \p height, and \p output_size so the caller can allocate memory.
+  * 
+  * \param page Pointer to the ddjvu_page_t instance.
+  * \param render_rect The region of the foreground to render. If NULL, the full page is rendered.
+  * \param page_rect The physical boundaries of the page. If NULL, the full page size is used.
+  * \param width Pointer to an integer to receive the actual width of the rendered region in pixels.
+  * \param height Pointer to an integer to receive the actual height of the rendered region in pixels.
+  * \param output_size Pointer to an integer to receive the total required buffer size in bytes.
+  * \param buffer Pointer to the destination buffer. Can be NULL to query dimensions.
+  * \param buffer_size The size of the destination buffer in bytes.
+  * \return TRUE (1) if successful, FALSE (0) if parameters are invalid, extraction fails, or the buffer is too small.
+  */
+ extern "C" DDJVUAPI int ddjvu_page_get_fg_raw(
+     ddjvu_page_t* page,
+     const ddjvu_rect_t* render_rect, const ddjvu_rect_t* page_rect,
+     int* width, int* height, int* output_size,
+     unsigned char* buffer, int buffer_size);
+
+ int ddjvu_page_get_fg_raw(
+     ddjvu_page_t* page,
+     const ddjvu_rect_t* render_rect, const ddjvu_rect_t* page_rect,
+     int* width, int* height, int* output_size,
+     unsigned char* buffer, int buffer_size)
+ {
+     if (page == nullptr || page->img == nullptr || width == nullptr || height == nullptr || output_size == nullptr) return FALSE;
+
+     G_TRY
+     {
+         DJVU::GRect p_rect = page_rect 
+             ? DJVU::GRect(page_rect->x, page_rect->y, page_rect->w, page_rect->h) 
+             : DJVU::GRect(0, 0, page->img->get_width(), page->img->get_height());
+             
+         DJVU::GRect r_rect = render_rect 
+             ? DJVU::GRect(render_rect->x, render_rect->y, render_rect->w, render_rect->h) 
+             : p_rect;
+
+         GP<DJVU::GPixmap> pix = page->img->get_fg_pixmap(r_rect, p_rect);
+         if (!pix) return FALSE;
+
+         *width = pix->columns();
+         *height = pix->rows();
+         *output_size = (*width) * (*height) * sizeof(DJVU::GPixel);
+
+         if (buffer != nullptr && buffer_size >= *output_size)
+         {
+             DJVU::GPixel* src = (*pix)[0];
+             memcpy(buffer, src, *output_size);
+         }
+         else if (buffer != nullptr)
+         {
+             return FALSE;
+         }
+         return TRUE;
+     }
+     G_CATCH(ex)
+     {
+         ddjvu_set_last_error(ex.get_cause());
+     }
+     G_ENDCATCH;
+
+     return FALSE;
+ }
+
+ /**
+  * \brief Gets the complete, composited raw page image in BGR format.
+  *
+  * This function extracts raw GPixel data (BGR, 3 bytes per pixel) directly into a caller-provided buffer.
+  * If \p buffer is NULL, the function populates \p width, \p height, and \p output_size so the caller can allocate memory.
+  * 
+  * \param page Pointer to the ddjvu_page_t instance.
+  * \param render_rect The region of the image to render. If NULL, the full page is rendered.
+  * \param page_rect The physical boundaries of the page. If NULL, the full page size is used.
+  * \param width Pointer to an integer to receive the actual width of the rendered region in pixels.
+  * \param height Pointer to an integer to receive the actual height of the rendered region in pixels.
+  * \param output_size Pointer to an integer to receive the total required buffer size in bytes.
+  * \param buffer Pointer to the destination buffer. Can be NULL to query dimensions.
+  * \param buffer_size The size of the destination buffer in bytes.
+  * \return TRUE (1) if successful, FALSE (0) if parameters are invalid, extraction fails, or the buffer is too small.
+  */
+ extern "C" DDJVUAPI int ddjvu_page_get_composite_raw(
+     ddjvu_page_t* page,
+     const ddjvu_rect_t* render_rect, const ddjvu_rect_t* page_rect,
+     int* width, int* height, int* output_size,
+     unsigned char* buffer, int buffer_size);
+
+ int ddjvu_page_get_composite_raw(
+     ddjvu_page_t* page,
+     const ddjvu_rect_t* render_rect, const ddjvu_rect_t* page_rect,
+     int* width, int* height, int* output_size,
+     unsigned char* buffer, int buffer_size)
+ {
+     if (page == nullptr || page->img == nullptr || width == nullptr || height == nullptr || output_size == nullptr) return FALSE;
+
+     G_TRY
+     {
+         DJVU::GRect p_rect = page_rect 
+             ? DJVU::GRect(page_rect->x, page_rect->y, page_rect->w, page_rect->h) 
+             : DJVU::GRect(0, 0, page->img->get_width(), page->img->get_height());
+             
+         DJVU::GRect r_rect = render_rect 
+             ? DJVU::GRect(render_rect->x, render_rect->y, render_rect->w, render_rect->h) 
+             : p_rect;
+
+         GP<DJVU::GPixmap> pix = page->img->get_pixmap(r_rect, p_rect);
+         if (!pix) return FALSE;
+
+         *width = pix->columns();
+         *height = pix->rows();
+         *output_size = (*width) * (*height) * sizeof(DJVU::GPixel);
+
+         if (buffer != nullptr && buffer_size >= *output_size)
+         {
+             DJVU::GPixel* src = (*pix)[0];
+             memcpy(buffer, src, *output_size);
+         }
+         else if (buffer != nullptr)
+         {
+             return FALSE;
+         }
          return TRUE;
      }
      G_CATCH(ex)
