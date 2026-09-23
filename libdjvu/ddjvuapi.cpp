@@ -6202,6 +6202,89 @@ int ddjvu_grect_equals(const struct ddjvu_grect* r1, const struct ddjvu_grect* r
  }
 
  /**
+  * \brief Gets the raw mask component scaled to full resolution in 8bpp format.
+  *
+  * This function extracts raw GBitmap data (8bpp, 1 byte per pixel) directly into a caller-provided buffer.
+  * The memory layout preserves the right-sided border padding intrinsic to the GBitmap structure.
+  * If \p buffer is NULL, the function populates \p width, \p height, \p rowsize, and \p output_size so the caller can allocate memory.
+  * 
+  * \param page Pointer to the ddjvu_page_t instance.
+  * \param width Pointer to an integer to receive the width of the rendered region in pixels (excluding border).
+  * \param height Pointer to an integer to receive the height of the rendered region in pixels.
+  * \param rowsize Pointer to an integer to receive the stride (memory row size in bytes, width + border).
+  * \param output_size Pointer to an integer to receive the total required buffer size in bytes (height * rowsize + border).
+  * \param grays Pointer to an integer to receive the number of grays in the mask.
+  * \param buffer Pointer to the destination buffer. Can be NULL to query dimensions.
+  * \param buffer_size The size of the destination buffer in bytes.
+  * \return TRUE (1) if successful, FALSE (0) if parameters are invalid, extraction fails, or the buffer is too small.
+  */
+ extern "C" DDJVUAPI int ddjvu_page_get_mask_raw(
+     ddjvu_page_t* page,
+     int* width, int* height, int* rowsize, int* output_size,
+     int* grays, unsigned char* buffer, int buffer_size);
+
+ int ddjvu_page_get_mask_raw(
+     ddjvu_page_t* page,
+     int* width, int* height, int* rowsize, int* output_size,
+     int* grays, unsigned char* buffer, int buffer_size)
+ {
+     if (page == nullptr || page->img == nullptr || width == nullptr || grays == nullptr ||
+         height == nullptr || rowsize == nullptr || output_size == nullptr) return FALSE;
+
+     G_TRY
+     {
+         GP<DJVU::JB2Image> fgjb = page->img->get_fgjb();
+         if (!fgjb) return FALSE;
+
+         GP<DJVU::GBitmap> bmp = fgjb->get_bitmap(1, 1);
+         if (!bmp) return FALSE;
+
+         *width = bmp->columns();
+         *height = bmp->rows();
+         *rowsize = bmp->rowsize();
+         *grays = bmp->get_grays();
+         int64_t safe_size = (int64_t)(*height) * (int64_t)(*rowsize) + (int64_t)bmp->get_border();
+         // Prevent 32-bit signed int overflow required by the output parameter
+         if (*height < 0 || *rowsize < 0 || safe_size > 0x7FFFFFFF) return FALSE;
+         
+         *output_size = (int)safe_size;
+
+         if (*grays == 2)
+         {
+             bmp->binarize_grays(0);
+         }
+
+         if (buffer != nullptr && buffer_size >= *output_size)
+         {
+             for (int y = 0; y < *height; y++)
+             {
+                 unsigned char* src = (*bmp)[y];
+                 unsigned char* dst = buffer + ((int64_t)y * (int64_t)(*rowsize));
+                 memcpy(dst, src, *rowsize);
+             }
+             
+             int border = bmp->get_border();
+             if (border > 0)
+             {
+                 memset(buffer + ((int64_t)(*height) * (int64_t)(*rowsize)), 0, border);
+             }
+         }
+         else if (buffer != nullptr)
+         {
+             return FALSE;
+         }
+         return TRUE;
+     }
+     G_CATCH(ex)
+     {
+         ddjvu_set_last_error(ex.get_cause());
+     }
+     G_ENDCATCH;
+
+     return FALSE;
+ }
+
+ /**
   * \brief Set the encoding options for the JB2 dictionary.
   *
   * This function allows runtime configuration of the dictionary encoding strategies
